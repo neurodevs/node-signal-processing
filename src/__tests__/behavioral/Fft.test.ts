@@ -1,6 +1,5 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import { ComplexNumbers } from 'fili'
-import Fft, { FftOptions } from '../../Fft'
+import Fft, { ComplexNumbers, FftOptions } from '../../Fft'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class FftTest extends AbstractSignalProcessingTest {
@@ -45,8 +44,8 @@ export default class FftTest extends AbstractSignalProcessingTest {
 		const fft = this.Fft({ radix })
 		const err = assert.doesThrow(() =>
 			fft.inverse({
-				re: [1, 2],
-				im: [1, 2],
+				real: [1, 2],
+				imaginary: [1, 2],
 			})
 		)
 		errorAssert.assertError(err, 'INVALID_PARAMETERS', {
@@ -82,7 +81,8 @@ export default class FftTest extends AbstractSignalProcessingTest {
 	protected static async forwardAndInverseReturnsOriginalData() {
 		const forwardResult = this.fft.forward(this.testData)
 		const inverseResult = this.fft.inverse(forwardResult)
-		assert.isEqualDeep(inverseResult.re, this.testData)
+		assert.isEqualDeep(inverseResult.real, this.testData)
+		assert.isNotEqualDeep(inverseResult.real, inverseResult.imaginary)
 	}
 
 	private static Fft(options?: Partial<FftOptions>) {
@@ -135,12 +135,12 @@ export class SpyFft extends Fft {
 		return super.load()
 	}
 
-	public forward(data: number[]) {
+	public forward(data: number[]): ComplexNumbers {
 		SpyFft.forwardHitCount += 1
 		return super.forward(data)
 	}
 
-	public inverse(data: ComplexNumbers) {
+	public inverse(data: ComplexNumbers): ComplexNumbers {
 		SpyFft.inverseHitCount += 1
 		return super.inverse(data)
 	}

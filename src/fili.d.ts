@@ -52,11 +52,11 @@ declare module 'fili' {
 
 		public constructor(radix: number)
 
-		public forward(b: number[], window: string): ComplexNumbers
-		public inverse(re: number[], im: number[]): number[]
-		public magnitude(params: ComplexNumbers): number[]
+		public forward(b: number[], window: string): FiliComplexNumbers
+		public inverse(re: number[], im: number[]): FiliComplexNumbers
+		public magnitude(params: FiliComplexNumbers): number[]
 		public magToDb(b: number[]): number[]
-		public phase(params: ComplexNumbers): number[]
+		public phase(params: FiliComplexNumbers): number[]
 		public windows(): string[]
 	}
 
@@ -67,7 +67,7 @@ declare module 'fili' {
 		n?: number
 	}
 
-	export interface ComplexNumbers {
+	export interface FiliComplexNumbers {
 		re: number[]
 		im: number[]
 	}

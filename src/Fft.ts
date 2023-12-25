@@ -1,5 +1,5 @@
 import { assertOptions } from '@sprucelabs/schema'
-import { ComplexNumbers, Fft as FiliFft } from 'fili'
+import { Fft as FiliFft } from 'fili'
 import {
 	assertValidDataLength as assertValidDataLength,
 	assertValidRadix,
@@ -18,14 +18,21 @@ export default class Fft {
 
 	public forward(data: number[]): ComplexNumbers {
 		assertValidDataLength(data, this.radix)
-		return this.fft.forward(data, 'none')
+		const result = this.fft.forward(data, 'none')
+		return {
+			real: result.re,
+			imaginary: result.im,
+		}
 	}
 
 	public inverse(data: ComplexNumbers): ComplexNumbers {
-		assertValidDataLength(data.re, this.radix)
-		assertValidDataLength(data.im, this.radix)
-		const result = this.fft.inverse(data.re, data.im)
-		return { re: Array.from(result), im: Array.from(result) }
+		assertValidDataLength(data.real, this.radix)
+		assertValidDataLength(data.imaginary, this.radix)
+		const result = this.fft.inverse(data.real, data.imaginary)
+		return {
+			real: result.re,
+			imaginary: result.im,
+		}
 	}
 
 	protected load(): FiliFft {
@@ -38,3 +45,8 @@ export interface FftOptions {
 }
 
 export type FftClass = new (options: FftOptions) => Fft
+
+export interface ComplexNumbers {
+	real: number[]
+	imaginary: number[]
+}

@@ -37,8 +37,7 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 	@test()
 	protected static async runReturnsAValidResponseAndHitsFftMethods() {
 		const result = this.hilbert.run(this.testData)
-		assert.isEqual(result.re.length, this.testData.length)
-		assert.isEqual(result.im.length, this.testData.length)
+		assert.isEqual(result.length, this.testData.length)
 		assert.isEqual(SpyFft.constructorHitCount, 1)
 		assert.isEqual(SpyFft.forwardHitCount, 1)
 		assert.isEqual(SpyFft.inverseHitCount, 1)

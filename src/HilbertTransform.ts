@@ -1,4 +1,3 @@
-import { ComplexNumbers } from 'fili'
 import {
 	assertArrayIsNotEmpty,
 	assertArrayLengthIsPowerOfTwo,
@@ -16,7 +15,7 @@ export class HilbertTransform {
 		return HilbertTransform.fftClass
 	}
 
-	public run(data: number[]): ComplexNumbers {
+	public run(data: number[]): number[] {
 		assertArrayIsNotEmpty(data)
 		assertArrayLengthIsPowerOfTwo(data)
 
@@ -25,8 +24,8 @@ export class HilbertTransform {
 
 		const freqs = fft.forward(data)
 
-		const real = freqs.re.slice()
-		const imag = freqs.im.slice()
+		const real = freqs.real.slice()
+		const imag = freqs.imaginary.slice()
 
 		// Construct h filter for Hilbert transform (scaling)
 		const N = real.length
@@ -55,6 +54,8 @@ export class HilbertTransform {
 			imag[i] *= h[i]
 		}
 
-		return fft.inverse({ re: real, im: imag })
+		const result = fft.inverse({ real, imaginary: imag })
+
+		return result.imaginary
 	}
 }
