@@ -64,3 +64,5 @@ export default class HilbertTransform {
 		return analyticSignal.map((value) => Math.abs(value))
 	}
 }
+
+export type HilbertClass = new () => HilbertTransform

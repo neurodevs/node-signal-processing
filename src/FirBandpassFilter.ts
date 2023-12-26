@@ -102,3 +102,7 @@ export interface RunOptions {
 	usePadding?: boolean
 	useNormalization?: boolean
 }
+
+export type FilterClass = new (
+	options: FirBandpassFilterOptions
+) => FirBandpassFilter

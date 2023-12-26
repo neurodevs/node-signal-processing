@@ -1,6 +1,6 @@
-import HilbertPeakDetection, { SegmentData } from '../../HilbertPeakDetection'
+import HilbertPeakDetector, { SegmentData } from '../../HilbertPeakDetector'
 
-export default class SpyHilbertPeakDetection extends HilbertPeakDetection {
+export default class SpyHilbertPeakDetection extends HilbertPeakDetector {
 	public static generateSegmentsHitCount = 0
 	public static applyEnvelopeThresholdHitCount = 0
 	public static findPeaksHitCount = 0
