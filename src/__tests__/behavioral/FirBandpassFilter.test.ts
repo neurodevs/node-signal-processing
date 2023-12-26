@@ -5,6 +5,7 @@ import FirBandpassFilter, {
 } from '../../FirBandpassFilter'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import { loadCsv } from '../support/loader'
+import SpyFirBandpassFilter from '../support/SpyFirBandpassFilter'
 
 export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
 	private static options: FirBandpassFilterOptions
@@ -215,31 +216,5 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 			numTaps: 101,
 			attenuation: 50,
 		}
-	}
-}
-
-class SpyFirBandpassFilter extends FirBandpassFilter {
-	public getSampleRate() {
-		return this.sampleRate
-	}
-
-	public getLowCutoffHz() {
-		return this.lowCutoffHz
-	}
-
-	public getHighCutoffHz() {
-		return this.highCutoffHz
-	}
-
-	public getNumTaps() {
-		return this.numTaps
-	}
-
-	public getAttenuation() {
-		return this.attenuation
-	}
-
-	public load(): any {
-		return super.load()
 	}
 }

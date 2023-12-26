@@ -3,7 +3,7 @@
 import { plot } from 'nodeplotlib'
 import { loadCsv } from './__tests__/support/loader'
 import FirBandpassFilter from './FirBandpassFilter'
-import { HilbertTransform } from './HilbertTransform'
+import HilbertTransform from './HilbertTransform'
 import { normalizeArray } from './preprocess'
 
 async function main() {
@@ -22,9 +22,10 @@ async function main() {
 		highCutoffHz: 4,
 		attenuation: 10,
 	})
-	const filteredData = filter.run(infrared)
-
 	const hilbert = new HilbertTransform()
+
+	// Remove low and high frequency noise
+	const filteredData = filter.run(infrared)
 
 	// Calculate the upper envelope
 	const upperHilbert = hilbert.run(filteredData)

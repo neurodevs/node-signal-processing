@@ -4,7 +4,7 @@ import {
 } from './assertions'
 import Fft, { FftClass } from './Fft'
 
-export class HilbertTransform {
+export default class HilbertTransform {
 	private static fftClass: FftClass = Fft
 
 	public static setFftClass(fftClass: FftClass): void {
@@ -55,7 +55,12 @@ export class HilbertTransform {
 		}
 
 		const result = fft.inverse({ real, imaginary: imag })
+		const analyticSignal = result.imaginary
 
-		return result.imaginary
+		return analyticSignal
+	}
+
+	public getEnvelope(analyticSignal: number[]) {
+		return analyticSignal.map((value) => Math.abs(value))
 	}
 }

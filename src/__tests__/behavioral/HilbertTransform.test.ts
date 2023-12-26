@@ -1,17 +1,23 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import { HilbertTransform } from '../../HilbertTransform'
+import HilbertTransform from '../../HilbertTransform'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
+import SpyHilbertPeakDetection from '../support/SpyHilbertPeakDetection'
 import { SpyFft } from './Fft.test'
 
 export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 	private static hilbert: HilbertTransform
 	private static testData = [1, 2, 3, 4]
+	private static testResult: number[]
+	private static testEnvelope: number[]
 
 	protected static async beforeEach() {
 		await super.beforeEach()
 		HilbertTransform.setFftClass(SpyFft)
 		SpyFft.clear()
+		SpyHilbertPeakDetection.clear()
 		this.hilbert = new HilbertTransform()
+		this.testResult = this.hilbert.run(this.testData)
+		this.testEnvelope = this.hilbert.getEnvelope(this.testResult)
 	}
 
 	@test()
@@ -36,10 +42,21 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	@test()
 	protected static async runReturnsAValidResponseAndHitsFftMethods() {
-		const result = this.hilbert.run(this.testData)
-		assert.isEqual(result.length, this.testData.length)
+		assert.isEqual(this.testResult.length, this.testData.length)
 		assert.isEqual(SpyFft.constructorHitCount, 1)
 		assert.isEqual(SpyFft.forwardHitCount, 1)
 		assert.isEqual(SpyFft.inverseHitCount, 1)
+	}
+
+	@test()
+	protected static async getEnvelopeReturnsEnvelope() {
+		assert.isTruthy(this.testEnvelope)
+	}
+
+	@test()
+	protected static async getEnvelopeDoesNotModifyInputArray() {
+		const resultCopy = this.testResult.slice()
+		this.hilbert.getEnvelope(this.testResult)
+		assert.isEqualDeep(this.testResult, resultCopy)
 	}
 }
