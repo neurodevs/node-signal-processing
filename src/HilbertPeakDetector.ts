@@ -18,7 +18,7 @@ export default class HilbertPeakDetector {
 
 	public run(data: number[], timestamps: number[]) {
 		const upperAnalyticSignal = this.hilbert.run(data)
-		this.hilbert.getEnvelope(upperAnalyticSignal)
+		const upperEnvelope = this.hilbert.getEnvelope(upperAnalyticSignal)
 
 		const lowerAnalyticSignal = this.hilbert.run(upperAnalyticSignal)
 		const lowerEnvelope = this.hilbert.getEnvelope(lowerAnalyticSignal)
@@ -27,7 +27,15 @@ export default class HilbertPeakDetector {
 		const segmentedData = this.generateSegments(thresholdedData, timestamps)
 		const peaks = this.findPeaks(segmentedData)
 
-		return peaks
+		return {
+			upperAnalyticSignal,
+			upperEnvelope,
+			lowerAnalyticSignal,
+			lowerEnvelope,
+			thresholdedData,
+			segmentedData,
+			peaks,
+		}
 	}
 
 	protected applyEnvelopeThreshold(
@@ -69,7 +77,7 @@ export default class HilbertPeakDetector {
 		return segmentedData
 	}
 
-	protected findPeaks(segmentedData: SegmentData) {
+	protected findPeaks(segmentedData: SegmentData): DataPoint[] {
 		let peaks: DataPoint[] = []
 
 		for (let segment of segmentedData) {

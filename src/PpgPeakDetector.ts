@@ -1,6 +1,6 @@
 import { assertOptions } from '@sprucelabs/schema'
 import FirBandpassFilter, { FilterClass } from './FirBandpassFilter'
-import HilbertPeakDetector, { DataPoint } from './HilbertPeakDetector'
+import HilbertPeakDetector from './HilbertPeakDetector'
 
 export default class PpgPeakDetector extends HilbertPeakDetector {
 	protected sampleRate: number
@@ -22,13 +22,17 @@ export default class PpgPeakDetector extends HilbertPeakDetector {
 
 	public constructor(options: PpgPeakDetectorOptions) {
 		super()
-		const {
+		let {
 			sampleRate,
 			lowCutoffHz = 0.4,
 			highCutoffHz = 4.0,
-			numTaps = 257,
+			numTaps = null,
 			attenuation = 50,
 		} = assertOptions(options, ['sampleRate'])
+
+		if (!numTaps) {
+			numTaps = 4 * Math.floor(sampleRate) + 1
+		}
 
 		this.sampleRate = sampleRate
 		this.lowCutoffHz = lowCutoffHz
@@ -45,7 +49,7 @@ export default class PpgPeakDetector extends HilbertPeakDetector {
 		})
 	}
 
-	public run(data: number[], timestamps: number[]): DataPoint[] {
+	public run(data: number[], timestamps: number[]) {
 		const filtered = this.filter.run(data)
 		return super.run(filtered, timestamps)
 	}

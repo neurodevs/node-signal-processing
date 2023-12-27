@@ -42,4 +42,27 @@ export default class HilbertPeakDetectionTest extends AbstractSignalProcessingTe
 		assert.isEqual(SpyHilbertPeakDetection.applyEnvelopeThresholdHitCount, 1)
 		assert.isEqual(SpyHilbertPeakDetection.findPeaksHitCount, 1)
 	}
+
+	@test()
+	protected static async runReturnsExpectedDataStructure() {
+		const result = this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
+
+		const {
+			upperAnalyticSignal,
+			upperEnvelope,
+			lowerAnalyticSignal,
+			lowerEnvelope,
+			thresholdedData,
+			segmentedData,
+			peaks,
+		} = result
+
+		assert.isTruthy(upperAnalyticSignal)
+		assert.isTruthy(upperEnvelope)
+		assert.isTruthy(lowerAnalyticSignal)
+		assert.isTruthy(lowerEnvelope)
+		assert.isTruthy(thresholdedData)
+		assert.isTruthy(segmentedData)
+		assert.isTruthy(peaks)
+	}
 }
