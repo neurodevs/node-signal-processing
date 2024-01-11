@@ -1,9 +1,6 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { Fft as FiliFft } from '@neurodevs/fili'
-import {
-	assertValidDataLength as assertValidDataLength,
-	assertValidRadix,
-} from './assertions'
+import { assertValidDataLength as assertValidDataLength } from './assertions'
 
 export default class FastFourierTransform {
 	protected radix: number
@@ -11,7 +8,7 @@ export default class FastFourierTransform {
 
 	public constructor(options: FastFourierTransformOptions) {
 		const { radix } = assertOptions(options, ['radix'])
-		assertValidRadix(radix)
+		// assertValidRadix(radix)
 		this.radix = radix
 		this.fft = this.load()
 	}
