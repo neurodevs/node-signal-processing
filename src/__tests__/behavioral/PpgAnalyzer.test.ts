@@ -58,7 +58,8 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 		const analyzer = new SpyPpgAnalyzer({ sampleRate: 64 })
 		const result = analyzer.run(values, timestamps)
 		const { signals, metrics } = result
-		const { rrIntervals, hrv, hr } = metrics
+		const { rrIntervals, hrvMean, hrMean, hrvPercentChange, hrPercentChange } =
+			metrics
 
 		assert.isTruthy(signals)
 		assert.isTruthy(metrics)
@@ -74,10 +75,14 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 				999.9000000025262, 1093.4999999990396,
 			]
 		)
-		assert.isTruthy(hrv)
-		assert.isEqual(hrv, 65.2431557711733)
-		assert.isTruthy(hr)
-		assert.isEqual(hr, 64.51531289926798)
+		assert.isTruthy(hrvMean)
+		assert.isEqual(hrvMean, 65.2431557711733)
+		assert.isTruthy(hrMean)
+		assert.isEqual(hrMean, 64.51531289926798)
+		assert.isTruthy(hrvPercentChange)
+		assert.isEqual(hrvPercentChange, 170.4859425149902)
+		assert.isTruthy(hrPercentChange)
+		assert.isEqual(hrPercentChange, -4.6672703562031107e-11)
 	}
 
 	private static generateRandomOptions() {

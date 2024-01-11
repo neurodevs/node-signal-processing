@@ -23,21 +23,61 @@ export default class PpgAnalyzerImpl implements PpgAnalyzer {
 	}
 
 	public run(data: number[], timestamps: number[]): PpgAnalyzerResults {
+		const middleIdx = Math.floor(data.length / 2)
+
+		const dataFirstHalf = data.slice(0, middleIdx)
+		const timestampsFirstHalf = timestamps.slice(0, middleIdx)
+
+		const dataSecondHalf = data.slice(middleIdx)
+		const timestampsSecondHalf = timestamps.slice(middleIdx)
+
+		const { result, rrIntervals, hrvMean, hrMean } = this.calculateMetrics(
+			data,
+			timestamps
+		)
+
+		const { hrvMean: hrvMeanFirstHalf, hrMean: hrMeanFirstHalf } =
+			this.calculateMetrics(dataFirstHalf, timestampsFirstHalf)
+
+		const { hrvMean: hrvMeanSecondHalf, hrMean: hrMeanSecondHalf } =
+			this.calculateMetrics(dataSecondHalf, timestampsSecondHalf)
+
+		const hrvPercentChange = this.calculatePercentChange(
+			hrvMeanFirstHalf,
+			hrvMeanSecondHalf
+		)
+
+		const hrPercentChange = this.calculatePercentChange(
+			hrMeanFirstHalf,
+			hrMeanSecondHalf
+		)
+
+		return {
+			signals: result,
+			metrics: {
+				rrIntervals,
+				hrvMean,
+				hrMean,
+				hrvPercentChange,
+				hrPercentChange,
+			},
+		}
+	}
+	private calculatePercentChange(
+		meanFirstHalf: number,
+		meanSecondHalf: number
+	) {
+		return ((meanSecondHalf - meanFirstHalf) / meanFirstHalf) * 100
+	}
+
+	private calculateMetrics(data: number[], timestamps: number[]) {
 		const result = this.detector.run(data, timestamps)
 		const { peaks } = result
 
 		const rrIntervals = this.calculateRrIntervals(peaks)
 		const hrvMean = this.calculateHeartRateVariability(rrIntervals)
 		const hrMean = this.calculateHeartRate(rrIntervals)
-
-		return {
-			signals: result,
-			metrics: {
-				rrIntervals,
-				hrv: hrvMean,
-				hr: hrMean,
-			},
-		}
+		return { result, rrIntervals, hrvMean, hrMean }
 	}
 
 	private calculateRrIntervals(peaks: DataPoint[]): number[] {
@@ -95,6 +135,8 @@ export interface PpgAnalyzerResults {
 
 export interface PpgMetrics {
 	rrIntervals: number[]
-	hrv: number
-	hr: number
+	hrvMean: number
+	hrvPercentChange: number
+	hrMean: number
+	hrPercentChange: number
 }
