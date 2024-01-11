@@ -1,2 +1,2 @@
-export { default as PpgAnalyzer } from './PpgAnalyzer'
+export { default as PpgAnalyzerImpl } from './PpgAnalyzer'
 export * from 'PpgAnalyzer'
