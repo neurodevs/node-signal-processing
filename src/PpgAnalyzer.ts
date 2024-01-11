@@ -1,46 +1,46 @@
 import { assertOptions } from '@sprucelabs/schema'
-import { DataPoint } from './HilbertPeakDetector'
+import { DataPoint, PeakDetectorResults } from './HilbertPeakDetector'
 import PpgPeakDetector, { PpgPeakDetectorClass } from './PpgPeakDetector'
 
-export default class PpgAnalyzer {
+export default class PpgAnalyzerImpl implements PpgAnalyzer {
 	protected sampleRate: number
 	protected detector: PpgPeakDetector
 	private static DetectorClass: PpgPeakDetectorClass = PpgPeakDetector
 
 	public static setDetectorClass(Class: PpgPeakDetectorClass): void {
-		PpgAnalyzer.DetectorClass = Class
+		PpgAnalyzerImpl.DetectorClass = Class
 	}
 
 	public static getDetectorClass(): PpgPeakDetectorClass {
-		return PpgAnalyzer.DetectorClass
+		return PpgAnalyzerImpl.DetectorClass
 	}
 
 	public constructor(options: PpgAnalyzerOptions) {
 		const { sampleRate } = assertOptions(options, ['sampleRate'])
 		this.sampleRate = sampleRate
 
-		this.detector = new PpgAnalyzer.DetectorClass({ sampleRate })
+		this.detector = new PpgAnalyzerImpl.DetectorClass({ sampleRate })
 	}
 
-	public run(data: number[], timestamps: number[]) {
+	public run(data: number[], timestamps: number[]): PpgAnalyzerResults {
 		const result = this.detector.run(data, timestamps)
 		const { peaks } = result
 
 		const rrIntervals = this.calculateRrIntervals(peaks)
-		const hrv = this.calculateRMSSD(rrIntervals)
-		const hr = this.calculateHeartRate(rrIntervals)
+		const hrvMean = this.calculateHeartRateVariability(rrIntervals)
+		const hrMean = this.calculateHeartRate(rrIntervals)
 
 		return {
 			signals: result,
 			metrics: {
 				rrIntervals,
-				hrv,
-				hr,
+				hrv: hrvMean,
+				hr: hrMean,
 			},
 		}
 	}
 
-	private calculateRrIntervals(peaks: DataPoint[]) {
+	private calculateRrIntervals(peaks: DataPoint[]): number[] {
 		const result = new Array(peaks.length - 1)
 
 		peaks.forEach((peak, index) => {
@@ -55,7 +55,7 @@ export default class PpgAnalyzer {
 		return result
 	}
 
-	private calculateRMSSD(rrIntervals: number[]): number {
+	private calculateHeartRateVariability(rrIntervals: number[]): number {
 		let squaredDifferences: number[] = rrIntervals
 			.slice(1)
 			.map((current, i) => Math.pow(current - rrIntervals[i], 2))
@@ -78,8 +78,23 @@ export default class PpgAnalyzer {
 	}
 }
 
-export type PpgAnalyzerClass = new (options: PpgAnalyzerOptions) => PpgAnalyzer
+export interface PpgAnalyzer {
+	run(data: number[], timestamps: number[]): PpgAnalyzerResults
+}
 
 export interface PpgAnalyzerOptions {
 	sampleRate: number
+}
+
+export type PpgAnalyzerClass = new (options: PpgAnalyzerOptions) => PpgAnalyzer
+
+export interface PpgAnalyzerResults {
+	signals: PeakDetectorResults
+	metrics: PpgMetrics
+}
+
+export interface PpgMetrics {
+	rrIntervals: number[]
+	hrv: number
+	hr: number
 }

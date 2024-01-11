@@ -1,5 +1,5 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import PpgAnalyzer, { PpgAnalyzerOptions } from '../../PpgAnalyzer'
+import PpgAnalyzerImpl, { PpgAnalyzerOptions } from '../../PpgAnalyzer'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import loadPpgData from '../support/loadPpgData'
 import SpyPpgAnalyzer from '../support/SpyPpgAnalyzer'
@@ -10,7 +10,7 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 	private static options: PpgAnalyzerOptions
 
 	protected static async beforeEach() {
-		PpgAnalyzer.setDetectorClass(SpyPpgPeakDetector)
+		PpgAnalyzerImpl.setDetectorClass(SpyPpgPeakDetector)
 		this.options = this.generateRandomOptions()
 		this.analyzer = this.Analyzer(this.options)
 	}
@@ -27,14 +27,14 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 
 	@test()
 	protected static canSetAndGetDetectorInstance() {
-		PpgAnalyzer.setDetectorClass(SpyPpgPeakDetector)
-		assert.isEqual(PpgAnalyzer.getDetectorClass(), SpyPpgPeakDetector)
+		PpgAnalyzerImpl.setDetectorClass(SpyPpgPeakDetector)
+		assert.isEqual(PpgAnalyzerImpl.getDetectorClass(), SpyPpgPeakDetector)
 	}
 
 	@test()
 	protected static async throwsWithMissingRequiredOptions() {
 		// @ts-ignore
-		const err = assert.doesThrow(() => new PpgAnalyzer())
+		const err = assert.doesThrow(() => new PpgAnalyzerImpl())
 		errorAssert.assertError(err, 'MISSING_PARAMETERS', {
 			parameters: ['sampleRate'],
 		})
@@ -48,7 +48,7 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 	@test()
 	protected static async constructorCanOverridePpgPeakDetector() {
 		SpyPpgPeakDetector.clear()
-		new PpgAnalyzer(this.options)
+		new PpgAnalyzerImpl(this.options)
 		assert.isEqual(SpyPpgPeakDetector.constructorHitCount, 1)
 	}
 

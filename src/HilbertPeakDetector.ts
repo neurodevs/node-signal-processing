@@ -35,7 +35,7 @@ export default class HilbertPeakDetector {
 			thresholdedData,
 			segmentedData,
 			peaks,
-		}
+		} as PeakDetectorResults
 	}
 
 	protected applyEnvelopeThreshold(
@@ -94,10 +94,20 @@ export default class HilbertPeakDetector {
 
 export type HilbertPeakDetectorClass = new () => HilbertPeakDetector
 
-export type SegmentData = Segment[]
-export type Segment = DataPoint[]
+export interface PeakDetectorResults {
+	upperAnalyticSignal: number[]
+	upperEnvelope: number[]
+	lowerAnalyticSignal: number[]
+	lowerEnvelope: number[]
+	thresholdedData: number[]
+	segmentedData: SegmentData
+	peaks: DataPoint[]
+}
 
-export type DataPoint = {
+export interface DataPoint {
 	value: number
 	timestamp: number
 }
+
+export type SegmentData = Segment[]
+export type Segment = DataPoint[]
