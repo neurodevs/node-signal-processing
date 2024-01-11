@@ -1,6 +1,6 @@
 {
   "name": "node-signal-processing",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": "https://github.com/neurodevs/node-signal-processing",
   "scripts": {
     "build.ci": "yarn build.tsc && yarn build.resolve-paths && yarn lint",
