@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+//@ts-ignore
 import { parse } from 'fast-csv'
 
 export async function loadCsv(filePath: string): Promise<CsvRow[]> {
@@ -9,7 +10,7 @@ export async function loadCsv(filePath: string): Promise<CsvRow[]> {
 			.pipe(parse({ headers: true }))
 			.on('data', (row: CsvRow) => results.push(row))
 			.on('end', () => resolve(results))
-			.on('error', (error) => reject(error))
+			.on('error', (error: any) => reject(error))
 	})
 }
 
