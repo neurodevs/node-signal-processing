@@ -1,5 +1,8 @@
 import { assertOptions } from '@sprucelabs/schema'
-import { FirCoeffs as FiliFirCoeffs, FirFilter as FiliFirFilter } from 'fili'
+import {
+	FirCoeffs as FiliFirCoeffs,
+	FirFilter as FiliFirFilter,
+} from '@neurodevs/fili'
 import {
 	assertArrayIsNotEmpty,
 	assertHighFreqGreaterThanLowFreq,

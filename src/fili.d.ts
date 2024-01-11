@@ -1,4 +1,4 @@
-declare module 'fili' {
+declare module '@neurodevs/fili' {
 	export class FirCoeffs {
 		public lowpass(params: FirCoeffsParams): number[]
 		public highpass(params: FirCoeffsParams): number[]

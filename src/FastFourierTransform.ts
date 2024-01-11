@@ -1,5 +1,5 @@
 import { assertOptions } from '@sprucelabs/schema'
-import { Fft as FiliFft } from 'fili'
+import { Fft as FiliFft } from '@neurodevs/fili'
 import {
 	assertValidDataLength as assertValidDataLength,
 	assertValidRadix,
