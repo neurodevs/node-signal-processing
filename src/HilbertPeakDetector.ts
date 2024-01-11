@@ -1,19 +1,19 @@
-import HilbertTransform, { HilbertClass } from './HilbertTransform'
+import HilbertTransform, { HilbertTransformClass } from './HilbertTransform'
 
 export default class HilbertPeakDetector {
 	protected hilbert: HilbertTransform
-	private static hilbertClass: HilbertClass = HilbertTransform
+	private static HilbertClass: HilbertTransformClass = HilbertTransform
 
-	public static setHilbertClass(hilbertClass: HilbertClass): void {
-		HilbertPeakDetector.hilbertClass = hilbertClass
+	public static setHilbertClass(Class: HilbertTransformClass): void {
+		HilbertPeakDetector.HilbertClass = Class
 	}
 
-	public static getHilbertClass(): HilbertClass {
-		return HilbertPeakDetector.hilbertClass
+	public static getHilbertClass(): HilbertTransformClass {
+		return HilbertPeakDetector.HilbertClass
 	}
 
 	public constructor() {
-		this.hilbert = new HilbertPeakDetector.hilbertClass()
+		this.hilbert = new HilbertPeakDetector.HilbertClass()
 	}
 
 	public run(data: number[], timestamps: number[]) {
@@ -91,6 +91,8 @@ export default class HilbertPeakDetector {
 		return peaks
 	}
 }
+
+export type HilbertPeakDetectorClass = new () => HilbertPeakDetector
 
 export type SegmentData = Segment[]
 export type Segment = DataPoint[]

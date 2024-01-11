@@ -1,8 +1,8 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import HilbertTransform from '../../HilbertTransform'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import SpyHilbertPeakDetection from '../support/SpyHilbertPeakDetection'
-import { SpyFft } from './Fft.test'
+import SpyFastFourierTransform from '../support/SpyFastFourierTransform'
+import SpyHilbertPeakDetector from '../support/SpyHilbertPeakDetector'
 
 export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 	private static hilbert: HilbertTransform
@@ -12,9 +12,9 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	protected static async beforeEach() {
 		await super.beforeEach()
-		HilbertTransform.setFftClass(SpyFft)
-		SpyFft.clear()
-		SpyHilbertPeakDetection.clear()
+		HilbertTransform.setFftClass(SpyFastFourierTransform)
+		SpyFastFourierTransform.clear()
+		SpyHilbertPeakDetector.clear()
 		this.hilbert = new HilbertTransform()
 		this.testResult = this.hilbert.run(this.testData)
 		this.testEnvelope = this.hilbert.getEnvelope(this.testResult)
@@ -36,16 +36,16 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	@test()
 	protected static canSetAndGetFftInstance() {
-		HilbertTransform.setFftClass(SpyFft)
-		assert.isEqual(HilbertTransform.getFftClass(), SpyFft)
+		HilbertTransform.setFftClass(SpyFastFourierTransform)
+		assert.isEqual(HilbertTransform.getFftClass(), SpyFastFourierTransform)
 	}
 
 	@test()
 	protected static async runReturnsAValidResponseAndHitsFftMethods() {
 		assert.isEqual(this.testResult.length, this.testData.length)
-		assert.isEqual(SpyFft.constructorHitCount, 1)
-		assert.isEqual(SpyFft.forwardHitCount, 1)
-		assert.isEqual(SpyFft.inverseHitCount, 1)
+		assert.isEqual(SpyFastFourierTransform.constructorHitCount, 1)
+		assert.isEqual(SpyFastFourierTransform.forwardHitCount, 1)
+		assert.isEqual(SpyFastFourierTransform.inverseHitCount, 1)
 	}
 
 	@test()

@@ -1,5 +1,5 @@
 import { assertOptions } from '@sprucelabs/schema'
-import FirBandpassFilter, { FilterClass } from './FirBandpassFilter'
+import FirBandpassFilter, { FirBandpassFilterClass } from './FirBandpassFilter'
 import HilbertPeakDetector from './HilbertPeakDetector'
 
 export default class PpgPeakDetector extends HilbertPeakDetector {
@@ -10,14 +10,14 @@ export default class PpgPeakDetector extends HilbertPeakDetector {
 	protected attenuation: number
 
 	protected filter: FirBandpassFilter
-	private static filterClass: FilterClass = FirBandpassFilter
+	private static FilterClass: FirBandpassFilterClass = FirBandpassFilter
 
-	public static setFilterClass(filterClass: FilterClass): void {
-		PpgPeakDetector.filterClass = filterClass
+	public static setFilterClass(Class: FirBandpassFilterClass): void {
+		PpgPeakDetector.FilterClass = Class
 	}
 
-	public static getFilterClass(): FilterClass {
-		return PpgPeakDetector.filterClass
+	public static getFilterClass(): FirBandpassFilterClass {
+		return PpgPeakDetector.FilterClass
 	}
 
 	public constructor(options: PpgPeakDetectorOptions) {
@@ -40,7 +40,7 @@ export default class PpgPeakDetector extends HilbertPeakDetector {
 		this.numTaps = numTaps
 		this.attenuation = attenuation
 
-		this.filter = new PpgPeakDetector.filterClass({
+		this.filter = new PpgPeakDetector.FilterClass({
 			sampleRate,
 			lowCutoffHz,
 			highCutoffHz,
@@ -54,6 +54,10 @@ export default class PpgPeakDetector extends HilbertPeakDetector {
 		return super.run(filtered, timestamps)
 	}
 }
+
+export type PpgPeakDetectorClass = new (
+	options: PpgPeakDetectorOptions
+) => PpgPeakDetector
 
 export interface PpgPeakDetectorOptions {
 	sampleRate: number

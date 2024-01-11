@@ -21,6 +21,7 @@ export default class FirBandpassFilter {
 	protected highCutoffHz: number
 	protected numTaps: number
 	protected attenuation: number
+
 	private filter: FiliFirFilter
 
 	public constructor(options: FirBandpassFilterOptions) {
@@ -90,6 +91,10 @@ export default class FirBandpassFilter {
 	}
 }
 
+export type FirBandpassFilterClass = new (
+	options: FirBandpassFilterOptions
+) => FirBandpassFilter
+
 export interface FirBandpassFilterOptions {
 	sampleRate: number
 	lowCutoffHz: number
@@ -102,7 +107,3 @@ export interface RunOptions {
 	usePadding?: boolean
 	useNormalization?: boolean
 }
-
-export type FilterClass = new (
-	options: FirBandpassFilterOptions
-) => FirBandpassFilter

@@ -20,7 +20,7 @@ async function main() {
 		sampleRate: 64,
 		lowCutoffHz: 0.4,
 		highCutoffHz: 4,
-		attenuation: 10,
+		attenuation: 50,
 	})
 	const hilbert = new HilbertTransform()
 

@@ -5,11 +5,11 @@ import {
 	assertValidRadix,
 } from './assertions'
 
-export default class Fft {
+export default class FastFourierTransform {
 	protected radix: number
 	private fft: FiliFft
 
-	public constructor(options: FftOptions) {
+	public constructor(options: FastFourierTransformOptions) {
 		const { radix } = assertOptions(options, ['radix'])
 		assertValidRadix(radix)
 		this.radix = radix
@@ -40,11 +40,13 @@ export default class Fft {
 	}
 }
 
-export interface FftOptions {
+export type FastFourierTransformClass = new (
+	options: FastFourierTransformOptions
+) => FastFourierTransform
+
+export interface FastFourierTransformOptions {
 	radix: number
 }
-
-export type FftClass = new (options: FftOptions) => Fft
 
 export interface ComplexNumbers {
 	real: number[]

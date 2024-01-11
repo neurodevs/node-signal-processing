@@ -1,16 +1,25 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { DataPoint } from './HilbertPeakDetector'
-import PpgPeakDetector from './PpgPeakDetector'
+import PpgPeakDetector, { PpgPeakDetectorClass } from './PpgPeakDetector'
 
 export default class PpgAnalyzer {
 	protected sampleRate: number
 	protected detector: PpgPeakDetector
+	private static DetectorClass: PpgPeakDetectorClass = PpgPeakDetector
+
+	public static setDetectorClass(Class: PpgPeakDetectorClass): void {
+		PpgAnalyzer.DetectorClass = Class
+	}
+
+	public static getDetectorClass(): PpgPeakDetectorClass {
+		return PpgAnalyzer.DetectorClass
+	}
 
 	public constructor(options: PpgAnalyzerOptions) {
 		const { sampleRate } = assertOptions(options, ['sampleRate'])
 		this.sampleRate = sampleRate
 
-		this.detector = new PpgPeakDetector({ sampleRate })
+		this.detector = new PpgAnalyzer.DetectorClass({ sampleRate })
 	}
 
 	public run(data: number[], timestamps: number[]) {
@@ -68,6 +77,8 @@ export default class PpgAnalyzer {
 		return (secondsPerMinute * msPerSecond) / avgRR
 	}
 }
+
+export type PpgAnalyzerClass = new (options: PpgAnalyzerOptions) => PpgAnalyzer
 
 export interface PpgAnalyzerOptions {
 	sampleRate: number

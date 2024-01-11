@@ -1,17 +1,34 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import PpgAnalyzer, { PpgAnalyzerOptions } from '../../PpgAnalyzer'
-import PpgPeakDetector from '../../PpgPeakDetector'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import loadPpgData from '../support/loadPpgData'
 import SpyPpgAnalyzer from '../support/SpyPpgAnalyzer'
+import SpyPpgPeakDetector from '../support/SpyPpgPeakDetector'
 
 export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 	private static analyzer: SpyPpgAnalyzer
 	private static options: PpgAnalyzerOptions
 
 	protected static async beforeEach() {
+		PpgAnalyzer.setDetectorClass(SpyPpgPeakDetector)
 		this.options = this.generateRandomOptions()
-		this.analyzer = new SpyPpgAnalyzer(this.options)
+		this.analyzer = this.Analyzer(this.options)
+	}
+
+	private static Analyzer(
+		options?: Partial<PpgAnalyzerOptions>
+	): SpyPpgAnalyzer {
+		const defaultOptions = this.generateRandomOptions()
+		return new SpyPpgAnalyzer({
+			...defaultOptions,
+			...options,
+		})
+	}
+
+	@test()
+	protected static canSetAndGetDetectorInstance() {
+		PpgAnalyzer.setDetectorClass(SpyPpgPeakDetector)
+		assert.isEqual(PpgAnalyzer.getDetectorClass(), SpyPpgPeakDetector)
 	}
 
 	@test()
@@ -29,8 +46,10 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 	}
 
 	@test()
-	protected static async constructorInstantiatesDependencies() {
-		assert.isInstanceOf(this.analyzer.getDetector(), PpgPeakDetector)
+	protected static async constructorCanOverridePpgPeakDetector() {
+		SpyPpgPeakDetector.clear()
+		new PpgAnalyzer(this.options)
+		assert.isEqual(SpyPpgPeakDetector.constructorHitCount, 1)
 	}
 
 	@test()

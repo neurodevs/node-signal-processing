@@ -1,10 +1,13 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft, { ComplexNumbers, FftOptions } from '../../Fft'
+import FastFourierTransform, {
+	FastFourierTransformOptions,
+} from '../../FastFourierTransform'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
+import SpyFastFourierTransform from '../support/SpyFastFourierTransform'
 
-export default class FftTest extends AbstractSignalProcessingTest {
-	private static defaultOptions: FftOptions
-	private static fft: SpyFft
+export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
+	private static defaultOptions: FastFourierTransformOptions
+	private static fft: SpyFastFourierTransform
 	private static testData = [1, 2, 3, 4]
 
 	protected static async beforeEach() {
@@ -16,7 +19,7 @@ export default class FftTest extends AbstractSignalProcessingTest {
 	@test()
 	protected static async throwsWithMissingRequiredOptions() {
 		// @ts-ignore
-		const err = assert.doesThrow(() => new Fft())
+		const err = assert.doesThrow(() => new FastFourierTransform())
 		errorAssert.assertError(err, 'MISSING_PARAMETERS', {
 			parameters: ['radix'],
 		})
@@ -85,8 +88,8 @@ export default class FftTest extends AbstractSignalProcessingTest {
 		assert.isNotEqualDeep(inverseResult.real, inverseResult.imaginary)
 	}
 
-	private static Fft(options?: Partial<FftOptions>) {
-		return new SpyFft({
+	private static Fft(options?: Partial<FastFourierTransformOptions>) {
+		return new SpyFastFourierTransform({
 			...this.defaultOptions,
 			...options,
 		})
@@ -97,7 +100,7 @@ export default class FftTest extends AbstractSignalProcessingTest {
 	}
 
 	private static assertDoesThrowInvalidParameters(
-		options: Partial<FftOptions>,
+		options: Partial<FastFourierTransformOptions>,
 		parameters: string[]
 	) {
 		const err = assert.doesThrow(() => this.Fft(options))
@@ -106,7 +109,9 @@ export default class FftTest extends AbstractSignalProcessingTest {
 		})
 	}
 
-	private static generateOptions(options?: Partial<FftOptions>) {
+	private static generateOptions(
+		options?: Partial<FastFourierTransformOptions>
+	) {
 		const defaultOptions = {
 			radix: 4,
 		}
@@ -114,40 +119,5 @@ export default class FftTest extends AbstractSignalProcessingTest {
 			...defaultOptions,
 			...options,
 		}
-	}
-}
-
-export class SpyFft extends Fft {
-	public static constructorHitCount = 0
-	public static forwardHitCount = 0
-	public static inverseHitCount = 0
-
-	public constructor(options: FftOptions) {
-		super(options)
-		SpyFft.constructorHitCount += 1
-	}
-
-	public getRadix() {
-		return this.radix
-	}
-
-	public load() {
-		return super.load()
-	}
-
-	public forward(data: number[]): ComplexNumbers {
-		SpyFft.forwardHitCount += 1
-		return super.forward(data)
-	}
-
-	public inverse(data: ComplexNumbers): ComplexNumbers {
-		SpyFft.inverseHitCount += 1
-		return super.inverse(data)
-	}
-
-	public static clear() {
-		SpyFft.constructorHitCount = 0
-		SpyFft.forwardHitCount = 0
-		SpyFft.inverseHitCount = 0
 	}
 }

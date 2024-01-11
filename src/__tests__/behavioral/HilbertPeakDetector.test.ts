@@ -1,16 +1,16 @@
 import { test, assert } from '@sprucelabs/test-utils'
 import HilbertPeakDetector from '../../HilbertPeakDetector'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import SpyHilbertPeakDetection from '../support/SpyHilbertPeakDetection'
+import SpyHilbertPeakDetector from '../support/SpyHilbertPeakDetector'
 import SpyHilbertTransform from '../support/SpyHilbertTransform'
 
-export default class HilbertPeakDetectionTest extends AbstractSignalProcessingTest {
+export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTest {
 	private static detector: HilbertPeakDetector
 
 	private static Detector() {
 		SpyHilbertTransform.clear()
-		SpyHilbertPeakDetection.clear()
-		return new SpyHilbertPeakDetection()
+		SpyHilbertPeakDetector.clear()
+		return new SpyHilbertPeakDetector()
 	}
 
 	protected static async beforeEach() {
@@ -25,22 +25,22 @@ export default class HilbertPeakDetectionTest extends AbstractSignalProcessingTe
 	}
 
 	@test()
-	protected static async constructorInstantiatesDependenciesAsExpected() {
+	protected static async constructorInstantiatesHilbertTransform() {
 		SpyHilbertTransform.clear()
-		this.detector = new HilbertPeakDetector()
+		new HilbertPeakDetector()
 		assert.isEqual(SpyHilbertTransform.constructorHitCount, 1)
 	}
 
 	@test()
 	protected static async runCallsDependenciesAsExpected() {
 		SpyHilbertTransform.clear()
-		SpyHilbertPeakDetection.clear()
+		SpyHilbertPeakDetector.clear()
 		this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
 		assert.isEqual(SpyHilbertTransform.runHitCount, 2)
 		assert.isEqual(SpyHilbertTransform.getEnvelopeHitCount, 2)
-		assert.isEqual(SpyHilbertPeakDetection.generateSegmentsHitCount, 1)
-		assert.isEqual(SpyHilbertPeakDetection.applyEnvelopeThresholdHitCount, 1)
-		assert.isEqual(SpyHilbertPeakDetection.findPeaksHitCount, 1)
+		assert.isEqual(SpyHilbertPeakDetector.generateSegmentsHitCount, 1)
+		assert.isEqual(SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount, 1)
+		assert.isEqual(SpyHilbertPeakDetector.findPeaksHitCount, 1)
 	}
 
 	@test()
