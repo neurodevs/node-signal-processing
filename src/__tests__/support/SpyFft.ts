@@ -1,7 +1,4 @@
-import Fft, {
-	ComplexNumbers,
-	FftOptions,
-} from '../../FastFourierTransform'
+import Fft, { ComplexNumbers, FftOptions } from '../../FastFourierTransform'
 
 export default class SpyFft extends Fft {
 	public static constructorHitCount = 0
