@@ -37,6 +37,8 @@ export default class HilbertPeakDetector {
 		const peaks = this.findPeaks(segmentedData)
 
 		return {
+			data,
+			timestamps,
 			upperAnalyticSignal,
 			upperEnvelope,
 			lowerAnalyticSignal,
@@ -122,6 +124,8 @@ export default class HilbertPeakDetector {
 export type HilbertPeakDetectorClass = new () => HilbertPeakDetector
 
 export interface PeakDetectorResults {
+	data: number[]
+	timestamps: number[]
 	upperAnalyticSignal: number[]
 	upperEnvelope: number[]
 	lowerAnalyticSignal: number[]

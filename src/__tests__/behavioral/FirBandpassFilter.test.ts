@@ -1,10 +1,8 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import { plot } from 'nodeplotlib'
 import FirBandpassFilter, {
 	FirBandpassFilterOptions,
 } from '../../FirBandpassFilter'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import { loadCsv } from '../support/loader'
 import SpyFirBandpassFilter from '../support/SpyFirBandpassFilter'
 
 export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
@@ -16,41 +14,6 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 		await super.beforeEach()
 		this.options = this.generateOptions()
 		this.filter = this.Filter(this.options)
-	}
-
-	@test.skip()
-	protected static async visualInspectionOfData() {
-		const data = await loadCsv('/Users/ericyates/Downloads/muse-ppg.csv')
-		const infrared = data.map((row) => Number(row['Infrared']))
-		const timestamps = data.map((row) => Number(row['time by space']))
-
-		const bufferSize = 1024
-		const x = timestamps.slice(0, bufferSize)
-		const y = infrared.slice(0, bufferSize)
-
-		const numTaps = 257
-
-		const filter = new FirBandpassFilter({
-			sampleRate: 64,
-			lowCutoffHz: 0.4,
-			highCutoffHz: 4,
-			numTaps,
-			attenuation: 10,
-		})
-		const result = filter.run(y)
-
-		const plotData = [
-			{
-				x,
-				y: result,
-			},
-			{
-				x,
-				y,
-			},
-		]
-
-		plot(plotData)
 	}
 
 	@test()

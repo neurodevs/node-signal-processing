@@ -45,9 +45,14 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 
 	@test()
 	protected static async runReturnsExpectedDataStructure() {
-		const result = this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
+		const dummyData = [1, 2, 3, 4]
+		const dummyTimestamps = [1, 2, 3, 4]
+
+		const result = this.detector.run(dummyData, dummyTimestamps)
 
 		const {
+			data,
+			timestamps,
 			upperAnalyticSignal,
 			upperEnvelope,
 			lowerAnalyticSignal,
@@ -57,6 +62,8 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 			peaks,
 		} = result
 
+		assert.isEqualDeep(dummyData, data)
+		assert.isEqualDeep(dummyTimestamps, timestamps)
 		assert.isTruthy(upperAnalyticSignal)
 		assert.isTruthy(upperEnvelope)
 		assert.isTruthy(lowerAnalyticSignal)

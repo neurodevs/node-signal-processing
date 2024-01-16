@@ -1,6 +1,6 @@
 {
   "name": "@neurodevs/node-signal-processing",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-signal-processing",
   "scripts": {
@@ -67,17 +67,14 @@
     }
   },
   "dependencies": {
-    "@nestjs/common": "^10.3.0",
-    "@nestjs/core": "^10.3.0",
-    "@nestjs/serve-static": "^4.0.0",
-    "@nestjs/websockets": "^10.3.0",
     "@neurodevs/fili": "^2.0.4",
     "@sprucelabs/error": "^5.1.57",
     "@sprucelabs/schema": "^29.3.7",
     "@sprucelabs/spruce-core-schemas": "^39.0.170",
     "@sprucelabs/spruce-skill-utils": "^30.1.56",
-    "fast-csv": "^4.3.6",
-    "nodeplotlib": "^1.1.2",
-    "reflect-metadata": "^0.2.1"
+    "canvas": "^2.11.2",
+    "chart.js": "^4.4.1",
+    "chartjs-node-canvas": "^4.1.6",
+    "fast-csv": "^4.3.6"
   }
 }
