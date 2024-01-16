@@ -1,10 +1,11 @@
-import { assertArrayIsNotEmpty } from './assertions'
-import FastFourierTransform, {
-	FastFourierTransformClass,
-} from './FastFourierTransform'
+import {
+	assertArrayIsNotEmpty,
+	assertArrayLengthIsPowerOfTwo,
+} from './assertions'
+import Fft, { FastFourierTransformClass } from './FastFourierTransform'
 
 export default class HilbertTransform {
-	private static FftClass: FastFourierTransformClass = FastFourierTransform
+	private static FftClass: FastFourierTransformClass = Fft
 
 	public static setFftClass(Class: FastFourierTransformClass): void {
 		HilbertTransform.FftClass = Class
@@ -16,7 +17,7 @@ export default class HilbertTransform {
 
 	public run(data: number[]): number[] {
 		assertArrayIsNotEmpty(data)
-		// assertArrayLengthIsPowerOfTwo(data)
+		assertArrayLengthIsPowerOfTwo(data)
 
 		const fft = new HilbertTransform.FftClass({ radix: data.length })
 

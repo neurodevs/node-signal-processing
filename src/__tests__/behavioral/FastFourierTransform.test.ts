@@ -1,31 +1,29 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import FastFourierTransform, {
-	FastFourierTransformOptions,
-} from '../../FastFourierTransform'
+import Fft, { FftOptions } from '../../FastFourierTransform'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import SpyFastFourierTransform from '../support/SpyFastFourierTransform'
+import SpyFft from '../support/SpyFft'
 
 export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
-	private static defaultOptions: FastFourierTransformOptions
-	private static fft: SpyFastFourierTransform
+	private static fft: SpyFft
+	private static fftOptions: FftOptions
 	private static testData = [1, 2, 3, 4]
 
 	protected static async beforeEach() {
 		await super.beforeEach()
-		this.defaultOptions = this.generateOptions()
+		this.fftOptions = this.generateOptions()
 		this.fft = this.Fft()
 	}
 
 	@test()
 	protected static async throwsWithMissingRequiredOptions() {
 		// @ts-ignore
-		const err = assert.doesThrow(() => new FastFourierTransform())
+		const err = assert.doesThrow(() => new Fft())
 		errorAssert.assertError(err, 'MISSING_PARAMETERS', {
 			parameters: ['radix'],
 		})
 	}
 
-	@test.skip('PPG data in segment might not be power of two, revisit this')
+	@test()
 	protected static async throwsIfRadixIsNotPowerOfTwo() {
 		const invalidValues = [3, 5, 6, 7, 9, 1.5, -1, -1.5, 0]
 		invalidValues.forEach((value) => this.assertInvalidRadix(value))
@@ -88,19 +86,12 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
 		assert.isNotEqualDeep(inverseResult.real, inverseResult.imaginary)
 	}
 
-	private static Fft(options?: Partial<FastFourierTransformOptions>) {
-		return new SpyFastFourierTransform({
-			...this.defaultOptions,
-			...options,
-		})
-	}
-
 	private static assertInvalidRadix(radix: number) {
 		this.assertDoesThrowInvalidParameters({ radix }, ['radix'])
 	}
 
 	private static assertDoesThrowInvalidParameters(
-		options: Partial<FastFourierTransformOptions>,
+		options: Partial<FftOptions>,
 		parameters: string[]
 	) {
 		const err = assert.doesThrow(() => this.Fft(options))
@@ -109,9 +100,7 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
 		})
 	}
 
-	private static generateOptions(
-		options?: Partial<FastFourierTransformOptions>
-	) {
+	private static generateOptions(options?: Partial<FftOptions>) {
 		const defaultOptions = {
 			radix: 4,
 		}
@@ -119,5 +108,12 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
 			...defaultOptions,
 			...options,
 		}
+	}
+
+	private static Fft(options?: Partial<FftOptions>) {
+		return new SpyFft({
+			...this.fftOptions,
+			...options,
+		})
 	}
 }

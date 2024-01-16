@@ -1,4 +1,5 @@
 import HilbertTransform, { HilbertTransformClass } from './HilbertTransform'
+import { isPowerOfTwo } from './validations'
 
 export default class HilbertPeakDetector {
 	protected hilbert: HilbertTransform
@@ -17,7 +18,15 @@ export default class HilbertPeakDetector {
 	}
 
 	public run(data: number[], timestamps: number[]) {
-		const upperAnalyticSignal = this.hilbert.run(data)
+		let formattedData
+
+		if (!isPowerOfTwo(data.length)) {
+			formattedData = this.padToNearestPowerOfTwo(data)
+		} else {
+			formattedData = data
+		}
+
+		const upperAnalyticSignal = this.hilbert.run(formattedData)
 		const upperEnvelope = this.hilbert.getEnvelope(upperAnalyticSignal)
 
 		const lowerAnalyticSignal = this.hilbert.run(upperAnalyticSignal)
@@ -36,6 +45,24 @@ export default class HilbertPeakDetector {
 			segmentedData,
 			peaks,
 		} as PeakDetectorResults
+	}
+
+	private padToNearestPowerOfTwo(arr: number[]): any {
+		const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(arr.length)))
+
+		const totalZerosToAdd = nextPowerOfTwo - arr.length
+
+		// Split zeros roughly equally for the beginning and end
+		const zerosAtStart = Math.floor(totalZerosToAdd / 2)
+		const zerosAtEnd = totalZerosToAdd - zerosAtStart
+
+		const newArray = [
+			...Array(zerosAtStart).fill(0),
+			...arr,
+			...Array(zerosAtEnd).fill(0),
+		]
+
+		return newArray
 	}
 
 	protected applyEnvelopeThreshold(

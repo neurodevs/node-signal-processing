@@ -65,4 +65,27 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 		assert.isTruthy(segmentedData)
 		assert.isTruthy(peaks)
 	}
+
+	@test()
+	protected static async runPadsDataWithZerosToNearestPowerOfTwo() {
+		const examples = [1, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15]
+		examples.forEach((length) => this.runForLength(length))
+	}
+
+	private static runForLength(length: number) {
+		const { data, timestamps } = this.generateDummyData(length)
+		return this.detector.run(data, timestamps)
+	}
+
+	private static generateDummyData(length: number) {
+		const data = []
+		const timestamps = []
+
+		for (let i = 0; i < length; i++) {
+			data.push(i)
+			timestamps.push(i)
+		}
+
+		return { data, timestamps }
+	}
 }

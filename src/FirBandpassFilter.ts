@@ -25,7 +25,7 @@ export default class FirBandpassFilter {
 	protected numTaps: number
 	protected attenuation: number
 
-	private filter: FiliFirFilter
+	private filiFilter: FiliFirFilter
 
 	public constructor(options: FirBandpassFilterOptions) {
 		const { sampleRate, lowCutoffHz, highCutoffHz, numTaps, attenuation } =
@@ -50,7 +50,7 @@ export default class FirBandpassFilter {
 		this.numTaps = numTaps
 		this.attenuation = attenuation
 
-		this.filter = this.load()
+		this.filiFilter = this.load()
 	}
 
 	public run(
@@ -59,7 +59,7 @@ export default class FirBandpassFilter {
 	): number[] {
 		assertArrayIsNotEmpty(data)
 		let { usePadding = true, useNormalization = true } = options
-		this.filter.reinit()
+		this.filiFilter.reinit()
 
 		if (useNormalization) {
 			data = normalizeArray(data)
@@ -70,10 +70,10 @@ export default class FirBandpassFilter {
 		if (usePadding) {
 			const padLength = 3 * this.numTaps
 			const padded = padArrayWithZeros(data, padLength)
-			const resultPadded = this.filter.filtfilt(padded)
+			const resultPadded = this.filiFilter.filtfilt(padded)
 			result = removeArrayPadding(resultPadded, padLength)
 		} else {
-			result = this.filter.filtfilt(data)
+			result = this.filiFilter.filtfilt(data)
 		}
 
 		return result

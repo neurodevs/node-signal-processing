@@ -1,7 +1,7 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import HilbertTransform from '../../HilbertTransform'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import SpyFastFourierTransform from '../support/SpyFastFourierTransform'
+import SpyFft from '../support/SpyFft'
 import SpyHilbertPeakDetector from '../support/SpyHilbertPeakDetector'
 
 export default class HilbertTransformTest extends AbstractSignalProcessingTest {
@@ -12,8 +12,8 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	protected static async beforeEach() {
 		await super.beforeEach()
-		HilbertTransform.setFftClass(SpyFastFourierTransform)
-		SpyFastFourierTransform.clear()
+		HilbertTransform.setFftClass(SpyFft)
+		SpyFft.clear()
 		SpyHilbertPeakDetector.clear()
 		this.hilbert = new HilbertTransform()
 		this.testResult = this.hilbert.run(this.testData)
@@ -26,7 +26,7 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 		errorAssert.assertError(err, 'INVALID_EMPTY_ARRAY')
 	}
 
-	@test.skip('PPG data in segment might not be power of two, revisit this')
+	@test()
 	protected static async throwsOnRunWithArrayOfLengthNotPowerOfTwo() {
 		const err = assert.doesThrow(() => this.hilbert.run([1, 2, 3]))
 		errorAssert.assertError(err, 'INVALID_PARAMETERS', {
@@ -36,16 +36,16 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	@test()
 	protected static canSetAndGetFftInstance() {
-		HilbertTransform.setFftClass(SpyFastFourierTransform)
-		assert.isEqual(HilbertTransform.getFftClass(), SpyFastFourierTransform)
+		HilbertTransform.setFftClass(SpyFft)
+		assert.isEqual(HilbertTransform.getFftClass(), SpyFft)
 	}
 
 	@test()
 	protected static async runReturnsAValidResponseAndHitsFftMethods() {
 		assert.isEqual(this.testResult.length, this.testData.length)
-		assert.isEqual(SpyFastFourierTransform.constructorHitCount, 1)
-		assert.isEqual(SpyFastFourierTransform.forwardHitCount, 1)
-		assert.isEqual(SpyFastFourierTransform.inverseHitCount, 1)
+		assert.isEqual(SpyFft.constructorHitCount, 1)
+		assert.isEqual(SpyFft.forwardHitCount, 1)
+		assert.isEqual(SpyFft.inverseHitCount, 1)
 	}
 
 	@test()
