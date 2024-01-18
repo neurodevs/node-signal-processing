@@ -4,7 +4,6 @@ import FirBandpassFilter from '../../FirBandpassFilter'
 import HilbertPeakDetector from '../../HilbertPeakDetector'
 import PpgPeakDetector, { PpgPeakDetectorOptions } from '../../PpgPeakDetector'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import loadPpgData from '../support/loadPpgData'
 import SpyFirBandpassFilter from '../support/SpyFirBandpassFilter'
 import SpyPpgPeakDetector from '../support/SpyPpgPeakDetector'
 
@@ -78,22 +77,6 @@ export default class PpgPeakDetectorTest extends AbstractSignalProcessingTest {
 	protected static async runCallsDependenciesAsExpected() {
 		this.randomDetector.run([1, 2, 3, 4], [4, 5, 6, 7])
 		assert.isEqual(SpyFirBandpassFilter.runHitCount, 1)
-	}
-
-	@test()
-	protected static async peakDetectionWorksOnActualPpgData() {
-		const { values, timestamps } = await loadPpgData()
-
-		const detector = new PpgPeakDetector({ sampleRate: 64 })
-		const result = detector.run(values, timestamps)
-
-		const { peaks } = result
-
-		assert.isLength(peaks, 18)
-		peaks.forEach((peak) => {
-			assert.isNumber(peak.value)
-			assert.isNumber(peak.timestamp)
-		})
 	}
 
 	private static generateRandomOptions() {

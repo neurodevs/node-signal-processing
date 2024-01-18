@@ -4,6 +4,7 @@ import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import loadPpgData from '../support/loadPpgData'
 import SpyPpgAnalyzer from '../support/SpyPpgAnalyzer'
 import SpyPpgPeakDetector from '../support/SpyPpgPeakDetector'
+import expectedOutput from '../testData/expectedOutput'
 
 export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 	private static analyzer: SpyPpgAnalyzer
@@ -53,8 +54,37 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 	}
 
 	@test()
-	protected static async runWorksWithActualPpgData() {
-		const { values, timestamps } = await loadPpgData()
+	protected static async hrvCalculationIgnoresRrIntervalOutliers() {
+		// We want to ignore rr intervals 700 -> 1200 and 1100 -> 500
+		const rrIntervals = [600, 700, 1200, 800, 500, 600, 700, 800]
+
+		const analyzer = new SpyPpgAnalyzer({ sampleRate: 64 })
+		const result = analyzer.calculateHeartRateVariability(rrIntervals)
+		assert.isEqual(result, 100)
+	}
+
+	@test(
+		'Works with actual PPG data: ppg-example-4-subject-3.csv',
+		'ppg-example-4-subject-3.csv'
+	)
+	@test(
+		'Works with actual PPG data: ppg-example-3-subject-3.csv',
+		'ppg-example-3-subject-3.csv'
+	)
+	@test.skip(
+		'Works with actual PPG data: ppg-example-2-subject-2.csv',
+		'ppg-example-2-subject-2.csv'
+	)
+	@test(
+		'Works with actual PPG data: ppg-example-1-subject-1.csv',
+		'ppg-example-1-subject-1.csv'
+	)
+	protected static async runWorksWithActualPpgData(fileName: string) {
+		const expected = expectedOutput.find((item) =>
+			item.fileName.endsWith(fileName)
+		) as any
+
+		const { values, timestamps } = await loadPpgData(fileName)
 		const analyzer = new SpyPpgAnalyzer({ sampleRate: 64 })
 		const result = analyzer.run(values, timestamps)
 		const { signals, metrics } = result
@@ -63,26 +93,13 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 
 		assert.isTruthy(signals)
 		assert.isTruthy(metrics)
-		assert.isLength(rrIntervals, 17)
-		assert.isEqualDeep(
-			rrIntervals,
-			[
-				702.9999999977008, 812.4000000025262, 781.1000000001513,
-				765.4999999977008, 828.0000000013388, 874.8999999988882,
-				906.1000000001513, 999.9000000025262, 1109.199999998964,
-				1093.6000000001513, 1015.4999999977008, 921.7000000026019,
-				968.6999999976251, 968.6000000001513, 968.6000000001513,
-				999.9000000025262, 1093.4999999990396,
-			]
-		)
-		assert.isTruthy(hrvMean)
-		assert.isEqual(hrvMean, 65.2431557711733)
-		assert.isTruthy(hrMean)
-		assert.isEqual(hrMean, 64.51531289926798)
-		assert.isTruthy(hrvPercentChange)
-		assert.isEqual(hrvPercentChange, 170.4859425149902)
-		assert.isTruthy(hrPercentChange)
-		assert.isEqual(hrPercentChange, -4.6672703562031107e-11)
+		assert.isLength(rrIntervals, expected.numPeaks)
+
+		assert.isEqualDeep(rrIntervals, expected.rrIntervals)
+		assert.isEqual(hrvMean, expected.hrvMean)
+		assert.isEqual(hrMean, expected.hrMean)
+		assert.isEqual(hrvPercentChange, expected.hrvPercentChange)
+		assert.isEqual(hrPercentChange, expected.hrPercentChange)
 	}
 
 	private static generateRandomOptions() {

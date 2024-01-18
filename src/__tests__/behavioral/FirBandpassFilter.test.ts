@@ -62,7 +62,7 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 	}
 
 	@test()
-	protected static async throwsWithInvalidAttentuation() {
+	protected static async throwsWithInvalidAttenuation() {
 		const invalidValues = [0, -1, -1.5]
 		invalidValues.forEach((value) => this.assertInvalidAttenuation(value))
 	}

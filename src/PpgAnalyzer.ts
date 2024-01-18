@@ -4,6 +4,7 @@ import PpgPeakDetector, { PpgPeakDetectorClass } from './PpgPeakDetector'
 
 export default class PpgAnalyzerImpl implements PpgAnalyzer {
 	protected sampleRate: number
+	protected ignoreRrIntervalThreshold: number
 	protected detector: PpgPeakDetector
 	private static DetectorClass: PpgPeakDetectorClass = PpgPeakDetector
 
@@ -16,10 +17,14 @@ export default class PpgAnalyzerImpl implements PpgAnalyzer {
 	}
 
 	public constructor(options: PpgAnalyzerOptions) {
-		const { sampleRate } = assertOptions(options, ['sampleRate'])
+		const { sampleRate, ignoreRrIntervalThreshold = 25 } = assertOptions(
+			options,
+			['sampleRate']
+		)
 		this.sampleRate = sampleRate
 
 		this.detector = new PpgAnalyzerImpl.DetectorClass({ sampleRate })
+		this.ignoreRrIntervalThreshold = ignoreRrIntervalThreshold
 	}
 
 	public run(data: number[], timestamps: number[]): PpgAnalyzerResults {
@@ -89,16 +94,26 @@ export default class PpgAnalyzerImpl implements PpgAnalyzer {
 			}
 
 			const previousPeak = peaks[index - 1]
-			result[index - 1] = 1000 * (peak.timestamp - previousPeak.timestamp)
+			result[index - 1] = peak.timestamp - previousPeak.timestamp
 		})
 
 		return result
 	}
 
-	private calculateHeartRateVariability(rrIntervals: number[]): number {
-		let squaredDifferences: number[] = rrIntervals
-			.slice(1)
-			.map((current, i) => Math.pow(current - rrIntervals[i], 2))
+	protected calculateHeartRateVariability(rrIntervals: number[]) {
+		const squaredDifferences: number[] = []
+
+		for (let i = 1; i < rrIntervals.length; i++) {
+			const current = rrIntervals[i]
+			const previous = rrIntervals[i - 1]
+
+			const diff = this.calculateAbsDifference(previous, current)
+
+			if (diff < this.ignoreRrIntervalThreshold) {
+				const squaredDifference = Math.pow(current - previous, 2)
+				squaredDifferences.push(squaredDifference)
+			}
+		}
 
 		let meanSquaredDifference =
 			squaredDifferences.reduce((acc, curr) => acc + curr, 0) /
@@ -107,7 +122,11 @@ export default class PpgAnalyzerImpl implements PpgAnalyzer {
 		return Math.sqrt(meanSquaredDifference)
 	}
 
-	private calculateHeartRate(rrIntervals: number[]): number {
+	private calculateAbsDifference(a: number, b: number) {
+		return (100 * Math.abs(a - b)) / a
+	}
+
+	private calculateHeartRate(rrIntervals: number[]) {
 		let totalRR = rrIntervals.reduce((acc, curr) => acc + curr, 0)
 		let avgRR = totalRR / rrIntervals.length
 
@@ -124,6 +143,7 @@ export interface PpgAnalyzer {
 
 export interface PpgAnalyzerOptions {
 	sampleRate: number
+	ignoreRrIntervalThreshold?: number
 }
 
 export type PpgAnalyzerClass = new (options: PpgAnalyzerOptions) => PpgAnalyzer
@@ -139,4 +159,8 @@ export interface PpgMetrics {
 	hrvPercentChange: number
 	hrMean: number
 	hrPercentChange: number
+}
+
+export interface CalculateHrvOptions {
+	ignoreRrIntervalThreshold: number
 }

@@ -8,4 +8,8 @@ export default class SpyPpgAnalyzer extends PpgAnalyzerImpl {
 	public getDetector() {
 		return this.detector
 	}
+
+	public calculateHeartRateVariability(rrIntervals: number[]) {
+		return super.calculateHeartRateVariability(rrIntervals)
+	}
 }
