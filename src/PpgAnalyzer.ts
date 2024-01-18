@@ -127,14 +127,37 @@ export default class PpgAnalyzerImpl implements PpgAnalyzer {
 	}
 
 	private calculateHeartRate(rrIntervals: number[]) {
-		let totalRR = rrIntervals.reduce((acc, curr) => acc + curr, 0)
-		let avgRR = totalRR / rrIntervals.length
+		let validRr: number[] = []
+
+		for (let i = 1; i < rrIntervals.length; i++) {
+			const current = rrIntervals[i]
+			const previous = rrIntervals[i - 1]
+
+			const diff = this.calculateAbsDifference(previous, current)
+
+			if (diff < this.ignoreRrIntervalThreshold) {
+				validRr.push(current)
+			}
+		}
+		let totalMs = validRr.reduce((acc, curr) => acc + curr, 0)
+		let avgRr = totalMs / validRr.length
 
 		const secondsPerMinute = 60
 		const msPerSecond = 1000
+		const beatsPerMinute = (secondsPerMinute * msPerSecond) / avgRr
 
-		return (secondsPerMinute * msPerSecond) / avgRR
+		return beatsPerMinute
 	}
+
+	// private calculateHeartRate(rrIntervals: number[]) {
+	// 	let totalRR = rrIntervals.reduce((acc, curr) => acc + curr, 0)
+	// 	let avgRR = totalRR / rrIntervals.length
+
+	// 	const secondsPerMinute = 60
+	// 	const msPerSecond = 1000
+
+	// 	return (secondsPerMinute * msPerSecond) / avgRR
+	// }
 }
 
 export interface PpgAnalyzer {

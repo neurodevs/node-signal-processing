@@ -72,6 +72,7 @@ export default class PpgAnalyzerTest extends AbstractSignalProcessingTest {
 		'ppg-example-3-subject-3.csv'
 	)
 	@test.skip(
+		// For unknown reasons, peak detection is failing on this file
 		'Works with actual PPG data: ppg-example-2-subject-2.csv',
 		'ppg-example-2-subject-2.csv'
 	)

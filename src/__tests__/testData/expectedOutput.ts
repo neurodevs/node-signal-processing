@@ -2,9 +2,9 @@ const expectedOutput = [
 	{
 		fileName: 'src/__tests__/testData/ppg-example-1-subject-1.csv',
 		numPeaks: 788,
-		hrMean: 71.80641428109296,
+		hrMean: 69.13374305471919,
 		hrvMean: 62.23187729983799,
-		hrPercentChange: -1.0616742439678146,
+		hrPercentChange: 3.782012526493126,
 		hrvPercentChange: -28.970547500493502,
 		rrIntervals: [
 			1607, 1308, 809, 793, 769, 778, 782, 805, 785, 794, 747, 812, 703, 706,
@@ -76,9 +76,9 @@ const expectedOutput = [
 	{
 		fileName: 'src/__tests__/testData/ppg-example-3-subject-3.csv',
 		numPeaks: 247,
-		hrMean: 82.46160694413533,
+		hrMean: 88.98337776787169,
 		hrvMean: 54.23200002387516,
-		hrPercentChange: 17.192959664180293,
+		hrPercentChange: -0.738571980166735,
 		hrvPercentChange: -24.79744177466842,
 		rrIntervals: [
 			1618, 790, 664, 672, 632, 658, 629, 659, 620, 675, 628, 660, 613, 644,
@@ -104,9 +104,9 @@ const expectedOutput = [
 	{
 		fileName: 'src/__tests__/testData/ppg-example-4-subject-3.csv',
 		numPeaks: 201,
-		hrMean: 73.97638399018555,
+		hrMean: 82.99362901847829,
 		hrvMean: 50.63032107112008,
-		hrPercentChange: 96.53474718653017,
+		hrPercentChange: 6.149777679833032,
 		hrvPercentChange: -35.30853083409752,
 		rrIntervals: [
 			1624, 840, 717, 737, 753, 731, 722, 754, 731, 768, 684, 785, 766, 734,
