@@ -17,27 +17,30 @@ export default class HilbertPeakDetector {
 		this.hilbert = new HilbertPeakDetector.HilbertClass()
 	}
 
-	public run(data: number[], timestamps: number[]) {
-		let formattedData
+	public run(filteredData: number[], timestamps: number[]) {
+		let paddedData
 
-		if (!isPowerOfTwo(data.length)) {
-			formattedData = this.padToNearestPowerOfTwo(data)
+		if (!isPowerOfTwo(filteredData.length)) {
+			paddedData = this.padToNearestPowerOfTwo(filteredData)
 		} else {
-			formattedData = data
+			paddedData = filteredData
 		}
 
-		const upperAnalyticSignal = this.hilbert.run(formattedData)
+		const upperAnalyticSignal = this.hilbert.run(paddedData)
 		const upperEnvelope = this.hilbert.getEnvelope(upperAnalyticSignal)
 
 		const lowerAnalyticSignal = this.hilbert.run(upperAnalyticSignal)
 		const lowerEnvelope = this.hilbert.getEnvelope(lowerAnalyticSignal)
 
-		const thresholdedData = this.applyEnvelopeThreshold(data, lowerEnvelope)
+		const thresholdedData = this.applyEnvelopeThreshold(
+			filteredData,
+			lowerEnvelope
+		)
 		const segmentedData = this.generateSegments(thresholdedData, timestamps)
 		const peaks = this.findPeaks(segmentedData)
 
 		return {
-			data,
+			filteredData,
 			timestamps,
 			upperAnalyticSignal,
 			upperEnvelope,
@@ -124,7 +127,7 @@ export default class HilbertPeakDetector {
 export type HilbertPeakDetectorClass = new () => HilbertPeakDetector
 
 export interface PeakDetectorResults {
-	data: number[]
+	filteredData: number[]
 	timestamps: number[]
 	upperAnalyticSignal: number[]
 	upperEnvelope: number[]

@@ -10,6 +10,8 @@ import SpyPpgPeakDetector from '../support/SpyPpgPeakDetector'
 export default class PpgPeakDetectorTest extends AbstractSignalProcessingTest {
 	private static randomDetector: SpyPpgPeakDetector
 	private static randomOptions: PpgPeakDetectorOptions
+	private static rawData: number[]
+	private static timestamps: number[]
 
 	protected static async beforeEach() {
 		SpyPpgPeakDetector.setFilterClass(SpyFirBandpassFilter)
@@ -17,6 +19,9 @@ export default class PpgPeakDetectorTest extends AbstractSignalProcessingTest {
 
 		this.randomOptions = this.generateRandomOptions()
 		this.randomDetector = new SpyPpgPeakDetector(this.randomOptions)
+
+		this.rawData = [1, 2, 3, 4]
+		this.timestamps = [4, 5, 6, 7]
 	}
 
 	@test()
@@ -75,8 +80,18 @@ export default class PpgPeakDetectorTest extends AbstractSignalProcessingTest {
 
 	@test()
 	protected static async runCallsDependenciesAsExpected() {
-		this.randomDetector.run([1, 2, 3, 4], [4, 5, 6, 7])
+		this.run()
 		assert.isEqual(SpyFirBandpassFilter.runHitCount, 1)
+	}
+
+	@test()
+	protected static async runReturnsRawData() {
+		const result = this.run()
+		assert.isEqualDeep(result.rawData, this.rawData)
+	}
+
+	private static run() {
+		return this.randomDetector.run(this.rawData, this.timestamps)
 	}
 
 	private static generateRandomOptions() {

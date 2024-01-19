@@ -51,7 +51,7 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 		const result = this.detector.run(dummyData, dummyTimestamps)
 
 		const {
-			data,
+			filteredData,
 			timestamps,
 			upperAnalyticSignal,
 			upperEnvelope,
@@ -62,15 +62,15 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 			peaks,
 		} = result
 
-		assert.isEqualDeep(dummyData, data)
+		assert.isEqualDeep(dummyData, filteredData)
 		assert.isEqualDeep(dummyTimestamps, timestamps)
-		assert.isTruthy(upperAnalyticSignal)
-		assert.isTruthy(upperEnvelope)
-		assert.isTruthy(lowerAnalyticSignal)
-		assert.isTruthy(lowerEnvelope)
-		assert.isTruthy(thresholdedData)
-		assert.isTruthy(segmentedData)
-		assert.isTruthy(peaks)
+		assert.isAbove(upperAnalyticSignal.length, 0)
+		assert.isAbove(upperEnvelope.length, 0)
+		assert.isAbove(lowerAnalyticSignal.length, 0)
+		assert.isAbove(lowerEnvelope.length, 0)
+		assert.isAbove(thresholdedData.length, 0)
+		assert.isAbove(segmentedData.length, 0)
+		assert.isAbove(peaks.length, 0)
 	}
 
 	@test()
