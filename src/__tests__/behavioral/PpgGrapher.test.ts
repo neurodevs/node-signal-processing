@@ -1,7 +1,11 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import PpgGrapher from '../../PpgGrapher'
+import PpgGrapher, {
+	CombineSubplotOptions,
+	CreateSubplotOptions,
+} from '../../PpgGrapher'
 import { PpgPeakDetectorResults } from '../../PpgPeakDetector'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
+import SpyCanvas from '../support/SpyCanvas'
 
 export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 	private static grapher: SpyPpgGrapher
@@ -11,17 +15,29 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 
 	protected static async beforeEach() {
 		await super.beforeEach()
+
+		PpgGrapher.CanvasClass = SpyCanvas
+
+		SpyPpgGrapher.createSubplotOptions = []
+		SpyPpgGrapher.combineSubplotsOptions = []
+
+		SpyCanvas.constructorOptions = []
+		SpyCanvas.renderOptions = []
+
 		this.grapher = this.Grapher()
 		this.savePath = 'asdf'
+
+		const dataLength = 4
+
 		this.signals = {
-			rawData: [],
-			filteredData: [],
-			timestamps: [],
-			upperAnalyticSignal: [],
-			upperEnvelope: [],
-			lowerAnalyticSignal: [],
-			lowerEnvelope: [],
-			thresholdedData: [],
+			rawData: this.generateRandomArray(dataLength),
+			filteredData: this.generateRandomArray(dataLength),
+			timestamps: this.generateRandomArray(dataLength),
+			upperAnalyticSignal: this.generateRandomArray(dataLength),
+			upperEnvelope: this.generateRandomArray(dataLength),
+			lowerAnalyticSignal: this.generateRandomArray(dataLength),
+			lowerEnvelope: this.generateRandomArray(dataLength),
+			thresholdedData: this.generateRandomArray(dataLength),
 			segmentedData: [],
 			peaks: [],
 		} as PpgPeakDetectorResults
@@ -37,13 +53,13 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 	}
 
 	@test()
-	protected static async callsCreateSubplotCorrectNumberOfTimes() {
+	protected static async callsCreateSubplotWithExpectedOptions() {
 		await this.run()
 
 		const expectedOptions = [
 			{
 				title: 'Raw PPG Data',
-				datasets: [{ label: 'Raw PPG Data', data: this.signals.filteredData }],
+				datasets: [{ label: 'Raw PPG Data', data: this.signals.rawData }],
 			},
 			{
 				title: 'Filtered PPG Data (0.4-4 Hz Bandpass)',
@@ -83,14 +99,59 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 			{
 				title: 'Peak Detection on Raw Data',
 				datasets: [
-					{ label: 'Raw PPG Data', data: this.signals.filteredData },
+					{ label: 'Raw PPG Data', data: this.signals.rawData },
 					{ label: 'Lower Envelope', data: this.signals.lowerEnvelope },
 				],
 			},
 		]
 
-		assert.isEqual(SpyPpgGrapher.createSubplotCallCount, 7)
-		assert.isEqualDeep(SpyPpgGrapher.createSubplotCallOptions, expectedOptions)
+		assert.isEqualDeep(SpyPpgGrapher.createSubplotOptions, expectedOptions)
+	}
+
+	@test()
+	protected static async callsCombineSubplotsWithExpectedOptions() {
+		await this.run()
+
+		assert.isEqualDeep(
+			SpyPpgGrapher.combineSubplotsOptions[0]?.subplots.length,
+			7
+		)
+	}
+
+	@test()
+	protected static async createSubplotCallsCanvasWithExpectedOptions() {
+		await this.run()
+
+		assert.isEqualDeep(SpyCanvas.constructorOptions[0], {
+			width: 800,
+			height: 300,
+		})
+
+		const configuration = SpyCanvas.renderOptions[0]?.configuration
+
+		const required = {
+			type: 'line',
+			data: {
+				datasets: [
+					{
+						label: 'Raw PPG Data',
+						data: this.signals.rawData.slice(),
+						fill: false,
+					},
+				],
+			},
+		}
+		assert.doesInclude(configuration, required)
+	}
+
+	@test()
+	protected static async canSetAndGetCanvasClass() {
+		PpgGrapher.CanvasClass = SpyCanvas
+		assert.isEqual(PpgGrapher.CanvasClass, SpyCanvas)
+	}
+
+	private static generateRandomArray(length: number) {
+		return Array.from({ length }, () => Math.random())
 	}
 
 	protected static async run() {
@@ -103,12 +164,16 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 }
 
 class SpyPpgGrapher extends PpgGrapher {
-	public static createSubplotCallCount = 0
-	public static createSubplotCallOptions: any[] = []
+	public static createSubplotOptions: CreateSubplotOptions[] = []
+	public static combineSubplotsOptions: CombineSubplotOptions[] = []
 
-	public async createSubplot(options: any) {
-		SpyPpgGrapher.createSubplotCallCount++
-		SpyPpgGrapher.createSubplotCallOptions.push(options)
-		await super.createSubplot(options)
+	public async createSubplot(options: CreateSubplotOptions) {
+		SpyPpgGrapher.createSubplotOptions.push(options)
+		return await super.createSubplot(options)
+	}
+
+	public async combineSubplots(options: CombineSubplotOptions) {
+		SpyPpgGrapher.combineSubplotsOptions.push(options)
+		await super.combineSubplots(options)
 	}
 }

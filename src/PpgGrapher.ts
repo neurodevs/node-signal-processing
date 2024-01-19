@@ -1,69 +1,113 @@
 import { assertOptions } from '@sprucelabs/schema'
-import { PeakDetectorResults } from './HilbertPeakDetector'
+import { ChartConfiguration } from 'chart.js'
+import Canvas from './Canvas'
+import { PpgPeakDetectorResults } from './PpgPeakDetector'
 
 export default class PpgGrapher implements Grapher {
-	public async run(savePath: string, signals: PeakDetectorResults) {
+	public static CanvasClass = Canvas
+
+	public async run(savePath: string, signals: PpgPeakDetectorResults) {
 		assertOptions({ savePath, signals }, ['savePath', 'signals'])
 
-		const graphConfigs = [
+		const graphConfigs = this.generateGraphConfigs(signals)
+
+		const subplots = await Promise.all(
+			graphConfigs.map((config) => this.createSubplot(config))
+		)
+
+		await this.combineSubplots({ subplots })
+	}
+
+	protected async createSubplot(options: CreateSubplotOptions) {
+		const { title, datasets } = options
+
+		const width = 800
+		const height = 300
+
+		const canvas = new PpgGrapher.CanvasClass({ width, height })
+
+		const configuration: ChartConfiguration = {
+			type: 'line',
+			data: {
+				datasets: [
+					{
+						label: title,
+						data: datasets[0].data.slice(),
+						fill: false,
+					},
+				],
+			},
+		}
+
+		return canvas.render({ configuration })
+	}
+
+	protected async combineSubplots(_options: CombineSubplotOptions) {}
+
+	private generateGraphConfigs(signals: PpgPeakDetectorResults) {
+		return [
 			{
 				title: 'Raw PPG Data',
-				datasets: [{ label: 'Raw PPG Data', data: [] }],
+				datasets: [{ label: 'Raw PPG Data', data: signals.rawData }],
 			},
 			{
 				title: 'Filtered PPG Data (0.4-4 Hz Bandpass)',
-				datasets: [{ label: 'Filtered PPG Data', data: [] }],
+				datasets: [{ label: 'Filtered PPG Data', data: signals.filteredData }],
 			},
 			{
 				title: 'Upper Envelope (Hilbert)',
 				datasets: [
-					{ label: 'Filtered PPG Data', data: [] },
-					{ label: 'Upper Envelope', data: [] },
+					{ label: 'Filtered PPG Data', data: signals.filteredData },
+					{ label: 'Upper Envelope', data: signals.upperEnvelope },
 				],
 			},
 			{
 				title: 'Lower Envelope (Hilbert)',
 				datasets: [
-					{ label: 'Filtered PPG Data', data: [] },
-					{ label: 'Upper Envelope', data: [] },
-					{ label: 'Lower Envelope', data: [] },
+					{ label: 'Filtered PPG Data', data: signals.filteredData },
+					{ label: 'Upper Envelope', data: signals.upperEnvelope },
+					{ label: 'Lower Envelope', data: signals.lowerEnvelope },
 				],
 			},
 			{
 				title: 'Thresholded PPG Data by Lower Envelope',
 				datasets: [
-					{ label: 'Thresholded PPG Data', data: [] },
-					{ label: 'Lower Envelope', data: [] },
+					{ label: 'Thresholded PPG Data', data: signals.thresholdedData },
+					{ label: 'Lower Envelope', data: signals.lowerEnvelope },
 				],
 			},
 			{
 				title: 'Peak Detection',
 				datasets: [
-					{ label: 'Thresholded PPG Data', data: [] },
-					{ label: 'Lower Envelope', data: [] },
+					{ label: 'Thresholded PPG Data', data: signals.thresholdedData },
+					{ label: 'Lower Envelope', data: signals.lowerEnvelope },
 				],
 			},
 			{
 				title: 'Peak Detection on Raw Data',
 				datasets: [
-					{ label: 'Raw PPG Data', data: [] },
-					{ label: 'Lower Envelope', data: [] },
+					{ label: 'Raw PPG Data', data: signals.rawData },
+					{ label: 'Lower Envelope', data: signals.lowerEnvelope },
 				],
 			},
 		]
-
-		for (const graphConfig of graphConfigs) {
-			await this.createSubplot(graphConfig)
-		}
 	}
-
-	protected async createSubplot(_options: CreateSubplotOptions) {}
 }
 
 export interface Grapher {
-	run(savePath: string, signals: PeakDetectorResults): void
+	run(savePath: string, signals: PpgPeakDetectorResults): void
 }
 
 export interface CreateSubplotOptions {
 	title: string
+	datasets: Dataset[]
+}
+
+export interface CombineSubplotOptions {
+	subplots: any
+}
+
+export interface Dataset {
+	label: string
+	data: number[]
 }
