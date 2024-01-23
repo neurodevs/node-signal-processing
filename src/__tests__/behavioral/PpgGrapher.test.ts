@@ -55,8 +55,80 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 	@test()
 	protected static async callsCreateSubplotWithExpectedOptions() {
 		await this.run()
+		assert.isEqualDeep(SpyPpgGrapher.createSubplotOptions, this.expectedOptions)
+	}
 
-		const expectedOptions = [
+	@test()
+	protected static async callsCombineSubplotsWithExpectedOptions() {
+		await this.run()
+
+		assert.isEqualDeep(
+			SpyPpgGrapher.combineSubplotsOptions[0]?.subplots.length,
+			7
+		)
+	}
+
+	@test()
+	protected static async createSubplotCallsCanvasWithExpectedOptions() {
+		await this.run()
+
+		for (let i = 0; i < this.expectedOptions.length; i++) {
+			assert.isEqualDeep(SpyCanvas.constructorOptions[i], {
+				width: 800,
+				height: 300,
+			})
+
+			const configuration = SpyCanvas.renderOptions[i]?.configuration
+
+			const required = this.generateRequiredCanvasOptions(
+				this.expectedOptions[i].datasets
+			)
+
+			assert.doesInclude(configuration, required)
+		}
+	}
+
+	@test()
+	protected static async canSetAndGetCanvasClass() {
+		PpgGrapher.CanvasClass = SpyCanvas
+		assert.isEqual(PpgGrapher.CanvasClass, SpyCanvas)
+	}
+
+	private static generateRequiredCanvasOptions(
+		datasets: {
+			label: string
+			data: number[]
+		}[]
+	) {
+		return {
+			type: 'line',
+			data: {
+				labels: [],
+				datasets: datasets.map(({ label, data }) => {
+					return {
+						label,
+						data,
+						fill: false,
+					}
+				}),
+			},
+		}
+	}
+
+	private static generateRandomArray(length: number) {
+		return Array.from({ length }, () => Math.random())
+	}
+
+	protected static async run() {
+		await this.grapher.run(this.savePath, this.signals)
+	}
+
+	private static Grapher() {
+		return new SpyPpgGrapher()
+	}
+
+	private static get expectedOptions() {
+		return [
 			{
 				title: 'Raw PPG Data',
 				datasets: [{ label: 'Raw PPG Data', data: this.signals.rawData }],
@@ -104,62 +176,6 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 				],
 			},
 		]
-
-		assert.isEqualDeep(SpyPpgGrapher.createSubplotOptions, expectedOptions)
-	}
-
-	@test()
-	protected static async callsCombineSubplotsWithExpectedOptions() {
-		await this.run()
-
-		assert.isEqualDeep(
-			SpyPpgGrapher.combineSubplotsOptions[0]?.subplots.length,
-			7
-		)
-	}
-
-	@test()
-	protected static async createSubplotCallsCanvasWithExpectedOptions() {
-		await this.run()
-
-		assert.isEqualDeep(SpyCanvas.constructorOptions[0], {
-			width: 800,
-			height: 300,
-		})
-
-		const configuration = SpyCanvas.renderOptions[0]?.configuration
-
-		const required = {
-			type: 'line',
-			data: {
-				datasets: [
-					{
-						label: 'Raw PPG Data',
-						data: this.signals.rawData.slice(),
-						fill: false,
-					},
-				],
-			},
-		}
-		assert.doesInclude(configuration, required)
-	}
-
-	@test()
-	protected static async canSetAndGetCanvasClass() {
-		PpgGrapher.CanvasClass = SpyCanvas
-		assert.isEqual(PpgGrapher.CanvasClass, SpyCanvas)
-	}
-
-	private static generateRandomArray(length: number) {
-		return Array.from({ length }, () => Math.random())
-	}
-
-	protected static async run() {
-		await this.grapher.run(this.savePath, this.signals)
-	}
-
-	private static Grapher() {
-		return new SpyPpgGrapher()
 	}
 }
 

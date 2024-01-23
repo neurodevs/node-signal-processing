@@ -19,7 +19,7 @@ export default class PpgGrapher implements Grapher {
 	}
 
 	protected async createSubplot(options: CreateSubplotOptions) {
-		const { title, datasets } = options
+		const { datasets } = options
 
 		const width = 800
 		const height = 300
@@ -29,13 +29,13 @@ export default class PpgGrapher implements Grapher {
 		const configuration: ChartConfiguration = {
 			type: 'line',
 			data: {
-				datasets: [
-					{
-						label: title,
-						data: datasets[0].data.slice(),
+				datasets: datasets.map((dataset) => {
+					return {
+						label: dataset.label,
+						data: dataset.data.slice(),
 						fill: false,
-					},
-				],
+					}
+				}),
 			},
 		}
 
