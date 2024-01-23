@@ -1,12 +1,10 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import PpgGrapher, {
-	CombineSubplotOptions,
-	CreateSubplotOptions,
-	Dataset,
-} from '../../PpgGrapher'
+import PpgGrapher, { Dataset } from '../../PpgGrapher'
 import { PpgPeakDetectorResults } from '../../PpgPeakDetector'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import SpyCanvas from '../support/SpyCanvas'
+import SpyComposite from '../support/SpyComposite'
+import SpyPpgGrapher from '../support/SpyPpgGrapher'
 
 export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 	private static grapher: SpyPpgGrapher
@@ -18,6 +16,7 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 		await super.beforeEach()
 
 		PpgGrapher.CanvasClass = SpyCanvas
+		PpgGrapher.CompositeClass = SpyComposite
 
 		SpyPpgGrapher.createSubplotOptions = []
 		SpyPpgGrapher.combineSubplotsOptions = []
@@ -93,9 +92,31 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 	}
 
 	@test()
+	protected static async runCallsCompositeWithRequiredOptions() {
+		await this.run()
+
+		const expected = {
+			create: {
+				width: 800,
+				height: 300 * 7,
+				channels: 4,
+				background: { r: 255, g: 255, b: 255, alpha: 0 },
+			},
+		}
+
+		assert.isEqualDeep(SpyComposite.constructorOptions, expected)
+	}
+
+	@test()
 	protected static async canSetAndGetCanvasClass() {
 		PpgGrapher.CanvasClass = SpyCanvas
 		assert.isEqual(PpgGrapher.CanvasClass, SpyCanvas)
+	}
+
+	@test()
+	protected static async canSetAndGetCompositeClass() {
+		PpgGrapher.CompositeClass = SpyComposite
+		assert.isEqual(PpgGrapher.CompositeClass, SpyComposite)
 	}
 
 	private static generateRequiredCanvasOptions(
@@ -193,20 +214,5 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 				],
 			},
 		]
-	}
-}
-
-class SpyPpgGrapher extends PpgGrapher {
-	public static createSubplotOptions: CreateSubplotOptions[] = []
-	public static combineSubplotsOptions: CombineSubplotOptions[] = []
-
-	public async createSubplot(options: CreateSubplotOptions) {
-		SpyPpgGrapher.createSubplotOptions.push(options)
-		return await super.createSubplot(options)
-	}
-
-	public async combineSubplots(options: CombineSubplotOptions) {
-		SpyPpgGrapher.combineSubplotsOptions.push(options)
-		await super.combineSubplots(options)
 	}
 }

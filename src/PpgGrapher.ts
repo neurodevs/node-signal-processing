@@ -1,10 +1,12 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { ChartConfiguration } from 'chart.js'
 import Canvas from './Canvas'
+import Composite from './Composite'
 import { PpgPeakDetectorResults } from './PpgPeakDetector'
 
 export default class PpgGrapher implements Grapher {
 	public static CanvasClass = Canvas
+	public static CompositeClass = Composite
 
 	public async run(savePath: string, signals: PpgPeakDetectorResults) {
 		assertOptions({ savePath, signals }, ['savePath', 'signals'])
@@ -57,7 +59,16 @@ export default class PpgGrapher implements Grapher {
 		return canvas.render({ configuration })
 	}
 
-	protected async combineSubplots(_options: CombineSubplotOptions) {}
+	protected async combineSubplots(_options: CombineSubplotOptions) {
+		new PpgGrapher.CompositeClass({
+			create: {
+				width: 800,
+				height: 300 * 7,
+				channels: 4,
+				background: { r: 255, g: 255, b: 255, alpha: 0 },
+			},
+		})
+	}
 
 	private generateGraphConfigs(signals: PpgPeakDetectorResults) {
 		return [
