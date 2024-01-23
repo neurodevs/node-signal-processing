@@ -2,6 +2,7 @@ import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import PpgGrapher, {
 	CombineSubplotOptions,
 	CreateSubplotOptions,
+	Dataset,
 } from '../../PpgGrapher'
 import { PpgPeakDetectorResults } from '../../PpgPeakDetector'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
@@ -99,10 +100,7 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 
 	private static generateRequiredCanvasOptions(
 		title: string,
-		datasets: {
-			label: string
-			data: number[]
-		}[]
+		datasets: Dataset[]
 	) {
 		return {
 			type: 'line',
