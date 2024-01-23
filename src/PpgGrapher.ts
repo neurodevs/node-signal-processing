@@ -19,7 +19,7 @@ export default class PpgGrapher implements Grapher {
 	}
 
 	protected async createSubplot(options: CreateSubplotOptions) {
-		const { datasets } = options
+		const { title, datasets } = options
 
 		const width = 800
 		const height = 300
@@ -36,6 +36,21 @@ export default class PpgGrapher implements Grapher {
 						fill: false,
 					}
 				}),
+			},
+			options: {
+				plugins: {
+					title: {
+						display: true,
+						text: title,
+						font: {
+							size: 16,
+						},
+						padding: {
+							top: 10,
+							bottom: 30,
+						},
+					},
+				},
 			},
 		}
 

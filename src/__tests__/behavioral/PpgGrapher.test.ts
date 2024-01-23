@@ -80,8 +80,11 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 
 			const configuration = SpyCanvas.renderOptions[i]?.configuration
 
+			const expectedOption = this.expectedOptions[i]
+
 			const required = this.generateRequiredCanvasOptions(
-				this.expectedOptions[i].datasets
+				expectedOption.title,
+				expectedOption.datasets
 			)
 
 			assert.doesInclude(configuration, required)
@@ -95,6 +98,7 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 	}
 
 	private static generateRequiredCanvasOptions(
+		title: string,
 		datasets: {
 			label: string
 			data: number[]
@@ -111,6 +115,21 @@ export default class PpgGrapherTest extends AbstractSignalProcessingTest {
 						fill: false,
 					}
 				}),
+			},
+			options: {
+				plugins: {
+					title: {
+						display: true,
+						text: title,
+						font: {
+							size: 16,
+						},
+						padding: {
+							top: 10,
+							bottom: 30,
+						},
+					},
+				},
 			},
 		}
 	}
