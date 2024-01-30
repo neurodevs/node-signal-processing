@@ -2,20 +2,13 @@ import {
 	assertArrayIsNotEmpty,
 	assertArrayLengthIsPowerOfTwo,
 } from './assertions'
-import Fft, { FastFourierTransformClass } from './FastFourierTransform'
+import Fft from './FastFourierTransform'
+import { FastFourierTransformClass } from './types/nodeSignalProcessing.types'
 
 export default class HilbertTransform {
-	private static FftClass: FastFourierTransformClass = Fft
+	public static FftClass: FastFourierTransformClass = Fft
 
-	public static setFftClass(Class: FastFourierTransformClass): void {
-		HilbertTransform.FftClass = Class
-	}
-
-	public static getFftClass(): FastFourierTransformClass {
-		return HilbertTransform.FftClass
-	}
-
-	public run(data: number[]): number[] {
+	public run(data: number[]) {
 		assertArrayIsNotEmpty(data)
 		assertArrayLengthIsPowerOfTwo(data)
 
@@ -24,7 +17,7 @@ export default class HilbertTransform {
 		const freqs = fft.forward(data)
 
 		const real = freqs.real.slice()
-		const imag = freqs.imaginary.slice()
+		const imaginary = freqs.imaginary.slice()
 
 		// Construct h filter for Hilbert transform (scaling)
 		const N = real.length
@@ -50,10 +43,10 @@ export default class HilbertTransform {
 		// Apply h filter and perform inverse FFT
 		for (let i = 0; i < N; i++) {
 			real[i] *= h[i]
-			imag[i] *= h[i]
+			imaginary[i] *= h[i]
 		}
 
-		const result = fft.inverse({ real, imaginary: imag })
+		const result = fft.inverse({ real, imaginary })
 		const analyticSignal = result.imaginary
 
 		return analyticSignal
@@ -63,5 +56,3 @@ export default class HilbertTransform {
 		return analyticSignal.map((value) => Math.abs(value))
 	}
 }
-
-export type HilbertTransformClass = new () => HilbertTransform

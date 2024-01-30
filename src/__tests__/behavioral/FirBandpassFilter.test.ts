@@ -1,7 +1,6 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import FirBandpassFilter, {
-	FirBandpassFilterOptions,
-} from '../../FirBandpassFilter'
+import FirBandpassFilter from '../../FirBandpassFilter'
+import { FirBandpassFilterOptions } from '../../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import SpyFirBandpassFilter from '../support/SpyFirBandpassFilter'
 

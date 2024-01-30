@@ -17,6 +17,10 @@ import {
 	padArrayWithZeros,
 	removeArrayPadding,
 } from './preprocess'
+import {
+	FirBandpassFilterOptions,
+	FirBandpassFilterRunOptions,
+} from './types/nodeSignalProcessing.types'
 
 export default class FirBandpassFilter {
 	protected sampleRate: number
@@ -55,8 +59,11 @@ export default class FirBandpassFilter {
 
 	public run(
 		data: number[],
-		options: RunOptions = { usePadding: true, useNormalization: true } || null
-	): number[] {
+		options: FirBandpassFilterRunOptions = {
+			usePadding: true,
+			useNormalization: true,
+		} || null
+	) {
 		assertArrayIsNotEmpty(data)
 		let { usePadding = true, useNormalization = true } = options
 		this.filiFilter.reinit()
@@ -92,21 +99,4 @@ export default class FirBandpassFilter {
 
 		return new FiliFirFilter(firFilterCoeffs)
 	}
-}
-
-export type FirBandpassFilterClass = new (
-	options: FirBandpassFilterOptions
-) => FirBandpassFilter
-
-export interface FirBandpassFilterOptions {
-	sampleRate: number
-	lowCutoffHz: number
-	highCutoffHz: number
-	numTaps: number
-	attenuation: number
-}
-
-export interface RunOptions {
-	usePadding?: boolean
-	useNormalization?: boolean
 }

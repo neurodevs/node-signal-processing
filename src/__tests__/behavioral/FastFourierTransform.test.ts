@@ -1,5 +1,6 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft, { FftOptions } from '../../FastFourierTransform'
+import Fft from '../../FastFourierTransform'
+import { FftOptions } from '../../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 import SpyFft from '../support/SpyFft'
 

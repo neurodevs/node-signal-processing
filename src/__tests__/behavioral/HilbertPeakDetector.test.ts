@@ -14,14 +14,14 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 	}
 
 	protected static async beforeEach() {
-		HilbertPeakDetector.setHilbertClass(SpyHilbertTransform)
+		HilbertPeakDetector.HilbertClass = SpyHilbertTransform
 		this.detector = this.Detector()
 	}
 
 	@test()
 	protected static canSetAndGetHilbertInstance() {
-		HilbertPeakDetector.setHilbertClass(SpyHilbertTransform)
-		assert.isEqual(HilbertPeakDetector.getHilbertClass(), SpyHilbertTransform)
+		HilbertPeakDetector.HilbertClass = SpyHilbertTransform
+		assert.isEqual(HilbertPeakDetector.HilbertClass, SpyHilbertTransform)
 	}
 
 	@test()

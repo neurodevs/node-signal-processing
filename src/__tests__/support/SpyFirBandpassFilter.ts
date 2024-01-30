@@ -1,7 +1,8 @@
-import FirBandpassFilter, {
+import FirBandpassFilter from '../../FirBandpassFilter'
+import {
 	FirBandpassFilterOptions,
-	RunOptions,
-} from '../../FirBandpassFilter'
+	FirBandpassFilterRunOptions,
+} from '../../types/nodeSignalProcessing.types'
 
 export default class SpyFirBandpassFilter extends FirBandpassFilter {
 	public static constructorHitCount = 0
@@ -21,7 +22,7 @@ export default class SpyFirBandpassFilter extends FirBandpassFilter {
 		return super.load()
 	}
 
-	public run(data: number[], options?: Partial<RunOptions>) {
+	public run(data: number[], options?: Partial<FirBandpassFilterRunOptions>) {
 		SpyFirBandpassFilter.runHitCount++
 		return super.run(data, options)
 	}

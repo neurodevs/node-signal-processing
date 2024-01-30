@@ -1,9 +1,11 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { Fft as FiliFft } from '@neurodevs/fili'
+import { assertValidDataLength, assertValidRadix } from './assertions'
 import {
-	assertValidDataLength as assertValidDataLength,
-	assertValidRadix,
-} from './assertions'
+	FastFourierTransform,
+	FftOptions,
+	ComplexNumbers,
+} from './types/nodeSignalProcessing.types'
 
 export default class Fft implements FastFourierTransform {
 	protected radix: number
@@ -35,25 +37,7 @@ export default class Fft implements FastFourierTransform {
 		}
 	}
 
-	protected load(): FiliFft {
+	protected load() {
 		return new FiliFft(this.radix)
 	}
-}
-
-export interface FastFourierTransform {
-	forward(data: number[]): ComplexNumbers
-	inverse(data: ComplexNumbers): ComplexNumbers
-}
-
-export type FastFourierTransformClass = new (
-	options: FftOptions
-) => FastFourierTransform
-
-export interface FftOptions {
-	radix: number
-}
-
-export interface ComplexNumbers {
-	real: number[]
-	imaginary: number[]
 }

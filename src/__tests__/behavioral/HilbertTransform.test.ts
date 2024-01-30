@@ -12,7 +12,7 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	protected static async beforeEach() {
 		await super.beforeEach()
-		HilbertTransform.setFftClass(SpyFft)
+		HilbertTransform.FftClass = SpyFft
 		SpyFft.clear()
 		SpyHilbertPeakDetector.clear()
 		this.hilbert = new HilbertTransform()
@@ -36,8 +36,8 @@ export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 
 	@test()
 	protected static canSetAndGetFftInstance() {
-		HilbertTransform.setFftClass(SpyFft)
-		assert.isEqual(HilbertTransform.getFftClass(), SpyFft)
+		HilbertTransform.FftClass = SpyFft
+		assert.isEqual(HilbertTransform.FftClass, SpyFft)
 	}
 
 	@test()

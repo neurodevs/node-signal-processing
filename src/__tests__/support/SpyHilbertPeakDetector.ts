@@ -1,4 +1,5 @@
-import HilbertPeakDetector, { SegmentData } from '../../HilbertPeakDetector'
+import HilbertPeakDetector from '../../HilbertPeakDetector'
+import { SegmentData } from '../../types/nodeSignalProcessing.types'
 
 export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
 	public static generateSegmentsHitCount = 0

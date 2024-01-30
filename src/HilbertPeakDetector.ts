@@ -1,17 +1,16 @@
-import HilbertTransform, { HilbertTransformClass } from './HilbertTransform'
+import HilbertTransform from './HilbertTransform'
+import {
+	PeakDetectorResults,
+	SegmentData,
+	DataPoint,
+	HilbertTransformClass,
+} from './types/nodeSignalProcessing.types'
 import { isPowerOfTwo } from './validations'
 
 export default class HilbertPeakDetector {
+	public static HilbertClass: HilbertTransformClass = HilbertTransform
+
 	protected hilbert: HilbertTransform
-	private static HilbertClass: HilbertTransformClass = HilbertTransform
-
-	public static setHilbertClass(Class: HilbertTransformClass): void {
-		HilbertPeakDetector.HilbertClass = Class
-	}
-
-	public static getHilbertClass(): HilbertTransformClass {
-		return HilbertPeakDetector.HilbertClass
-	}
 
 	public constructor() {
 		this.hilbert = new HilbertPeakDetector.HilbertClass()
@@ -52,7 +51,7 @@ export default class HilbertPeakDetector {
 		} as PeakDetectorResults
 	}
 
-	private padToNearestPowerOfTwo(arr: number[]): any {
+	private padToNearestPowerOfTwo(arr: number[]) {
 		const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(arr.length)))
 
 		const totalZerosToAdd = nextPowerOfTwo - arr.length
@@ -70,10 +69,7 @@ export default class HilbertPeakDetector {
 		return newArray
 	}
 
-	protected applyEnvelopeThreshold(
-		data: number[],
-		lowerEnvelope: number[]
-	): number[] {
+	protected applyEnvelopeThreshold(data: number[], lowerEnvelope: number[]) {
 		let result = data.slice()
 
 		for (let i = 0; i < data.length; i++) {
@@ -109,7 +105,7 @@ export default class HilbertPeakDetector {
 		return segmentedData
 	}
 
-	protected findPeaks(segmentedData: SegmentData): DataPoint[] {
+	protected findPeaks(segmentedData: SegmentData) {
 		let peaks: DataPoint[] = []
 
 		for (let segment of segmentedData) {
@@ -123,25 +119,3 @@ export default class HilbertPeakDetector {
 		return peaks
 	}
 }
-
-export type HilbertPeakDetectorClass = new () => HilbertPeakDetector
-
-export interface PeakDetectorResults {
-	filteredData: number[]
-	timestamps: number[]
-	upperAnalyticSignal: number[]
-	upperEnvelope: number[]
-	lowerAnalyticSignal: number[]
-	lowerEnvelope: number[]
-	thresholdedData: number[]
-	segmentedData: SegmentData
-	peaks: DataPoint[]
-}
-
-export interface DataPoint {
-	value: number
-	timestamp: number
-}
-
-export type SegmentData = Segment[]
-export type Segment = DataPoint[]
