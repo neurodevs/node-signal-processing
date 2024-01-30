@@ -1,8 +1,8 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import HilbertTransform from '../../HilbertTransform'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import SpyFft from '../support/SpyFft'
-import SpyHilbertPeakDetector from '../support/SpyHilbertPeakDetector'
+import SpyFft from '../../testDoubles/SpyFft'
+import SpyHilbertPeakDetector from '../../testDoubles/SpyHilbertPeakDetector'
 
 export default class HilbertTransformTest extends AbstractSignalProcessingTest {
 	private static hilbert: HilbertTransform

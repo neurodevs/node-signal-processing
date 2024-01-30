@@ -1,8 +1,8 @@
-import FirBandpassFilter from '../../FirBandpassFilter'
+import FirBandpassFilter from '../FirBandpassFilter'
 import {
 	FirBandpassFilterOptions,
 	FirBandpassFilterRunOptions,
-} from '../../types/nodeSignalProcessing.types'
+} from '../types/nodeSignalProcessing.types'
 
 export default class SpyFirBandpassFilter extends FirBandpassFilter {
 	public static constructorHitCount = 0

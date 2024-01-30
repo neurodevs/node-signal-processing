@@ -15,3 +15,17 @@ export * from './HilbertPeakDetector'
 // Types
 
 export * from './types/nodeSignalProcessing.types'
+
+// Test doubles
+
+export { default as SpyFirBandpassFilter } from './testDoubles/SpyFirBandpassFilter'
+export * from './testDoubles/SpyFirBandpassFilter'
+
+export { default as SpyHilbertPeakDetector } from './testDoubles/SpyHilbertPeakDetector'
+export * from './testDoubles/SpyHilbertPeakDetector'
+
+export { default as SpyHilbertTransform } from './testDoubles/SpyHilbertTransform'
+export * from './testDoubles/SpyHilbertTransform'
+
+export { default as SpyFastFourierTransform } from './testDoubles/SpyFft'
+export * from './testDoubles/SpyFft'

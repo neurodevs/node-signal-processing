@@ -1,4 +1,4 @@
-import HilbertTransform from '../../HilbertTransform'
+import HilbertTransform from '../HilbertTransform'
 
 export default class SpyHilbertTransform extends HilbertTransform {
 	public static constructorHitCount = 0
