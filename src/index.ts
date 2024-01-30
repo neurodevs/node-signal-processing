@@ -1,3 +1,5 @@
+// Production code
+
 export { default as FastFourierTransform } from './FastFourierTransform'
 export * from './FastFourierTransform'
 
@@ -9,5 +11,7 @@ export * from './HilbertTransform'
 
 export { default as HilbertPeakDetector } from './HilbertPeakDetector'
 export * from './HilbertPeakDetector'
+
+// Types
 
 export * from './types/nodeSignalProcessing.types'
