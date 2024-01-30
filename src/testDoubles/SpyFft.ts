@@ -1,8 +1,5 @@
 import Fft from '../FastFourierTransform'
-import {
-	FftOptions,
-	ComplexNumbers,
-} from '../types/nodeSignalProcessing.types'
+import { FftOptions, ComplexNumbers } from '../types/nodeSignalProcessing.types'
 
 export default class SpyFft extends Fft {
 	public static constructorHitCount = 0

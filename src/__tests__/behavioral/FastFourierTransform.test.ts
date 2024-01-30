@@ -1,8 +1,8 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import Fft from '../../FastFourierTransform'
+import SpyFft from '../../testDoubles/SpyFft'
 import { FftOptions } from '../../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
-import SpyFft from '../../testDoubles/SpyFft'
 
 export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
 	private static fft: SpyFft
