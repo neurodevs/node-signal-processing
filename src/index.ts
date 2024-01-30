@@ -9,3 +9,5 @@ export * from './HilbertTransform'
 
 export { default as HilbertPeakDetector } from './HilbertPeakDetector'
 export * from './HilbertPeakDetector'
+
+export * from './types/nodeSignalProcessing.types'
