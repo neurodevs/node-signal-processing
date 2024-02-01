@@ -1,13 +1,13 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft from '../../FastFourierTransform'
+import Fft from '../../Fft'
 import SpyFft from '../../testDoubles/SpyFft'
 import { FftOptions } from '../../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
+	private static testData = [1, 2, 3, 4]
 	private static fft: SpyFft
 	private static fftOptions: FftOptions
-	private static testData = [1, 2, 3, 4]
 
 	protected static async beforeEach() {
 		await super.beforeEach()
@@ -56,20 +56,12 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
 	}
 
 	@test()
-	protected static async constructorSavesOptions() {
-		assert.isNumber(this.fft.getRadix())
-	}
-
-	@test()
-	protected static async loadFftReturnsConfiguredFft() {
-		const fft = this.fft.load()
-		assert.isTruthy(fft)
-	}
-
-	@test()
-	protected static async forwardReturnsTransformedData() {
+	protected static async forwardResultHasExpectedValues() {
 		const result = this.fft.forward(this.testData)
-		assert.isNotEqualDeep(result as any, this.testData)
+		assert.isEqualDeep(result, {
+			real: [10, -2, -2, -1.9999999999999998],
+			imaginary: [0, 2, 0, -2],
+		})
 	}
 
 	@test()
@@ -84,7 +76,6 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
 		const forwardResult = this.fft.forward(this.testData)
 		const inverseResult = this.fft.inverse(forwardResult)
 		assert.isEqualDeep(inverseResult.real, this.testData)
-		assert.isNotEqualDeep(inverseResult.real, inverseResult.imaginary)
 	}
 
 	private static assertInvalidRadix(radix: number) {

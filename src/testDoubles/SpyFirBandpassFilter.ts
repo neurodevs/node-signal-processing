@@ -1,12 +1,12 @@
 import FirBandpassFilter from '../FirBandpassFilter'
-import {
-	FirBandpassFilterOptions,
-	FirBandpassFilterRunOptions,
-} from '../types/nodeSignalProcessing.types'
+import { FirBandpassFilterOptions } from '../types/nodeSignalProcessing.types'
 
 export default class SpyFirBandpassFilter extends FirBandpassFilter {
 	public static constructorHitCount = 0
 	public static runHitCount = 0
+
+	public static constructorCalledWith: FirBandpassFilterOptions[] = []
+	public static runCalledWith: number[][] = []
 
 	public static clear() {
 		SpyFirBandpassFilter.constructorHitCount = 0
@@ -15,35 +15,21 @@ export default class SpyFirBandpassFilter extends FirBandpassFilter {
 
 	public constructor(options: FirBandpassFilterOptions) {
 		SpyFirBandpassFilter.constructorHitCount++
+		SpyFirBandpassFilter.constructorCalledWith.push(options)
 		super(options)
 	}
 
-	public load(): any {
-		return super.load()
-	}
-
-	public run(data: number[], options?: Partial<FirBandpassFilterRunOptions>) {
+	public run(data: number[]) {
 		SpyFirBandpassFilter.runHitCount++
-		return super.run(data, options)
+		SpyFirBandpassFilter.runCalledWith.push(data)
+		return super.run(data)
 	}
 
-	public getSampleRate() {
-		return this.sampleRate
+	public getUsePadding() {
+		return this.usePadding
 	}
 
-	public getLowCutoffHz() {
-		return this.lowCutoffHz
-	}
-
-	public getHighCutoffHz() {
-		return this.highCutoffHz
-	}
-
-	public getNumTaps() {
-		return this.numTaps
-	}
-
-	public getAttenuation() {
-		return this.attenuation
+	public getUseNormalization() {
+		return this.useNormalization
 	}
 }

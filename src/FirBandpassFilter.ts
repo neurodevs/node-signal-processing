@@ -2,6 +2,7 @@ import { assertOptions } from '@sprucelabs/schema'
 import {
 	FirCoeffs as FiliFirCoeffs,
 	FirFilter as FiliFirFilter,
+	FiliFirFilterClass,
 } from '@neurodevs/fili'
 import {
 	assertArrayIsNotEmpty,
@@ -18,28 +19,38 @@ import {
 	removeArrayPadding,
 } from './preprocess'
 import {
+	Filter,
 	FirBandpassFilterOptions,
-	FirBandpassFilterRunOptions,
 } from './types/nodeSignalProcessing.types'
 
-export default class FirBandpassFilter {
-	protected sampleRate: number
-	protected lowCutoffHz: number
-	protected highCutoffHz: number
-	protected numTaps: number
-	protected attenuation: number
+export default class FirBandpassFilter implements Filter {
+	private sampleRate: number
+	private lowCutoffHz: number
+	private highCutoffHz: number
+	private numTaps: number
+	private attenuation: number
+	protected useNormalization: boolean
+	protected usePadding: boolean
 
+	public static FiliFilterClass: FiliFirFilterClass = FiliFirFilter
 	private filiFilter: FiliFirFilter
 
 	public constructor(options: FirBandpassFilterOptions) {
-		const { sampleRate, lowCutoffHz, highCutoffHz, numTaps, attenuation } =
-			assertOptions(options, [
-				'sampleRate',
-				'lowCutoffHz',
-				'highCutoffHz',
-				'numTaps',
-				'attenuation',
-			])
+		const {
+			sampleRate,
+			lowCutoffHz,
+			highCutoffHz,
+			numTaps,
+			attenuation,
+			useNormalization = true,
+			usePadding = true,
+		} = assertOptions(options, [
+			'sampleRate',
+			'lowCutoffHz',
+			'highCutoffHz',
+			'numTaps',
+			'attenuation',
+		])
 
 		assertValidSampleRate(sampleRate)
 		assertValidLowCutoffHz(lowCutoffHz)
@@ -53,28 +64,23 @@ export default class FirBandpassFilter {
 		this.highCutoffHz = highCutoffHz
 		this.numTaps = numTaps
 		this.attenuation = attenuation
+		this.useNormalization = useNormalization
+		this.usePadding = usePadding
 
 		this.filiFilter = this.load()
 	}
 
-	public run(
-		data: number[],
-		options: FirBandpassFilterRunOptions = {
-			usePadding: true,
-			useNormalization: true,
-		} || null
-	) {
+	public run(data: number[]) {
 		assertArrayIsNotEmpty(data)
-		let { usePadding = true, useNormalization = true } = options
 		this.filiFilter.reinit()
 
-		if (useNormalization) {
+		if (this.useNormalization) {
 			data = normalizeArray(data)
 		}
 
 		let result
 
-		if (usePadding) {
+		if (this.usePadding) {
 			const padLength = 3 * this.numTaps
 			const padded = padArrayWithZeros(data, padLength)
 			const resultPadded = this.filiFilter.filtfilt(padded)
@@ -86,7 +92,7 @@ export default class FirBandpassFilter {
 		return result
 	}
 
-	protected load(): FiliFirFilter {
+	protected load() {
 		let firCoeffsCalculator = new FiliFirCoeffs()
 
 		let firFilterCoeffs = firCoeffsCalculator.kbFilter({
@@ -97,6 +103,6 @@ export default class FirBandpassFilter {
 			Att: this.attenuation,
 		})
 
-		return new FiliFirFilter(firFilterCoeffs)
+		return new FirBandpassFilter.FiliFilterClass(firFilterCoeffs)
 	}
 }

@@ -2,17 +2,17 @@ import {
 	assertArrayIsNotEmpty,
 	assertArrayLengthIsPowerOfTwo,
 } from './assertions'
-import Fft from './FastFourierTransform'
-import { FastFourierTransformClass } from './types/nodeSignalProcessing.types'
+import Fft from './Fft'
+import { FftClass, HilbertTransform } from './types/nodeSignalProcessing.types'
 
-export default class HilbertTransform {
-	public static FftClass: FastFourierTransformClass = Fft
+export default class HilbertTransformer implements HilbertTransform {
+	public static FftClass: FftClass = Fft
 
 	public run(data: number[]) {
 		assertArrayIsNotEmpty(data)
 		assertArrayLengthIsPowerOfTwo(data)
 
-		const fft = new HilbertTransform.FftClass({ radix: data.length })
+		const fft = new HilbertTransformer.FftClass({ radix: data.length })
 
 		const freqs = fft.forward(data)
 
@@ -49,10 +49,8 @@ export default class HilbertTransform {
 		const result = fft.inverse({ real, imaginary })
 		const analyticSignal = result.imaginary
 
-		return analyticSignal
-	}
+		const envelope = analyticSignal.map((value) => Math.abs(value))
 
-	public getEnvelope(analyticSignal: number[]) {
-		return analyticSignal.map((value) => Math.abs(value))
+		return { analyticSignal, envelope }
 	}
 }

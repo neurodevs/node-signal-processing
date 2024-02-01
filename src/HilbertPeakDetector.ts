@@ -1,19 +1,18 @@
-import HilbertTransform from './HilbertTransform'
+import HilbertTransformer from './HilbertTransformer'
 import {
-	PeakDetectorResults,
 	SegmentData,
 	DataPoint,
-	HilbertTransformClass,
+	HilbertTransformerClass,
+	HilbertTransform,
 } from './types/nodeSignalProcessing.types'
 import { isPowerOfTwo } from './validations'
 
 export default class HilbertPeakDetector {
-	public static HilbertClass: HilbertTransformClass = HilbertTransform
-
-	protected hilbert: HilbertTransform
+	public static TransformerClass: HilbertTransformerClass = HilbertTransformer
+	private transformer: HilbertTransform
 
 	public constructor() {
-		this.hilbert = new HilbertPeakDetector.HilbertClass()
+		this.transformer = new HilbertPeakDetector.TransformerClass()
 	}
 
 	public run(filteredData: number[], timestamps: number[]) {
@@ -25,11 +24,11 @@ export default class HilbertPeakDetector {
 			paddedData = filteredData
 		}
 
-		const upperAnalyticSignal = this.hilbert.run(paddedData)
-		const upperEnvelope = this.hilbert.getEnvelope(upperAnalyticSignal)
+		const { analyticSignal: upperAnalyticSignal, envelope: upperEnvelope } =
+			this.transformer.run(paddedData)
 
-		const lowerAnalyticSignal = this.hilbert.run(upperAnalyticSignal)
-		const lowerEnvelope = this.hilbert.getEnvelope(lowerAnalyticSignal)
+		const { analyticSignal: lowerAnalyticSignal, envelope: lowerEnvelope } =
+			this.transformer.run(upperAnalyticSignal)
 
 		const thresholdedData = this.applyEnvelopeThreshold(
 			filteredData,
@@ -48,7 +47,7 @@ export default class HilbertPeakDetector {
 			thresholdedData,
 			segmentedData,
 			peaks,
-		} as PeakDetectorResults
+		}
 	}
 
 	private padToNearestPowerOfTwo(arr: number[]) {

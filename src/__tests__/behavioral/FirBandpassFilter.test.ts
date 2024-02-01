@@ -5,14 +5,16 @@ import { FirBandpassFilterOptions } from '../../types/nodeSignalProcessing.types
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
-	private static options: FirBandpassFilterOptions
-	private static filter: SpyFirBandpassFilter
 	private static testData = [1, 2, 3, 4]
+	private static filter: SpyFirBandpassFilter
+	private static options: FirBandpassFilterOptions
+	private static result: number[]
 
 	protected static async beforeEach() {
 		await super.beforeEach()
 		this.options = this.generateOptions()
 		this.filter = this.Filter(this.options)
+		this.result = this.filter.run(this.testData)
 	}
 
 	@test()
@@ -44,8 +46,8 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 
 	@test()
 	protected static async throwsWithInvalidighCutoffHz() {
-		const invalidvalues = [0, -1, -1.5]
-		invalidvalues.forEach((value) => this.assertInvalidHighCutoffHz(value))
+		const invalidValues = [0, -1, -1.5]
+		invalidValues.forEach((value) => this.assertInvalidHighCutoffHz(value))
 	}
 
 	@test()
@@ -73,24 +75,14 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 	}
 
 	@test()
-	protected static async constructorSavesOptions() {
-		assert.isNumber(this.filter.getSampleRate())
-		assert.isNumber(this.filter.getLowCutoffHz())
-		assert.isNumber(this.filter.getHighCutoffHz())
-		assert.isNumber(this.filter.getNumTaps())
-		assert.isNumber(this.filter.getAttenuation())
-	}
-
-	@test()
-	protected static async loadFilterReturnsConfiguredFilter() {
-		const filter = this.filter.load()
-		assert.isTruthy(filter)
-	}
-
-	@test()
-	protected static async runReturnsFilteredData() {
-		const result = this.filter.run(this.testData)
-		assert.isNotEqual(this.testData, result)
+	protected static async resultHasExpectedValues() {
+		assert.isEqualDeep(
+			this.result,
+			[
+				-10.261761080429311, 119.97967410440859, 251.73264498046936,
+				385.3659183863369,
+			]
+		)
 	}
 
 	@test()
@@ -101,31 +93,41 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 	}
 
 	@test()
-	protected static async runAddsPaddingToDataByDefault() {
-		const resultWithPadding = this.filter.run(this.testData)
-		const resultWithoutPadding = this.filter.run(this.testData, {
-			usePadding: false,
-		})
-		assert.isNotEqualDeep(resultWithPadding, resultWithoutPadding)
+	protected static async usesPaddingByDefault() {
+		assert.isTrue(this.filter.getUsePadding())
 	}
 
 	@test()
-	protected static async runNormalizesDataByDefault() {
-		const resultWithNormalization = this.filter.run(this.testData)
-		const resultWithoutNormalization = this.filter.run(this.testData, {
-			useNormalization: false,
-		})
-		assert.isNotEqualDeep(resultWithNormalization, resultWithoutNormalization)
+	protected static async resultWithoutPaddingHasExpectedValues() {
+		const filterWithoutPadding = this.Filter({ usePadding: false })
+		const resultWithoutPadding = filterWithoutPadding.run(this.testData)
+		assert.isEqualDeep(
+			resultWithoutPadding,
+			[
+				0.0002427712885911702, 0.0009011649348037566, 0.0010578137854440357,
+				0.0007969383931543167,
+			]
+		)
 	}
 
-	private static Filter(
-		options: Partial<FirBandpassFilterOptions>
-	): SpyFirBandpassFilter {
-		const defaultOptions = this.generateOptions()
-		return new SpyFirBandpassFilter({
-			...defaultOptions,
-			...options,
-		})
+	@test()
+	protected static async usesNormalizationByDefault() {
+		assert.isTrue(this.filter.getUseNormalization())
+	}
+
+	@test()
+	protected static async resultWithoutNormalizationHasExpectedValues() {
+		const filterWithoutNormalization = this.Filter({ useNormalization: false })
+		const resultWithoutNormalization = filterWithoutNormalization.run(
+			this.testData
+		)
+		assert.isEqualDeep(
+			resultWithoutNormalization,
+			[
+				344.3188740646193, 731.651341398104, 1126.9102540262866,
+				1531.201912464917,
+			]
+		)
 	}
 
 	private static assertInvalidSampleRate(sampleRate: number) {
@@ -169,14 +171,20 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 	}
 
 	private static generateOptions() {
-		const lowCutoffHz = Math.random()
-		const highCutoffHz = 10 * lowCutoffHz
 		return {
-			sampleRate: 100 * Math.random(),
-			lowCutoffHz,
-			highCutoffHz,
+			sampleRate: 1,
+			lowCutoffHz: 0.1,
+			highCutoffHz: 10,
 			numTaps: 101,
 			attenuation: 50,
 		}
+	}
+
+	private static Filter(options: Partial<FirBandpassFilterOptions>) {
+		const defaultOptions = this.generateOptions()
+		return new SpyFirBandpassFilter({
+			...defaultOptions,
+			...options,
+		})
 	}
 }

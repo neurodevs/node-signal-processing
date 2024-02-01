@@ -1,43 +1,30 @@
 import { test, assert } from '@sprucelabs/test-utils'
 import HilbertPeakDetector from '../../HilbertPeakDetector'
 import SpyHilbertPeakDetector from '../../testDoubles/SpyHilbertPeakDetector'
-import SpyHilbertTransform from '../../testDoubles/SpyHilbertTransform'
+import SpyHilbertTransformer from '../../testDoubles/SpyHilbertTransformer'
 import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTest {
 	private static detector: HilbertPeakDetector
 
-	private static Detector() {
-		SpyHilbertTransform.clear()
-		SpyHilbertPeakDetector.clear()
-		return new SpyHilbertPeakDetector()
-	}
-
 	protected static async beforeEach() {
-		HilbertPeakDetector.HilbertClass = SpyHilbertTransform
+		HilbertPeakDetector.TransformerClass = SpyHilbertTransformer
 		this.detector = this.Detector()
 	}
 
 	@test()
-	protected static canSetAndGetHilbertInstance() {
-		HilbertPeakDetector.HilbertClass = SpyHilbertTransform
-		assert.isEqual(HilbertPeakDetector.HilbertClass, SpyHilbertTransform)
-	}
-
-	@test()
 	protected static async constructorInstantiatesHilbertTransform() {
-		SpyHilbertTransform.clear()
+		SpyHilbertTransformer.clear()
 		new HilbertPeakDetector()
-		assert.isEqual(SpyHilbertTransform.constructorHitCount, 1)
+		assert.isEqual(SpyHilbertTransformer.constructorHitCount, 1)
 	}
 
 	@test()
 	protected static async runCallsDependenciesAsExpected() {
-		SpyHilbertTransform.clear()
+		SpyHilbertTransformer.clear()
 		SpyHilbertPeakDetector.clear()
 		this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
-		assert.isEqual(SpyHilbertTransform.runHitCount, 2)
-		assert.isEqual(SpyHilbertTransform.getEnvelopeHitCount, 2)
+		assert.isEqual(SpyHilbertTransformer.runHitCount, 2)
 		assert.isEqual(SpyHilbertPeakDetector.generateSegmentsHitCount, 1)
 		assert.isEqual(SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount, 1)
 		assert.isEqual(SpyHilbertPeakDetector.findPeaksHitCount, 1)
@@ -94,5 +81,11 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
 		}
 
 		return { data, timestamps }
+	}
+
+	private static Detector() {
+		SpyHilbertTransformer.clear()
+		SpyHilbertPeakDetector.clear()
+		return new SpyHilbertPeakDetector()
 	}
 }
