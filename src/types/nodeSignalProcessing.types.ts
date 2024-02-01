@@ -1,5 +1,3 @@
-import HilbertPeakDetector from '../HilbertPeakDetector'
-
 export interface FastFourierTransform {
 	forward(data: number[]): ComplexNumbers
 	inverse(data: ComplexNumbers): ComplexNumbers
@@ -40,7 +38,9 @@ export interface HilbertTransformResults {
 
 export type HilbertTransformerClass = new () => HilbertTransform
 
-export type HilbertPeakDetectorClass = new () => HilbertPeakDetector
+export interface PeakDetector {
+	run(filteredData: number[], timestamps: number[]): PeakDetectorResults
+}
 
 export interface PeakDetectorResults {
 	filteredData: number[]
@@ -53,6 +53,8 @@ export interface PeakDetectorResults {
 	segmentedData: SegmentData
 	peaks: DataPoint[]
 }
+
+export type HilbertPeakDetectorClass = new () => PeakDetector
 
 export type SegmentData = Segment[]
 

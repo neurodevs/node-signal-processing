@@ -4,10 +4,11 @@ import {
 	DataPoint,
 	HilbertTransformerClass,
 	HilbertTransform,
+	PeakDetector,
 } from './types/nodeSignalProcessing.types'
 import { isPowerOfTwo } from './validations'
 
-export default class HilbertPeakDetector {
+export default class HilbertPeakDetector implements PeakDetector {
 	public static TransformerClass: HilbertTransformerClass = HilbertTransformer
 	private transformer: HilbertTransform
 
