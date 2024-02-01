@@ -2,7 +2,10 @@
   "name": "@neurodevs/node-signal-processing",
   "version": "0.4.0",
   "main": "build/index.js",
-  "repository": "https://github.com/neurodevs/node-signal-processing",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neurodevs/node-signal-processing.git"
+  },
   "scripts": {
     "build.ci": "yarn build.tsc && yarn build.resolve-paths && yarn lint",
     "build.dev": "yarn build.tsc --sourceMap ; yarn resolve-paths.lint",
