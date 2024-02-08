@@ -24,6 +24,9 @@ import {
 } from './types/nodeSignalProcessing.types'
 
 export default class FirBandpassFilter implements Filter {
+	public static FiliFilterClass: FiliFirFilterClass = FiliFirFilter
+	private filiFilter: FiliFirFilter
+
 	private sampleRate: number
 	private lowCutoffHz: number
 	private highCutoffHz: number
@@ -31,9 +34,6 @@ export default class FirBandpassFilter implements Filter {
 	private attenuation: number
 	protected useNormalization: boolean
 	protected usePadding: boolean
-
-	public static FiliFilterClass: FiliFirFilterClass = FiliFirFilter
-	private filiFilter: FiliFirFilter
 
 	public constructor(options: FirBandpassFilterOptions) {
 		const {
@@ -52,12 +52,7 @@ export default class FirBandpassFilter implements Filter {
 			'attenuation',
 		])
 
-		assertValidSampleRate(sampleRate)
-		assertValidLowCutoffHz(lowCutoffHz)
-		assertValidHighCutoffHz(highCutoffHz)
-		assertHighFreqGreaterThanLowFreq(lowCutoffHz, highCutoffHz)
-		assertValidNumTaps(numTaps)
-		assertValidAttenuation(attenuation)
+		this.assertValidOptions(options)
 
 		this.sampleRate = sampleRate
 		this.lowCutoffHz = lowCutoffHz
@@ -68,6 +63,18 @@ export default class FirBandpassFilter implements Filter {
 		this.usePadding = usePadding
 
 		this.filiFilter = this.load()
+	}
+
+	private assertValidOptions(options: FirBandpassFilterOptions) {
+		const { sampleRate, lowCutoffHz, highCutoffHz, numTaps, attenuation } =
+			options
+
+		assertValidSampleRate(sampleRate)
+		assertValidLowCutoffHz(lowCutoffHz)
+		assertValidHighCutoffHz(highCutoffHz)
+		assertHighFreqGreaterThanLowFreq(lowCutoffHz, highCutoffHz)
+		assertValidNumTaps(numTaps)
+		assertValidAttenuation(attenuation)
 	}
 
 	public run(data: number[]) {

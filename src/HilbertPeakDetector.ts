@@ -13,7 +13,7 @@ export default class HilbertPeakDetector implements PeakDetector {
 	private transformer: HilbertTransform
 
 	public constructor() {
-		this.transformer = new HilbertPeakDetector.TransformerClass()
+		this.transformer = this.Transformer()
 	}
 
 	public run(filteredData: number[], timestamps: number[]) {
@@ -49,6 +49,10 @@ export default class HilbertPeakDetector implements PeakDetector {
 			segmentedData,
 			peaks,
 		}
+	}
+
+	private Transformer() {
+		return new HilbertPeakDetector.TransformerClass()
 	}
 
 	private padToNearestPowerOfTwo(arr: number[]) {

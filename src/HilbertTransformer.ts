@@ -9,8 +9,7 @@ export default class HilbertTransformer implements HilbertTransform {
 	public static FftClass: FftClass = Fft
 
 	public run(data: number[]) {
-		assertArrayIsNotEmpty(data)
-		assertArrayLengthIsPowerOfTwo(data)
+		this.assertValidData(data)
 
 		const fft = new HilbertTransformer.FftClass({ radix: data.length })
 
@@ -52,5 +51,10 @@ export default class HilbertTransformer implements HilbertTransform {
 		const envelope = analyticSignal.map((value) => Math.abs(value))
 
 		return { analyticSignal, envelope }
+	}
+
+	private assertValidData(data: number[]) {
+		assertArrayIsNotEmpty(data)
+		assertArrayLengthIsPowerOfTwo(data)
 	}
 }
