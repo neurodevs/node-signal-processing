@@ -3,9 +3,9 @@ import { SpruceErrors } from '../errors.types'
 
 
 
-const invalidEmptyArraySchema: SpruceErrors.HilbertTransform.InvalidEmptyArraySchema  = {
+const invalidEmptyArraySchema: SpruceErrors.NodeSignalProcessing.InvalidEmptyArraySchema  = {
 	id: 'invalidEmptyArray',
-	namespace: 'HilbertTransform',
+	namespace: 'NodeSignalProcessing',
 	name: 'Invalid empty array',
 	    fields: {
 	    }
