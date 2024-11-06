@@ -8,10 +8,10 @@ import {
 } from './types/nodeSignalProcessing.types'
 
 export default class Fft implements FastFourierTransform {
-    private radix: number
-
     public static FiliFftClass: FiliFftClass = FiliFft
+
     private filiFft: FiliFft
+    private radix: number
 
     public constructor(options: FftOptions) {
         const { radix } = assertOptions(options, ['radix'])
