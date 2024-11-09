@@ -1,5 +1,5 @@
 import { assertOptions } from '@sprucelabs/schema'
-import { Fft as FiliFft, FiliFftClass } from '@neurodevs/fili'
+import { Fft as FiliFft, FiliFftConstructor } from '@neurodevs/fili'
 import { assertValidDataLength, assertValidRadix } from './assertions'
 import {
     FastFourierTransform,
@@ -8,7 +8,7 @@ import {
 } from './types/nodeSignalProcessing.types'
 
 export default class Fft implements FastFourierTransform {
-    public static FiliFftClass: FiliFftClass = FiliFft
+    public static FiliFftClass: FiliFftConstructor = FiliFft
 
     private filiFft: FiliFft
     private radix: number

@@ -1,7 +1,7 @@
 declare module '@neurodevs/fili' {
-    export type FiliFftClass = new (radix: number) => Fft
+    export type FiliFftConstructor = new (radix: number) => Fft
 
-    export type FiliFirFilterClass = new (filter: number[]) => FirFilter
+    export type FiliFirFilterConstructor = new (filter: number[]) => FirFilter
 
     export class FirCoeffs {
         public lowpass(params: FirCoeffsParams): number[]
@@ -23,12 +23,11 @@ declare module '@neurodevs/fili' {
 
     export class FirFilter {
         public constructor(filter: number[])
-
-        public responsePoint(params: { Fs: number; Fr: number }): {
-            magnitude: number
-            phase: number
-            dBmagnitude: number
-        }
+        public simulate(input: number[]): number[]
+        public singleStep(input: number): number
+        public multiStep(input: number[], overwrite?: boolean): number[]
+        public filtfilt(input: number[], overwrite?: boolean): number[]
+        public reinit(): void
 
         public response(resolution?: number): {
             magnitude: number
@@ -36,14 +35,15 @@ declare module '@neurodevs/fili' {
             dBmagnitude: number
         }[]
 
-        public simulate(input: number[]): number[]
-        public singleStep(input: number): number
-        public multiStep(input: number[], overwrite?: boolean): number[]
-        public filtfilt(input: number[], overwrite?: boolean): number[]
-        public reinit(): void
+        public responsePoint(params: { Fs: number; Fr: number }): {
+            magnitude: number
+            phase: number
+            dBmagnitude: number
+        }
     }
 
     export class Fft {
+        public constructor(radix: number)
         public length: number
         public buffer: number[]
         public re: number[]
@@ -53,9 +53,6 @@ declare module '@neurodevs/fili' {
         public twiddle: number[]
         public sinTable: number[]
         public cosTable: number[]
-
-        public constructor(radix: number)
-
         public forward(b: number[], window: string): FiliComplexNumbers
         public inverse(re: number[], im: number[]): FiliComplexNumbers
         public magnitude(params: FiliComplexNumbers): number[]

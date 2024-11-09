@@ -2,7 +2,7 @@ import { assertOptions } from '@sprucelabs/schema'
 import {
     FirCoeffs as FiliFirCoeffs,
     FirFilter as FiliFirFilter,
-    FiliFirFilterClass,
+    FiliFirFilterConstructor,
 } from '@neurodevs/fili'
 import {
     assertArrayIsNotEmpty,
@@ -24,7 +24,7 @@ import {
 } from './types/nodeSignalProcessing.types'
 
 export default class FirBandpassFilter implements Filter {
-    public static FiliFilterClass: FiliFirFilterClass = FiliFirFilter
+    public static FiliFilterClass: FiliFirFilterConstructor = FiliFirFilter
     private filiFilter: FiliFirFilter
 
     private sampleRate: number
