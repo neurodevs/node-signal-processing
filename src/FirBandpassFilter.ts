@@ -2,7 +2,6 @@ import { assertOptions } from '@sprucelabs/schema'
 import {
     FirCoeffs as FiliFirCoeffs,
     FirFilter as FiliFirFilter,
-    FiliFirFilterConstructor,
 } from '@neurodevs/fili'
 import {
     assertArrayIsNotEmpty,
@@ -18,24 +17,20 @@ import {
     padArrayWithZeros,
     removeArrayPadding,
 } from './preprocess'
-import {
-    Filter,
-    FirBandpassFilterOptions,
-} from './types/nodeSignalProcessing.types'
 
 export default class FirBandpassFilter implements Filter {
-    public static FiliFilterClass: FiliFirFilterConstructor = FiliFirFilter
-    private filiFilter: FiliFirFilter
+    public static Class?: FirBandpassFilterConstructor
 
+    protected useNormalization: boolean
+    protected usePadding: boolean
+    private filiFilter: FiliFirFilter
     private sampleRate: number
     private lowCutoffHz: number
     private highCutoffHz: number
     private numTaps: number
     private attenuation: number
-    protected useNormalization: boolean
-    protected usePadding: boolean
 
-    public constructor(options: FirBandpassFilterOptions) {
+    protected constructor(options: FirBandpassFilterOptions) {
         const {
             sampleRate,
             lowCutoffHz,
@@ -63,6 +58,10 @@ export default class FirBandpassFilter implements Filter {
         this.usePadding = usePadding
 
         this.filiFilter = this.load()
+    }
+
+    public static Create(options: FirBandpassFilterOptions) {
+        return new (this.Class ?? this)(options)
     }
 
     private assertValidOptions(options: FirBandpassFilterOptions) {
@@ -110,6 +109,28 @@ export default class FirBandpassFilter implements Filter {
             Att: this.attenuation,
         })
 
-        return new FirBandpassFilter.FiliFilterClass(firFilterCoeffs)
+        return this.FirFilter(firFilterCoeffs)
     }
+
+    private FirFilter(firFilterCoeffs: number[]) {
+        return new FiliFirFilter(firFilterCoeffs)
+    }
+}
+
+export interface Filter {
+    run(data: number[]): number[]
+}
+
+export type FirBandpassFilterConstructor = new (
+    options: FirBandpassFilterOptions
+) => Filter
+
+export interface FirBandpassFilterOptions {
+    sampleRate: number
+    lowCutoffHz: number
+    highCutoffHz: number
+    numTaps: number
+    attenuation: number
+    usePadding?: boolean
+    useNormalization?: boolean
 }

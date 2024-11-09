@@ -1,7 +1,6 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft from '../Fft'
+import Fft, { FftOptions } from '../Fft'
 import SpyFft from '../testDoubles/SpyFft'
-import { FftOptions } from '../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
 
 export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
@@ -11,6 +10,7 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
 
     protected static async beforeEach() {
         await super.beforeEach()
+
         this.fftOptions = this.generateOptions()
         this.fft = this.Fft()
     }

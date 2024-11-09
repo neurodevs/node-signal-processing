@@ -1,7 +1,8 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import FirBandpassFilter from '../FirBandpassFilter'
+import FirBandpassFilter, {
+    FirBandpassFilterOptions,
+} from '../FirBandpassFilter'
 import SpyFirBandpassFilter from '../testDoubles/SpyFirBandpassFilter'
-import { FirBandpassFilterOptions } from '../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
 
 export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
@@ -12,6 +13,7 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 
     protected static async beforeEach() {
         await super.beforeEach()
+
         this.options = this.generateOptions()
         this.filter = this.Filter(this.options)
         this.result = this.filter.run(this.testData)

@@ -1,19 +1,18 @@
-import HilbertTransformer from './HilbertTransformer'
-import {
-    SegmentData,
-    DataPoint,
-    HilbertTransformerClass,
-    HilbertTransform,
-    PeakDetector,
-} from './types/nodeSignalProcessing.types'
+import HilbertTransformer, { HilbertTransform } from './HilbertTransformer'
 import { isPowerOfTwo } from './validations'
 
 export default class HilbertPeakDetector implements PeakDetector {
-    public static TransformerClass: HilbertTransformerClass = HilbertTransformer
+    public static Class?: HilbertPeakDetectorConstructor
+
     private transformer: HilbertTransform
 
-    public constructor() {
-        this.transformer = this.Transformer()
+    protected constructor(transformer: HilbertTransform) {
+        this.transformer = transformer
+    }
+
+    public static Create() {
+        const transformer = this.HilbertTransformer()
+        return new (this.Class ?? this)(transformer)
     }
 
     public run(filteredData: number[], timestamps: number[]) {
@@ -51,10 +50,6 @@ export default class HilbertPeakDetector implements PeakDetector {
         }
     }
 
-    private Transformer() {
-        return new HilbertPeakDetector.TransformerClass()
-    }
-
     private padToNearestPowerOfTwo(arr: number[]) {
         const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(arr.length)))
 
@@ -89,6 +84,7 @@ export default class HilbertPeakDetector implements PeakDetector {
         thresholdedData: number[],
         timestamps: number[]
     ) {
+        debugger
         let segmentedData: SegmentData = []
         let currentSegment: DataPoint[] = []
 
@@ -125,4 +121,37 @@ export default class HilbertPeakDetector implements PeakDetector {
 
         return peaks
     }
+
+    private static HilbertTransformer() {
+        return HilbertTransformer.Create()
+    }
+}
+
+export interface PeakDetector {
+    run(filteredData: number[], timestamps: number[]): PeakDetectorResults
+}
+
+export type HilbertPeakDetectorConstructor = new (
+    transformer: HilbertTransform
+) => PeakDetector
+
+export interface PeakDetectorResults {
+    filteredData: number[]
+    timestamps: number[]
+    upperAnalyticSignal: number[]
+    upperEnvelope: number[]
+    lowerAnalyticSignal: number[]
+    lowerEnvelope: number[]
+    thresholdedData: number[]
+    segmentedData: SegmentData
+    peaks: DataPoint[]
+}
+
+export type SegmentData = Segment[]
+
+export type Segment = DataPoint[]
+
+export interface DataPoint {
+    value: number
+    timestamp: number
 }

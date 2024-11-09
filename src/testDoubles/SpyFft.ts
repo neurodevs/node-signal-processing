@@ -1,5 +1,4 @@
-import Fft from '../Fft'
-import { FftOptions, ComplexNumbers } from '../types/nodeSignalProcessing.types'
+import Fft, { ComplexNumbers, FftOptions } from '../Fft'
 
 export default class SpyFft extends Fft {
     public static constructorHitCount = 0
@@ -28,7 +27,7 @@ export default class SpyFft extends Fft {
         return super.inverse(data)
     }
 
-    public static clear() {
+    public static resetTestDouble() {
         SpyFft.constructorHitCount = 0
         SpyFft.forwardHitCount = 0
         SpyFft.inverseHitCount = 0

@@ -1,5 +1,6 @@
 import { test, assert } from '@sprucelabs/test-utils'
 import HilbertPeakDetector from '../HilbertPeakDetector'
+import HilbertTransformer from '../HilbertTransformer'
 import SpyHilbertPeakDetector from '../testDoubles/SpyHilbertPeakDetector'
 import SpyHilbertTransformer from '../testDoubles/SpyHilbertTransformer'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
@@ -8,26 +9,51 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
     private static detector: HilbertPeakDetector
 
     protected static async beforeEach() {
-        HilbertPeakDetector.TransformerClass = SpyHilbertTransformer
+        HilbertTransformer.Class = SpyHilbertTransformer
+        HilbertPeakDetector.Class = SpyHilbertPeakDetector
+
         this.detector = this.Detector()
     }
 
     @test()
-    protected static async constructorInstantiatesHilbertTransform() {
-        SpyHilbertTransformer.clear()
-        new HilbertPeakDetector()
+    protected static async createsHilbertTransformer() {
         assert.isEqual(SpyHilbertTransformer.constructorHitCount, 1)
     }
 
     @test()
     protected static async runCallsDependenciesAsExpected() {
-        SpyHilbertTransformer.clear()
-        SpyHilbertPeakDetector.clear()
+        SpyHilbertTransformer.resetTestDouble()
+        SpyHilbertPeakDetector.resetTestDouble()
+
+        debugger
+
         this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
-        assert.isEqual(SpyHilbertTransformer.runHitCount, 2)
-        assert.isEqual(SpyHilbertPeakDetector.generateSegmentsHitCount, 1)
-        assert.isEqual(SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount, 1)
-        assert.isEqual(SpyHilbertPeakDetector.findPeaksHitCount, 1)
+
+        assert.isEqual(
+            SpyHilbertTransformer.runHitCount,
+            2,
+            'Incorrect number of calls to run!'
+        )
+
+        debugger
+
+        assert.isEqual(
+            SpyHilbertPeakDetector.generateSegmentsHitCount,
+            1,
+            'Incorrect number of calls to generateSegments!'
+        )
+
+        assert.isEqual(
+            SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount,
+            1,
+            'Incorrect number of calls to applyEnvelopeThreshold!'
+        )
+
+        assert.isEqual(
+            SpyHilbertPeakDetector.findPeaksHitCount,
+            1,
+            'Incorrect number of calls to findPeaks!'
+        )
     }
 
     @test()
@@ -84,8 +110,9 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
     }
 
     private static Detector() {
-        SpyHilbertTransformer.clear()
-        SpyHilbertPeakDetector.clear()
-        return new SpyHilbertPeakDetector()
+        SpyHilbertTransformer.resetTestDouble()
+        SpyHilbertPeakDetector.resetTestDouble()
+
+        return HilbertPeakDetector.Create() as SpyHilbertPeakDetector
     }
 }

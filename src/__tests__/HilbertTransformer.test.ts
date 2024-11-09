@@ -1,7 +1,11 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import HilbertTransform from '../HilbertTransformer'
+import Fft from '../Fft'
+import {
+    HilbertTransform,
+    HilbertTransformResults,
+} from '../HilbertTransformer'
+import HilbertTransformer from '../HilbertTransformer'
 import SpyFft from '../testDoubles/SpyFft'
-import { HilbertTransformResults } from '../types/nodeSignalProcessing.types'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
 
 export default class HilbertTransformerTest extends AbstractSignalProcessingTest {
@@ -12,10 +16,10 @@ export default class HilbertTransformerTest extends AbstractSignalProcessingTest
     protected static async beforeEach() {
         await super.beforeEach()
 
-        HilbertTransform.FftClass = SpyFft
-        SpyFft.clear()
+        Fft.Class = SpyFft
+        SpyFft.resetTestDouble()
 
-        this.hilbert = new HilbertTransform()
+        this.hilbert = this.HilbertTransformer()
         this.result = this.hilbert.run(this.testData)
     }
 
@@ -81,5 +85,9 @@ export default class HilbertTransformerTest extends AbstractSignalProcessingTest
 
     private static get envelope() {
         return this.result.envelope
+    }
+
+    private static HilbertTransformer() {
+        return HilbertTransformer.Create()
     }
 }

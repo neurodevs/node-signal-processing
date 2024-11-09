@@ -1,5 +1,6 @@
-import FirBandpassFilter from '../FirBandpassFilter'
-import { FirBandpassFilterOptions } from '../types/nodeSignalProcessing.types'
+import FirBandpassFilter, {
+    FirBandpassFilterOptions,
+} from '../FirBandpassFilter'
 
 export default class SpyFirBandpassFilter extends FirBandpassFilter {
     public static constructorHitCount = 0
@@ -7,11 +8,6 @@ export default class SpyFirBandpassFilter extends FirBandpassFilter {
 
     public static constructorCalledWith: FirBandpassFilterOptions[] = []
     public static runCalledWith: number[][] = []
-
-    public static clear() {
-        SpyFirBandpassFilter.constructorHitCount = 0
-        SpyFirBandpassFilter.runHitCount = 0
-    }
 
     public constructor(options: FirBandpassFilterOptions) {
         SpyFirBandpassFilter.constructorHitCount++
@@ -31,5 +27,10 @@ export default class SpyFirBandpassFilter extends FirBandpassFilter {
 
     public getUseNormalization() {
         return this.useNormalization
+    }
+
+    public static resetTestDouble() {
+        SpyFirBandpassFilter.constructorHitCount = 0
+        SpyFirBandpassFilter.runHitCount = 0
     }
 }

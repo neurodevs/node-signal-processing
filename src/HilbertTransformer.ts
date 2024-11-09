@@ -3,15 +3,20 @@ import {
     assertArrayLengthIsPowerOfTwo,
 } from './assertions'
 import Fft from './Fft'
-import { FftClass, HilbertTransform } from './types/nodeSignalProcessing.types'
 
 export default class HilbertTransformer implements HilbertTransform {
-    public static FftClass: FftClass = Fft
+    public static Class?: HilbertTransformConstructor
+
+    protected constructor() {}
+
+    public static Create() {
+        return new (this.Class ?? this)()
+    }
 
     public run(data: number[]) {
         this.assertValidData(data)
 
-        const fft = new HilbertTransformer.FftClass({ radix: data.length })
+        const fft = this.Fft(data.length)
 
         const freqs = fft.forward(data)
 
@@ -57,4 +62,19 @@ export default class HilbertTransformer implements HilbertTransform {
         assertArrayIsNotEmpty(data)
         assertArrayLengthIsPowerOfTwo(data)
     }
+
+    private Fft(radix: number) {
+        return Fft.Create({ radix })
+    }
+}
+
+export interface HilbertTransform {
+    run(data: number[]): HilbertTransformResults
+}
+
+export type HilbertTransformConstructor = new () => HilbertTransform
+
+export interface HilbertTransformResults {
+    analyticSignal: number[]
+    envelope: number[]
 }

@@ -1,15 +1,13 @@
-import HilbertPeakDetector from '../HilbertPeakDetector'
-import { SegmentData } from '../types/nodeSignalProcessing.types'
+import HilbertPeakDetector, { SegmentData } from '../HilbertPeakDetector'
+import { HilbertTransform } from '../HilbertTransformer'
 
 export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
     public static generateSegmentsHitCount = 0
     public static applyEnvelopeThresholdHitCount = 0
     public static findPeaksHitCount = 0
 
-    public static clear() {
-        SpyHilbertPeakDetector.generateSegmentsHitCount = 0
-        SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount = 0
-        SpyHilbertPeakDetector.findPeaksHitCount = 0
+    public constructor(transformer: HilbertTransform) {
+        super(transformer)
     }
 
     public generateSegments(thresholdedData: number[], timestamps: number[]) {
@@ -28,5 +26,11 @@ export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
     public findPeaks(segmentedData: SegmentData) {
         SpyHilbertPeakDetector.findPeaksHitCount++
         return super.findPeaks(segmentedData)
+    }
+
+    public static resetTestDouble() {
+        this.generateSegmentsHitCount = 0
+        this.applyEnvelopeThresholdHitCount = 0
+        this.findPeaksHitCount = 0
     }
 }

@@ -1,8 +1,4 @@
 declare module '@neurodevs/fili' {
-    export type FiliFftConstructor = new (radix: number) => Fft
-
-    export type FiliFirFilterConstructor = new (filter: number[]) => FirFilter
-
     export class FirCoeffs {
         public lowpass(params: FirCoeffsParams): number[]
         public highpass(params: FirCoeffsParams): number[]
