@@ -2,10 +2,13 @@ import {
     assertArrayIsNotEmpty,
     assertArrayLengthIsPowerOfTwo,
 } from './assertions'
-import Fft from './Fft'
+import Fft, { FastFourierTransform } from './Fft'
 
 export default class HilbertTransformer implements HilbertTransform {
     public static Class?: HilbertTransformConstructor
+
+    private data!: number[]
+    private fft!: FastFourierTransform
 
     protected constructor() {}
 
@@ -14,11 +17,12 @@ export default class HilbertTransformer implements HilbertTransform {
     }
 
     public run(data: number[]) {
-        this.assertValidData(data)
+        this.data = data
+        this.assertValidData()
 
-        const fft = this.Fft(data.length)
+        this.fft = this.Fft(data.length)
 
-        const freqs = fft.forward(data)
+        const freqs = this.fft.forward(this.data)
 
         const real = freqs.real.slice()
         const imaginary = freqs.imaginary.slice()
@@ -50,7 +54,7 @@ export default class HilbertTransformer implements HilbertTransform {
             imaginary[i] *= h[i]
         }
 
-        const result = fft.inverse({ real, imaginary })
+        const result = this.fft.inverse({ real, imaginary })
         const analyticSignal = result.imaginary
 
         const envelope = analyticSignal.map((value) => Math.abs(value))
@@ -58,9 +62,9 @@ export default class HilbertTransformer implements HilbertTransform {
         return { analyticSignal, envelope }
     }
 
-    private assertValidData(data: number[]) {
-        assertArrayIsNotEmpty(data)
-        assertArrayLengthIsPowerOfTwo(data)
+    private assertValidData() {
+        assertArrayIsNotEmpty(this.data)
+        assertArrayLengthIsPowerOfTwo(this.data)
     }
 
     private Fft(radix: number) {
