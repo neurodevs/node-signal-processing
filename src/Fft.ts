@@ -13,7 +13,7 @@ export default class Fft implements FastFourierTransform {
         assertValidRadix(radix)
 
         this.radix = radix
-        this.filiFft = this.load()
+        this.filiFft = this.FiliFft()
     }
 
     public static Create(options: FftOptions) {
@@ -43,7 +43,7 @@ export default class Fft implements FastFourierTransform {
         }
     }
 
-    protected load() {
+    protected FiliFft() {
         return new FiliFft(this.radix)
     }
 }
