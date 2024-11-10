@@ -23,12 +23,16 @@ export default class FirBandpassFilter implements Filter {
 
     protected useNormalization: boolean
     protected usePadding: boolean
-    private filiFilter: FiliFirFilter
     private sampleRate: number
     private lowCutoffHz: number
     private highCutoffHz: number
     private numTaps: number
     private attenuation: number
+    private signal!: number[]
+    private result!: number[]
+    private filiFirFilter!: FiliFirFilter
+    private filiFirCoeffs!: FiliFirCoeffs
+    private firFilterCoeffs!: number[]
 
     protected constructor(options: FirBandpassFilterOptions) {
         const {
@@ -47,8 +51,6 @@ export default class FirBandpassFilter implements Filter {
             'attenuation',
         ])
 
-        this.assertValidOptions(options)
-
         this.sampleRate = sampleRate
         this.lowCutoffHz = lowCutoffHz
         this.highCutoffHz = highCutoffHz
@@ -57,51 +59,23 @@ export default class FirBandpassFilter implements Filter {
         this.useNormalization = useNormalization
         this.usePadding = usePadding
 
-        this.filiFilter = this.load()
+        this.assertValidOptions()
+        this.loadFiliFirFilter()
     }
 
-    public static Create(options: FirBandpassFilterOptions) {
-        return new (this.Class ?? this)(options)
+    private assertValidOptions() {
+        assertValidSampleRate(this.sampleRate)
+        assertValidLowCutoffHz(this.lowCutoffHz)
+        assertValidHighCutoffHz(this.highCutoffHz)
+        assertHighFreqGreaterThanLowFreq(this.lowCutoffHz, this.highCutoffHz)
+        assertValidNumTaps(this.numTaps)
+        assertValidAttenuation(this.attenuation)
     }
 
-    private assertValidOptions(options: FirBandpassFilterOptions) {
-        const { sampleRate, lowCutoffHz, highCutoffHz, numTaps, attenuation } =
-            options
+    protected loadFiliFirFilter() {
+        this.filiFirCoeffs = new FiliFirCoeffs()
 
-        assertValidSampleRate(sampleRate)
-        assertValidLowCutoffHz(lowCutoffHz)
-        assertValidHighCutoffHz(highCutoffHz)
-        assertHighFreqGreaterThanLowFreq(lowCutoffHz, highCutoffHz)
-        assertValidNumTaps(numTaps)
-        assertValidAttenuation(attenuation)
-    }
-
-    public run(data: number[]) {
-        assertArrayIsNotEmpty(data)
-        this.filiFilter.reinit()
-
-        if (this.useNormalization) {
-            data = normalizeArray(data)
-        }
-
-        let result
-
-        if (this.usePadding) {
-            const padLength = 3 * this.numTaps
-            const padded = padArrayWithZeros(data, padLength)
-            const resultPadded = this.filiFilter.filtfilt(padded)
-            result = removeArrayPadding(resultPadded, padLength)
-        } else {
-            result = this.filiFilter.filtfilt(data)
-        }
-
-        return result
-    }
-
-    protected load() {
-        let firCoeffsCalculator = new FiliFirCoeffs()
-
-        let firFilterCoeffs = firCoeffsCalculator.kbFilter({
+        this.firFilterCoeffs = this.filiFirCoeffs.kbFilter({
             Fs: this.sampleRate,
             Fa: this.lowCutoffHz,
             Fb: this.highCutoffHz,
@@ -109,11 +83,58 @@ export default class FirBandpassFilter implements Filter {
             Att: this.attenuation,
         })
 
-        return this.FirFilter(firFilterCoeffs)
+        this.filiFirFilter = this.FiliFirFilter()
     }
 
-    private FirFilter(firFilterCoeffs: number[]) {
-        return new FiliFirFilter(firFilterCoeffs)
+    public static Create(options: FirBandpassFilterOptions) {
+        return new (this.Class ?? this)(options)
+    }
+
+    public run(signal: number[]) {
+        this.signal = signal
+        assertArrayIsNotEmpty(this.signal)
+
+        this.resetFili()
+        this.normalizeSignalIfEnabled()
+        this.padSignalIfEnabled()
+        this.runFilter()
+        this.removePaddingIfEnabled()
+
+        return this.result
+    }
+
+    private resetFili() {
+        this.filiFirFilter.reinit()
+    }
+
+    private normalizeSignalIfEnabled() {
+        if (this.useNormalization) {
+            this.signal = normalizeArray(this.signal)
+        }
+    }
+
+    private padSignalIfEnabled() {
+        if (this.usePadding) {
+            this.signal = padArrayWithZeros(this.signal, this.padLength)
+        }
+    }
+
+    private runFilter() {
+        this.result = this.filiFirFilter.filtfilt(this.signal)
+    }
+
+    private removePaddingIfEnabled() {
+        if (this.usePadding) {
+            this.result = removeArrayPadding(this.result, this.padLength)
+        }
+    }
+
+    private get padLength() {
+        return 3 * this.numTaps
+    }
+
+    private FiliFirFilter() {
+        return new FiliFirFilter(this.firFilterCoeffs)
     }
 }
 
