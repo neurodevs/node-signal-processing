@@ -1,6 +1,6 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { Fft as FiliFft } from '@neurodevs/fili'
-import { assertValidDataLength, assertValidRadix } from './assertions'
+import { assertValidDataLength, assertValidRadix } from './utils/assertions'
 
 export default class Fft implements FastFourierTransform {
     public static Class?: FftConstructor

@@ -1,5 +1,5 @@
 import { SchemaError } from '@sprucelabs/schema'
-import SpruceError from './errors/SpruceError'
+import SpruceError from '../errors/SpruceError'
 import { isOddPositiveInt, isPositiveNumber, isPowerOfTwo } from './validations'
 
 export function assertValidSampleRate(sampleRate: number): void {

@@ -11,12 +11,12 @@ import {
     assertValidLowCutoffHz,
     assertValidNumTaps,
     assertValidSampleRate,
-} from './assertions'
+} from './utils/assertions'
 import {
     normalizeArray,
     padArrayWithZeros,
     removeArrayPadding,
-} from './preprocess'
+} from './utils/preprocess'
 
 export default class FirBandpassFilter implements Filter {
     public static Class?: FirBandpassFilterConstructor

@@ -1,8 +1,8 @@
+import Fft, { ComplexNumbers, FastFourierTransform } from './Fft'
 import {
     assertArrayIsNotEmpty,
     assertArrayLengthIsPowerOfTwo,
-} from './assertions'
-import Fft, { ComplexNumbers, FastFourierTransform } from './Fft'
+} from './utils/assertions'
 
 export default class HilbertTransformer implements HilbertTransform {
     public static Class?: HilbertTransformConstructor
