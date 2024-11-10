@@ -14,8 +14,6 @@ export default class HilbertTransformer implements HilbertTransform {
     private imaginary!: number[]
     private filter!: number[]
     private result!: ComplexNumbers
-    private analyticSignal!: number[]
-    private envelope!: number[]
 
     protected constructor() {}
 
@@ -98,9 +96,6 @@ export default class HilbertTransformer implements HilbertTransform {
 
     private runInverseFft() {
         this.result = this.fft.inverse(this.complex)
-
-        this.analyticSignal = this.result.imaginary
-        this.envelope = this.analyticSignal.map((value) => Math.abs(value))
     }
 
     private get signalLength() {
@@ -120,6 +115,14 @@ export default class HilbertTransformer implements HilbertTransform {
 
     private get results() {
         return { analyticSignal: this.analyticSignal, envelope: this.envelope }
+    }
+
+    private get analyticSignal() {
+        return this.result.imaginary
+    }
+
+    private get envelope() {
+        return this.analyticSignal.map((value) => Math.abs(value))
     }
 
     private HilbertFilter() {
