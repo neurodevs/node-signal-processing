@@ -1,4 +1,4 @@
-![npm version](https://img.shields.io/npm/v/@neurodevs/node-signal-processing)
+[![npm version](https://img.shields.io/npm/v/@neurodevs/node-signal-processing)](https://www.npmjs.com/package/@neurodevs/node-signal-processing)
 
 # node-signal-processing
 Object-oriented algorithms for digital signal processing.
