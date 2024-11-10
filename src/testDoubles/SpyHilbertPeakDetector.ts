@@ -1,4 +1,4 @@
-import HilbertPeakDetector, { SegmentData } from '../HilbertPeakDetector'
+import HilbertPeakDetector from '../HilbertPeakDetector'
 import { HilbertTransform } from '../HilbertTransformer'
 
 export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
@@ -10,22 +10,19 @@ export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
         super(transformer)
     }
 
-    public generateSegments(thresholdedData: number[], timestamps: number[]) {
-        SpyHilbertPeakDetector.generateSegmentsHitCount++
-        return super.generateSegments(thresholdedData, timestamps)
-    }
-
-    public applyEnvelopeThreshold(
-        filteredData: number[],
-        lowerEnvelope: number[]
-    ) {
+    public thresholdSignalByLowerEnvelope() {
         SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount++
-        return super.applyEnvelopeThreshold(filteredData, lowerEnvelope)
+        return super.thresholdSignalByLowerEnvelope()
     }
 
-    public findPeaks(segmentedData: SegmentData) {
+    public extractNonZeroSegments() {
+        SpyHilbertPeakDetector.generateSegmentsHitCount++
+        return super.extractNonZeroSegments()
+    }
+
+    public detectPeaks() {
         SpyHilbertPeakDetector.findPeaksHitCount++
-        return super.findPeaks(segmentedData)
+        return super.detectPeaks()
     }
 
     public static resetTestDouble() {

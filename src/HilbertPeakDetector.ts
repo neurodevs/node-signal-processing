@@ -1,10 +1,21 @@
-import HilbertTransformer, { HilbertTransform } from './HilbertTransformer'
+import HilbertTransformer, {
+    HilbertTransform,
+    HilbertTransformResults,
+} from './HilbertTransformer'
 import { isPowerOfTwo } from './validations'
 
 export default class HilbertPeakDetector implements PeakDetector {
     public static Class?: HilbertPeakDetectorConstructor
 
     private transformer: HilbertTransform
+    private passedSignal!: number[]
+    private signal!: number[]
+    private timestamps!: number[]
+    private upperHilbert!: HilbertTransformResults
+    private lowerHilbert!: HilbertTransformResults
+    private thresholdedSignal!: number[]
+    private nonZeroSegments!: SignalSegment[]
+    private peaks!: DataPoint[]
 
     protected constructor(transformer: HilbertTransform) {
         this.transformer = transformer
@@ -15,111 +26,164 @@ export default class HilbertPeakDetector implements PeakDetector {
         return new (this.Class ?? this)(transformer)
     }
 
-    public run(filteredData: number[], timestamps: number[]) {
-        let paddedData
+    public run(filteredSignal: number[], timestamps: number[]) {
+        this.passedSignal = filteredSignal
 
-        if (!isPowerOfTwo(filteredData.length)) {
-            paddedData = this.padToNearestPowerOfTwo(filteredData)
-        } else {
-            paddedData = filteredData
-        }
+        this.signal = this.passedSignal.slice()
+        this.timestamps = timestamps
 
-        const { analyticSignal: upperAnalyticSignal, envelope: upperEnvelope } =
-            this.transformer.run(paddedData)
+        this.padSignalIfNotPowerOfTwo()
+        this.calculateUpperEnvelope()
+        this.calculateLowerEnvelope()
+        this.thresholdSignalByLowerEnvelope()
+        this.extractNonZeroSegments()
+        this.detectPeaks()
 
-        const { analyticSignal: lowerAnalyticSignal, envelope: lowerEnvelope } =
-            this.transformer.run(upperAnalyticSignal)
+        return this.results
+    }
 
-        const thresholdedData = this.applyEnvelopeThreshold(
-            filteredData,
-            lowerEnvelope
-        )
-        const segmentedData = this.generateSegments(thresholdedData, timestamps)
-        const peaks = this.findPeaks(segmentedData)
-
-        return {
-            filteredData,
-            timestamps,
-            upperAnalyticSignal,
-            upperEnvelope,
-            lowerAnalyticSignal,
-            lowerEnvelope,
-            thresholdedData,
-            segmentedData,
-            peaks,
+    private padSignalIfNotPowerOfTwo() {
+        if (!this.signalLengthIsPowerOfTwo) {
+            this.padSignalToNextPowerOfTwo()
         }
     }
 
-    private padToNearestPowerOfTwo(arr: number[]) {
-        const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(arr.length)))
-
-        const totalZerosToAdd = nextPowerOfTwo - arr.length
-
-        // Split zeros roughly equally for the beginning and end
-        const zerosAtStart = Math.floor(totalZerosToAdd / 2)
-        const zerosAtEnd = totalZerosToAdd - zerosAtStart
-
-        const newArray = [
-            ...Array(zerosAtStart).fill(0),
-            ...arr,
-            ...Array(zerosAtEnd).fill(0),
+    private padSignalToNextPowerOfTwo() {
+        this.signal = [
+            ...this.paddedZerosAtStart,
+            ...this.signal,
+            ...this.paddedZerosAtEnd,
         ]
-
-        return newArray
     }
 
-    protected applyEnvelopeThreshold(data: number[], lowerEnvelope: number[]) {
-        let result = data.slice()
+    private calculateUpperEnvelope() {
+        this.upperHilbert = this.transformer.run(this.signal)
+    }
 
-        for (let i = 0; i < data.length; i++) {
-            if (lowerEnvelope[i] > data[i]) {
-                result[i] = 0
+    private calculateLowerEnvelope() {
+        this.lowerHilbert = this.transformer.run(this.upperAnalyticSignal)
+    }
+
+    protected thresholdSignalByLowerEnvelope() {
+        this.thresholdedSignal = this.signal.slice()
+
+        for (let i = 0; i < this.signalLength; i++) {
+            if (this.lowerEnvelope[i] > this.signal[i]) {
+                this.thresholdedSignal[i] = 0
             }
         }
-
-        return result
     }
 
-    protected generateSegments(
-        thresholdedData: number[],
-        timestamps: number[]
-    ) {
-        debugger
-        let segmentedData: SegmentData = []
-        let currentSegment: DataPoint[] = []
+    protected extractNonZeroSegments() {
+        this.nonZeroSegments = []
 
-        for (let i = 0; i < thresholdedData.length; i++) {
-            let value = thresholdedData[i]
+        let currentSegment = this.createEmptySegment()
+
+        for (let i = 0; i < this.signalLength; i++) {
+            const value = this.thresholdedSignal[i]
+            const timestamp = this.timestamps[i]
+
             if (value !== 0) {
-                const timestamp = timestamps[i]
-                currentSegment.push({ value, timestamp })
+                currentSegment.values.push(value)
+                currentSegment.timestamps.push(timestamp)
             } else {
-                if (currentSegment.length > 0) {
-                    segmentedData.push(currentSegment)
-                    currentSegment = []
+                if (currentSegment.values.length > 0) {
+                    this.nonZeroSegments.push(currentSegment)
+                    currentSegment = this.createEmptySegment()
                 }
             }
         }
 
-        if (currentSegment.length > 0) {
-            segmentedData.push(currentSegment)
+        if (currentSegment.values.length > 0) {
+            this.nonZeroSegments.push(currentSegment)
         }
-
-        return segmentedData
     }
 
-    protected findPeaks(segmentedData: SegmentData) {
-        let peaks: DataPoint[] = []
+    private createEmptySegment() {
+        return {
+            values: [],
+            timestamps: [],
+        } as SignalSegment
+    }
 
-        for (let segment of segmentedData) {
-            const values = segment.map((item) => item.value)
-            const timestamps = segment.map((item) => item.timestamp)
+    protected detectPeaks() {
+        this.peaks = []
+
+        for (const segment of this.nonZeroSegments) {
+            const { values, timestamps } = segment
+
             const maxValue = Math.max(...values)
-            const maxIndex = values.findIndex((element) => element === maxValue)
-            peaks.push({ timestamp: timestamps[maxIndex], value: maxValue })
-        }
+            const indexAtMaxValue = values.findIndex((v) => v == maxValue)
+            const timestampAtMaxValue = timestamps[indexAtMaxValue]
 
-        return peaks
+            this.peaks.push({
+                timestamp: timestampAtMaxValue,
+                value: maxValue,
+            })
+        }
+    }
+
+    private get signalLength() {
+        return this.passedSignal.length
+    }
+
+    private get signalLengthIsPowerOfTwo() {
+        return isPowerOfTwo(this.signalLength)
+    }
+
+    private get nextPowerOfTwo() {
+        const level = Math.log2(this.signalLength)
+        return Math.pow(2, Math.ceil(level))
+    }
+
+    private get totalZerosToPad() {
+        return this.nextPowerOfTwo - this.signalLength
+    }
+
+    private get numZerosToPadAtStart() {
+        return Math.floor(this.totalZerosToPad / 2)
+    }
+
+    private get numZerosToPadAtEnd() {
+        return this.totalZerosToPad - this.numZerosToPadAtStart
+    }
+
+    private get paddedZerosAtStart() {
+        return Array(this.numZerosToPadAtStart).fill(0)
+    }
+
+    private get paddedZerosAtEnd() {
+        return Array(this.numZerosToPadAtEnd).fill(0)
+    }
+
+    private get upperAnalyticSignal() {
+        return this.upperHilbert.analyticSignal
+    }
+
+    private get upperEnvelope() {
+        return this.upperHilbert.envelope
+    }
+
+    private get lowerAnalyticSignal() {
+        return this.lowerHilbert.analyticSignal
+    }
+
+    private get lowerEnvelope() {
+        return this.lowerHilbert.envelope
+    }
+
+    private get results() {
+        return {
+            signal: this.passedSignal,
+            timestamps: this.timestamps,
+            upperAnalyticSignal: this.upperAnalyticSignal,
+            upperEnvelope: this.upperEnvelope,
+            lowerAnalyticSignal: this.lowerAnalyticSignal,
+            lowerEnvelope: this.lowerEnvelope,
+            thresholdedSignal: this.thresholdedSignal,
+            nonZeroSegments: this.nonZeroSegments,
+            peaks: this.peaks,
+        } as unknown as PeakDetectorResults
     }
 
     private static HilbertTransformer() {
@@ -128,7 +192,7 @@ export default class HilbertPeakDetector implements PeakDetector {
 }
 
 export interface PeakDetector {
-    run(filteredData: number[], timestamps: number[]): PeakDetectorResults
+    run(filteredSignal: number[], timestamps: number[]): PeakDetectorResults
 }
 
 export type HilbertPeakDetectorConstructor = new (
@@ -136,20 +200,21 @@ export type HilbertPeakDetectorConstructor = new (
 ) => PeakDetector
 
 export interface PeakDetectorResults {
-    filteredData: number[]
+    signal: number[]
     timestamps: number[]
     upperAnalyticSignal: number[]
     upperEnvelope: number[]
     lowerAnalyticSignal: number[]
     lowerEnvelope: number[]
-    thresholdedData: number[]
-    segmentedData: SegmentData
+    thresholdedSignal: number[]
+    nonZeroSegments: SignalSegment[]
     peaks: DataPoint[]
 }
 
-export type SegmentData = Segment[]
-
-export type Segment = DataPoint[]
+export interface SignalSegment {
+    values: number[]
+    timestamps: number[]
+}
 
 export interface DataPoint {
     value: number
