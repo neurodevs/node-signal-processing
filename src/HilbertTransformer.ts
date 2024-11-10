@@ -2,13 +2,20 @@ import {
     assertArrayIsNotEmpty,
     assertArrayLengthIsPowerOfTwo,
 } from './assertions'
-import Fft, { FastFourierTransform } from './Fft'
+import Fft, { ComplexNumbers, FastFourierTransform } from './Fft'
 
 export default class HilbertTransformer implements HilbertTransform {
     public static Class?: HilbertTransformConstructor
 
-    private data!: number[]
+    private signal!: number[]
     private fft!: FastFourierTransform
+    private freqs!: ComplexNumbers
+    private real!: number[]
+    private imaginary!: number[]
+    private filter!: number[]
+    private result!: ComplexNumbers
+    private analyticSignal!: number[]
+    private envelope!: number[]
 
     protected constructor() {}
 
@@ -16,59 +23,111 @@ export default class HilbertTransformer implements HilbertTransform {
         return new (this.Class ?? this)()
     }
 
-    public run(data: number[]) {
-        this.data = data
-        this.assertValidData()
+    public run(signal: number[]) {
+        this.signal = signal
+        this.assertValidSignal()
 
-        this.fft = this.Fft(data.length)
+        this.runForwardFft()
+        this.setupHilbertFilter()
+        this.applyFilterToSignal()
+        this.runInverseFft()
 
-        const freqs = this.fft.forward(this.data)
+        return this.results
+    }
 
-        const real = freqs.real.slice()
-        const imaginary = freqs.imaginary.slice()
+    private assertValidSignal() {
+        assertArrayIsNotEmpty(this.signal)
+        assertArrayLengthIsPowerOfTwo(this.signal)
+    }
 
-        // Construct h filter for Hilbert transform (scaling)
-        const N = real.length
-        const h = new Array(N).fill(0)
+    private runForwardFft() {
+        this.fft = this.Fft()
 
-        // Define scaling for positive frequencies (1 for first half, 0 for second half)
-        if (N % 2 == 0) {
-            // Even length: 0 at both ends, 2 in the middle
-            for (let i = 1; i < N / 2; i++) {
-                h[i] = 2 // positive frequencies doubled
-            }
-            h[0] = 0 // DC component should be zero
-            h[N / 2] = 0 // Nyquist frequency should be zero
+        this.freqs = this.fft.forward(this.signal)
+        this.real = this.freqs.real.slice()
+        this.imaginary = this.freqs.imaginary.slice()
+    }
+
+    private setupHilbertFilter() {
+        this.filter = this.HilbertFilter()
+
+        if (this.signalLengthIsEven) {
+            this.updateFilterForEvenLength()
         } else {
-            // Odd length: no Nyquist frequency, 0 at the start, 2 up to the middle
-            for (let i = 1; i < (N + 1) / 2; i++) {
-                h[i] = 2 // positive frequencies doubled
-            }
-            h[0] = 0 // DC component should be zero
-            // Note: The last element of h[] for odd N remains 0, which is correct
+            this.updateFilterForOddLength()
         }
-
-        // Apply h filter and perform inverse FFT
-        for (let i = 0; i < N; i++) {
-            real[i] *= h[i]
-            imaginary[i] *= h[i]
-        }
-
-        const result = this.fft.inverse({ real, imaginary })
-        const analyticSignal = result.imaginary
-
-        const envelope = analyticSignal.map((value) => Math.abs(value))
-
-        return { analyticSignal, envelope }
     }
 
-    private assertValidData() {
-        assertArrayIsNotEmpty(this.data)
-        assertArrayLengthIsPowerOfTwo(this.data)
+    private updateFilterForEvenLength() {
+        this.doublePositiveFrequenciesForEven()
+        this.setDcComponentToZero()
+        this.setNyquistFrequencyToZero()
     }
 
-    private Fft(radix: number) {
-        return Fft.Create({ radix })
+    private updateFilterForOddLength() {
+        this.doublePositiveFrequenciesForOdd()
+        this.setDcComponentToZero()
+    }
+
+    private doublePositiveFrequenciesForEven() {
+        for (let i = 1; i < this.signalLength / 2; i++) {
+            this.filter[i] = 2
+        }
+    }
+
+    private doublePositiveFrequenciesForOdd() {
+        for (let i = 1; i < (this.signalLength + 1) / 2; i++) {
+            this.filter[i] = 2
+        }
+    }
+
+    private setDcComponentToZero() {
+        this.filter[0] = 0
+    }
+
+    private setNyquistFrequencyToZero() {
+        this.filter[this.signalLength / 2] = 0
+    }
+
+    private applyFilterToSignal() {
+        for (let i = 0; i < this.signalLength; i++) {
+            this.real[i] *= this.filter[i]
+            this.imaginary[i] *= this.filter[i]
+        }
+    }
+
+    private runInverseFft() {
+        this.result = this.fft.inverse(this.complex)
+
+        this.analyticSignal = this.result.imaginary
+        this.envelope = this.analyticSignal.map((value) => Math.abs(value))
+    }
+
+    private get signalLength() {
+        return this.signal.length
+    }
+
+    private get signalLengthIsEven() {
+        return this.signalLength % 2 == 0
+    }
+
+    private get complex() {
+        return {
+            real: this.real,
+            imaginary: this.imaginary,
+        } as ComplexNumbers
+    }
+
+    private get results() {
+        return { analyticSignal: this.analyticSignal, envelope: this.envelope }
+    }
+
+    private HilbertFilter() {
+        return new Array(this.signalLength).fill(0)
+    }
+
+    private Fft() {
+        return Fft.Create({ radix: this.signalLength })
     }
 }
 
