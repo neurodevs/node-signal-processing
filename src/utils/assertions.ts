@@ -76,27 +76,27 @@ export function assertValidRadix(radix: number): void {
     }
 }
 
-export function assertValidDataLength(data: number[], radix: number): void {
-    if (data.length !== radix) {
+export function assertValidDataLength(signal: number[], radix: number): void {
+    if (signal.length !== radix) {
         throw new SchemaError({
             code: 'INVALID_PARAMETERS',
-            parameters: ['radix', 'data'],
+            parameters: ['radix', 'signal'],
             friendlyMessage: 'Data must be same length as radix!',
         })
     }
 }
 
-export function assertArrayIsNotEmpty(data: number[]): void {
-    if (data.length === 0) {
+export function assertArrayIsNotEmpty(signal: number[]): void {
+    if (signal.length === 0) {
         throw new SpruceError({ code: 'INVALID_EMPTY_ARRAY' })
     }
 }
 
-export function assertArrayLengthIsPowerOfTwo(data: number[]): void {
-    if (!isPowerOfTwo(data.length)) {
+export function assertArrayLengthIsPowerOfTwo(signal: number[]): void {
+    if (!isPowerOfTwo(signal.length)) {
         throw new SchemaError({
             code: 'INVALID_PARAMETERS',
-            parameters: ['data'],
+            parameters: ['signal'],
             friendlyMessage:
                 'Data for Hilbert transform must have length equal to a power of two!',
         })

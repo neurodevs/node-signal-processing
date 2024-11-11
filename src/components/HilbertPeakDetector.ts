@@ -2,7 +2,7 @@ import HilbertTransformer, {
     HilbertTransform,
     HilbertTransformResults,
 } from './HilbertTransformer'
-import { isPowerOfTwo } from './utils/validations'
+import { isPowerOfTwo } from '../utils/validations'
 
 export default class HilbertPeakDetector implements PeakDetector {
     public static Class?: HilbertPeakDetectorConstructor

@@ -1,6 +1,6 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft, { FftOptions } from '../Fft'
-import SpyFft from '../testDoubles/SpyFft'
+import Fft, { FftOptions } from '../components/Fft'
+import SpyFft from '../testDoubles/Fft/SpyFft'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
 
 export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
@@ -31,17 +31,17 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
     }
 
     @test()
-    protected static async throwsIfForwardDataLengthNotEqualToRadix() {
+    protected static async throwsIfForwardSignalLengthNotEqualToRadix() {
         const radix = 1024
         const fft = this.Fft({ radix })
         const err = assert.doesThrow(() => fft.forward([1, 2, 3, 4]))
         errorAssert.assertError(err, 'INVALID_PARAMETERS', {
-            parameters: ['radix', 'data'],
+            parameters: ['radix', 'signal'],
         })
     }
 
     @test()
-    protected static async throwsIfInverseDataLengthNotEqualToRadix() {
+    protected static async throwsIfInverseSignalLengthNotEqualToRadix() {
         const radix = 4
         const fft = this.Fft({ radix })
         const err = assert.doesThrow(() =>
@@ -51,7 +51,7 @@ export default class FastFourierTransformTest extends AbstractSignalProcessingTe
             })
         )
         errorAssert.assertError(err, 'INVALID_PARAMETERS', {
-            parameters: ['radix', 'data'],
+            parameters: ['radix', 'signal'],
         })
     }
 

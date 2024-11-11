@@ -11,12 +11,12 @@ import {
     assertValidLowCutoffHz,
     assertValidNumTaps,
     assertValidSampleRate,
-} from './utils/assertions'
+} from '../utils/assertions'
 import {
     normalizeArray,
     padArrayWithZeros,
     removeArrayPadding,
-} from './utils/preprocess'
+} from '../utils/preprocess'
 
 export default class FirBandpassFilter implements Filter {
     public static Class?: FirBandpassFilterConstructor
@@ -139,7 +139,7 @@ export default class FirBandpassFilter implements Filter {
 }
 
 export interface Filter {
-    run(data: number[]): number[]
+    run(signal: number[]): number[]
 }
 
 export type FirBandpassFilterConstructor = new (

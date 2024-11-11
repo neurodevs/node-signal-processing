@@ -1,8 +1,8 @@
 import { test, assert } from '@sprucelabs/test-utils'
-import HilbertPeakDetector from '../HilbertPeakDetector'
-import HilbertTransformer from '../HilbertTransformer'
-import SpyHilbertPeakDetector from '../testDoubles/SpyHilbertPeakDetector'
-import SpyHilbertTransformer from '../testDoubles/SpyHilbertTransformer'
+import HilbertPeakDetector from '../components/HilbertPeakDetector'
+import HilbertTransformer from '../components/HilbertTransformer'
+import SpyHilbertPeakDetector from '../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
+import SpyHilbertTransformer from '../testDoubles/HilbertTransformer/SpyHilbertTransformer'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
 
 export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTest {
@@ -89,20 +89,20 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
     }
 
     private static runForLength(length: number) {
-        const { data, timestamps } = this.generateDummyData(length)
-        return this.detector.run(data, timestamps)
+        const { signal, timestamps } = this.generateDummyData(length)
+        return this.detector.run(signal, timestamps)
     }
 
     private static generateDummyData(length: number) {
-        const data = []
+        const signal = []
         const timestamps = []
 
         for (let i = 0; i < length; i++) {
-            data.push(i)
+            signal.push(i)
             timestamps.push(i)
         }
 
-        return { data, timestamps }
+        return { signal, timestamps }
     }
 
     private static Detector() {

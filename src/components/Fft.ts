@@ -1,6 +1,6 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { Fft as FiliFft } from '@neurodevs/fili'
-import { assertValidDataLength, assertValidRadix } from './utils/assertions'
+import { assertValidDataLength, assertValidRadix } from '../utils/assertions'
 
 export default class Fft implements FastFourierTransform {
     public static Class?: FftConstructor
@@ -20,10 +20,10 @@ export default class Fft implements FastFourierTransform {
         return new (this.Class ?? this)(options)
     }
 
-    public forward(data: number[]) {
-        assertValidDataLength(data, this.radix)
+    public forward(signal: number[]) {
+        assertValidDataLength(signal, this.radix)
 
-        const result = this.filiFft.forward(data, 'none')
+        const result = this.filiFft.forward(signal, 'none')
 
         return {
             real: result.re,
@@ -31,11 +31,11 @@ export default class Fft implements FastFourierTransform {
         }
     }
 
-    public inverse(data: ComplexNumbers) {
-        assertValidDataLength(data.real, this.radix)
-        assertValidDataLength(data.imaginary, this.radix)
+    public inverse(signal: ComplexNumbers) {
+        assertValidDataLength(signal.real, this.radix)
+        assertValidDataLength(signal.imaginary, this.radix)
 
-        const result = this.filiFft.inverse(data.real, data.imaginary)
+        const result = this.filiFft.inverse(signal.real, signal.imaginary)
 
         return {
             real: result.re,
@@ -48,8 +48,8 @@ export default class Fft implements FastFourierTransform {
     }
 }
 export interface FastFourierTransform {
-    forward(data: number[]): ComplexNumbers
-    inverse(data: ComplexNumbers): ComplexNumbers
+    forward(signal: number[]): ComplexNumbers
+    inverse(signal: ComplexNumbers): ComplexNumbers
 }
 
 export type FftConstructor = new (options: FftOptions) => FastFourierTransform

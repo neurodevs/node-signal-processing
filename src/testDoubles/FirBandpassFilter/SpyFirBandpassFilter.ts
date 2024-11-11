@@ -1,6 +1,6 @@
 import FirBandpassFilter, {
     FirBandpassFilterOptions,
-} from '../FirBandpassFilter'
+} from '../../components/FirBandpassFilter'
 
 export default class SpyFirBandpassFilter extends FirBandpassFilter {
     public constructor(options: FirBandpassFilterOptions) {

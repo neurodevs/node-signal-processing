@@ -1,4 +1,4 @@
-import HilbertTransformer from '../HilbertTransformer'
+import HilbertTransformer from '../../components/HilbertTransformer'
 
 export default class SpyHilbertTransformer extends HilbertTransformer {
     public static constructorHitCount = 0
@@ -9,9 +9,9 @@ export default class SpyHilbertTransformer extends HilbertTransformer {
         super()
     }
 
-    public run(data: number[]) {
+    public run(signal: number[]) {
         SpyHilbertTransformer.runHitCount++
-        return super.run(data)
+        return super.run(signal)
     }
 
     public static resetTestDouble() {

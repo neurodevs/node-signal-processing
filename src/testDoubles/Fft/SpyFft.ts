@@ -1,4 +1,4 @@
-import Fft, { ComplexNumbers, FftOptions } from '../Fft'
+import Fft, { ComplexNumbers, FftOptions } from '../../components/Fft'
 
 export default class SpyFft extends Fft {
     public static constructorHitCount = 0
@@ -15,16 +15,16 @@ export default class SpyFft extends Fft {
         SpyFft.constructorCalledWith.push(options)
     }
 
-    public forward(data: number[]): ComplexNumbers {
+    public forward(signal: number[]): ComplexNumbers {
         SpyFft.forwardHitCount += 1
-        SpyFft.forwardCalledWith.push(data)
-        return super.forward(data)
+        SpyFft.forwardCalledWith.push(signal)
+        return super.forward(signal)
     }
 
-    public inverse(data: ComplexNumbers): ComplexNumbers {
+    public inverse(signal: ComplexNumbers): ComplexNumbers {
         SpyFft.inverseHitCount += 1
-        SpyFft.inverseCalledWith.push(data)
-        return super.inverse(data)
+        SpyFft.inverseCalledWith.push(signal)
+        return super.inverse(signal)
     }
 
     public static resetTestDouble() {

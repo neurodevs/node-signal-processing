@@ -1,11 +1,11 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft from '../Fft'
+import Fft from '../components/Fft'
 import {
     HilbertTransform,
     HilbertTransformResults,
-} from '../HilbertTransformer'
-import HilbertTransformer from '../HilbertTransformer'
-import SpyFft from '../testDoubles/SpyFft'
+} from '../components/HilbertTransformer'
+import HilbertTransformer from '../components/HilbertTransformer'
+import SpyFft from '../testDoubles/Fft/SpyFft'
 import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
 
 export default class HilbertTransformerTest extends AbstractSignalProcessingTest {
@@ -33,7 +33,7 @@ export default class HilbertTransformerTest extends AbstractSignalProcessingTest
     protected static async throwsOnRunWithArrayOfLengthNotPowerOfTwo() {
         const err = assert.doesThrow(() => this.hilbert.run([1, 2, 3]))
         errorAssert.assertError(err, 'INVALID_PARAMETERS', {
-            parameters: ['data'],
+            parameters: ['signal'],
         })
     }
 
