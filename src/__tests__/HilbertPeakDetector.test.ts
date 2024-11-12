@@ -60,7 +60,7 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
         const result = this.detector.run(dummyData, dummyTimestamps)
 
         const {
-            signal,
+            filteredSignal: signal,
             timestamps,
             upperAnalyticSignal,
             upperEnvelope,

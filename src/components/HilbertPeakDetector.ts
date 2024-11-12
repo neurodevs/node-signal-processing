@@ -174,7 +174,7 @@ export default class HilbertPeakDetector implements PeakDetector {
 
     private get results() {
         return {
-            signal: this.passedSignal,
+            filteredSignal: this.passedSignal,
             timestamps: this.timestamps,
             upperAnalyticSignal: this.upperAnalyticSignal,
             upperEnvelope: this.upperEnvelope,
@@ -200,7 +200,7 @@ export type HilbertPeakDetectorConstructor = new (
 ) => PeakDetector
 
 export interface PeakDetectorResults {
-    signal: number[]
+    filteredSignal: number[]
     timestamps: number[]
     upperAnalyticSignal: number[]
     upperEnvelope: number[]

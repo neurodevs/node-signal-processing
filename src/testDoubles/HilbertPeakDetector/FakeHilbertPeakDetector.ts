@@ -39,7 +39,7 @@ export default class FakeHilbertPeakDetector implements PeakDetector {
 
     private static createEmptyResult() {
         return {
-            signal: [],
+            filteredSignal: [],
             timestamps: [],
             upperAnalyticSignal: [],
             upperEnvelope: [],
