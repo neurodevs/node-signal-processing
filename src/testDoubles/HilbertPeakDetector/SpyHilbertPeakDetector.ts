@@ -10,9 +10,9 @@ export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
         super(transformer)
     }
 
-    public thresholdSignalByLowerEnvelope() {
+    public setSignalBelowLowerEnvelopeToZero() {
         SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount++
-        return super.thresholdSignalByLowerEnvelope()
+        return super.setSignalBelowLowerEnvelopeToZero()
     }
 
     public extractNonZeroSegments() {

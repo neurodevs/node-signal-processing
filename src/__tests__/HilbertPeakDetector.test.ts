@@ -1,5 +1,7 @@
 import { test, assert } from '@sprucelabs/test-utils'
-import HilbertPeakDetector from '../components/HilbertPeakDetector'
+import HilbertPeakDetector, {
+    PeakDetectorResults,
+} from '../components/HilbertPeakDetector'
 import HilbertTransformer from '../components/HilbertTransformer'
 import SpyHilbertPeakDetector from '../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
 import SpyHilbertTransformer from '../testDoubles/HilbertTransformer/SpyHilbertTransformer'
@@ -86,6 +88,27 @@ export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTes
     protected static async runPadsDataWithZerosToNearestPowerOfTwo() {
         const examples = [1, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15]
         examples.forEach((length) => this.runForLength(length))
+    }
+
+    @test()
+    protected static async allSignalsHaveSameLength() {
+        const results = this.runForLength(20)
+
+        const fields = [
+            'filteredSignal',
+            'upperAnalyticSignal',
+            'lowerAnalyticSignal',
+            'thresholdedSignal',
+        ] as (keyof PeakDetectorResults)[]
+
+        const fieldLengths = fields.map((field) => results[field].length)
+        const uniqueLengths = new Set(fieldLengths)
+
+        assert.isEqual(
+            uniqueLengths.size,
+            1,
+            `Not all signals have unique lengths: ${fieldLengths}!`
+        )
     }
 
     private static runForLength(length: number) {

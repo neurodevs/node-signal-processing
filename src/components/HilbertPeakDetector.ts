@@ -35,7 +35,7 @@ export default class HilbertPeakDetector implements PeakDetector {
         this.padSignalIfNotPowerOfTwo()
         this.calculateUpperEnvelope()
         this.calculateLowerEnvelope()
-        this.thresholdSignalByLowerEnvelope()
+        this.setSignalBelowLowerEnvelopeToZero()
         this.extractNonZeroSegments()
         this.detectPeaks()
 
@@ -64,8 +64,8 @@ export default class HilbertPeakDetector implements PeakDetector {
         this.lowerHilbert = this.transformer.run(this.upperAnalyticSignal)
     }
 
-    protected thresholdSignalByLowerEnvelope() {
-        this.thresholdedSignal = this.signal.slice()
+    protected setSignalBelowLowerEnvelopeToZero() {
+        this.thresholdedSignal = this.passedSignal.slice()
 
         for (let i = 0; i < this.signalLength; i++) {
             if (this.lowerEnvelope[i] > this.signal[i]) {
@@ -123,6 +123,13 @@ export default class HilbertPeakDetector implements PeakDetector {
         }
     }
 
+    private removePadding(signal: number[]) {
+        return signal.slice(
+            this.numZerosToPadAtStart,
+            signal.length - this.numZerosToPadAtEnd
+        )
+    }
+
     private get signalLength() {
         return this.passedSignal.length
     }
@@ -161,22 +168,22 @@ export default class HilbertPeakDetector implements PeakDetector {
     }
 
     private get upperEnvelope() {
-        return this.upperHilbert.envelope
+        return this.removePadding(this.upperHilbert.envelope)
     }
 
     private get lowerAnalyticSignal() {
-        return this.lowerHilbert.analyticSignal
+        return this.removePadding(this.lowerHilbert.analyticSignal)
     }
 
     private get lowerEnvelope() {
-        return this.lowerHilbert.envelope
+        return this.removePadding(this.lowerHilbert.envelope)
     }
 
     private get results() {
         return {
             filteredSignal: this.passedSignal,
             timestamps: this.timestamps,
-            upperAnalyticSignal: this.upperAnalyticSignal,
+            upperAnalyticSignal: this.removePadding(this.upperAnalyticSignal),
             upperEnvelope: this.upperEnvelope,
             lowerAnalyticSignal: this.lowerAnalyticSignal,
             lowerEnvelope: this.lowerEnvelope,
