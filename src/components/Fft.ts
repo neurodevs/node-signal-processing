@@ -32,10 +32,11 @@ export default class Fft implements FastFourierTransform {
     }
 
     public inverse(signal: ComplexNumbers) {
-        assertValidDataLength(signal.real, this.radix)
-        assertValidDataLength(signal.imaginary, this.radix)
+        const { real, imaginary } = signal
+        assertValidDataLength(real, this.radix)
+        assertValidDataLength(imaginary, this.radix)
 
-        const result = this.filiFft.inverse(signal.real, signal.imaginary)
+        const result = this.filiFft.inverse(real, imaginary)
 
         return {
             real: result.re,

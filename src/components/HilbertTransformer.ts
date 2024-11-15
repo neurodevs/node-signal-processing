@@ -22,7 +22,7 @@ export default class HilbertTransformer implements HilbertTransform {
     }
 
     public run(signal: number[]) {
-        this.signal = signal
+        this.signal = signal.slice()
         this.assertValidSignal()
 
         this.runForwardFft()
