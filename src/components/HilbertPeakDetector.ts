@@ -43,7 +43,7 @@ export default class HilbertPeakDetector implements PeakDetector {
     }
 
     private padSignalIfNotPowerOfTwo() {
-        if (!this.signalLengthIsPowerOfTwo) {
+        if (!this.passedSignalLengthIsPowerOfTwo) {
             this.padSignalToNextPowerOfTwo()
         }
     }
@@ -67,8 +67,8 @@ export default class HilbertPeakDetector implements PeakDetector {
     protected setSignalBelowLowerEnvelopeToZero() {
         this.thresholdedSignal = this.passedSignal.slice()
 
-        for (let i = 0; i < this.signalLength; i++) {
-            if (this.lowerEnvelope[i] > this.signal[i]) {
+        for (let i = 0; i < this.passedSignalLength; i++) {
+            if (this.lowerEnvelope[i] > this.unpaddedSignal[i]) {
                 this.thresholdedSignal[i] = 0
             }
         }
@@ -79,7 +79,7 @@ export default class HilbertPeakDetector implements PeakDetector {
 
         let currentSegment = this.createEmptySegment()
 
-        for (let i = 0; i < this.signalLength; i++) {
+        for (let i = 0; i < this.passedSignalLength; i++) {
             const value = this.thresholdedSignal[i]
             const timestamp = this.timestamps[i]
 
@@ -126,25 +126,29 @@ export default class HilbertPeakDetector implements PeakDetector {
     private removePadding(signal: number[]) {
         return signal.slice(
             this.numZerosToPadAtStart,
-            signal.length - this.numZerosToPadAtEnd
+            this.signalLength - this.numZerosToPadAtEnd
         )
     }
 
     private get signalLength() {
+        return this.signal.length
+    }
+
+    private get passedSignalLength() {
         return this.passedSignal.length
     }
 
-    private get signalLengthIsPowerOfTwo() {
-        return isPowerOfTwo(this.signalLength)
+    private get passedSignalLengthIsPowerOfTwo() {
+        return isPowerOfTwo(this.passedSignalLength)
     }
 
     private get nextPowerOfTwo() {
-        const level = Math.log2(this.signalLength)
+        const level = Math.log2(this.passedSignalLength)
         return Math.pow(2, Math.ceil(level))
     }
 
     private get totalZerosToPad() {
-        return this.nextPowerOfTwo - this.signalLength
+        return this.nextPowerOfTwo - this.passedSignalLength
     }
 
     private get numZerosToPadAtStart() {
@@ -163,20 +167,24 @@ export default class HilbertPeakDetector implements PeakDetector {
         return Array(this.numZerosToPadAtEnd).fill(0)
     }
 
+    private get unpaddedSignal() {
+        return this.removePadding(this.signal)
+    }
+
     private get upperAnalyticSignal() {
         return this.upperHilbert.analyticSignal
     }
 
     private get upperEnvelope() {
-        return this.removePadding(this.upperHilbert.envelope)
+        return this.upperHilbert.envelope
     }
 
     private get lowerAnalyticSignal() {
-        return this.removePadding(this.lowerHilbert.analyticSignal)
+        return this.lowerHilbert.analyticSignal
     }
 
     private get lowerEnvelope() {
-        return this.removePadding(this.lowerHilbert.envelope)
+        return this.lowerHilbert.envelope
     }
 
     private get results() {
@@ -184,9 +192,9 @@ export default class HilbertPeakDetector implements PeakDetector {
             filteredSignal: this.passedSignal,
             timestamps: this.timestamps,
             upperAnalyticSignal: this.removePadding(this.upperAnalyticSignal),
-            upperEnvelope: this.upperEnvelope,
-            lowerAnalyticSignal: this.lowerAnalyticSignal,
-            lowerEnvelope: this.lowerEnvelope,
+            upperEnvelope: this.removePadding(this.upperEnvelope),
+            lowerAnalyticSignal: this.removePadding(this.lowerAnalyticSignal),
+            lowerEnvelope: this.removePadding(this.lowerEnvelope),
             thresholdedSignal: this.thresholdedSignal,
             nonZeroSegments: this.nonZeroSegments,
             peaks: this.peaks,
