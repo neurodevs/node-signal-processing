@@ -1,7 +1,7 @@
 import {
     FirBandpassFilterOptions,
     Filter,
-} from '../../components/FirBandpassFilter'
+} from '../../impl/FirBandpassFilter'
 
 export default class FakeFirBandpassFilter implements Filter {
     public static constructorCalledWith: FirBandpassFilterOptions[] = []

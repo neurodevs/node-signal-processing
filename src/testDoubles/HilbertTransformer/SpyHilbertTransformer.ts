@@ -1,4 +1,4 @@
-import HilbertTransformer from '../../components/HilbertTransformer'
+import HilbertTransformer from '../../impl/HilbertTransformer'
 
 export default class SpyHilbertTransformer extends HilbertTransformer {
     public static constructorHitCount = 0

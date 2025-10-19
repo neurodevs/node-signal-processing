@@ -1,9 +1,9 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
 import FirBandpassFilter, {
     FirBandpassFilterOptions,
-} from '../components/FirBandpassFilter'
-import SpyFirBandpassFilter from '../testDoubles/FirBandpassFilter/SpyFirBandpassFilter'
-import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
+} from '../../impl/FirBandpassFilter'
+import SpyFirBandpassFilter from '../../testDoubles/FirBandpassFilter/SpyFirBandpassFilter'
+import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
     private static testData = [1, 2, 3, 4]

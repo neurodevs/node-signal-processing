@@ -1,12 +1,12 @@
 import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft from '../components/Fft'
+import Fft from '../../impl/Fft'
 import {
     HilbertTransform,
     HilbertTransformResults,
-} from '../components/HilbertTransformer'
-import HilbertTransformer from '../components/HilbertTransformer'
-import SpyFft from '../testDoubles/Fft/SpyFft'
-import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
+} from '../../impl/HilbertTransformer'
+import HilbertTransformer from '../../impl/HilbertTransformer'
+import SpyFft from '../../testDoubles/Fft/SpyFft'
+import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class HilbertTransformerTest extends AbstractSignalProcessingTest {
     private static testData = [1, 2, 3, 4]

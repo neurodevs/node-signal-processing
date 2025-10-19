@@ -1,7 +1,7 @@
 import {
     HilbertTransform,
     HilbertTransformResults,
-} from '../../components/HilbertTransformer'
+} from '../../impl/HilbertTransformer'
 
 export default class FakeHilbertTransformer implements HilbertTransform {
     public static numCallsToConstructor = 0

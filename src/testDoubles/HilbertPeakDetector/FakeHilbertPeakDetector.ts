@@ -1,8 +1,8 @@
 import {
     PeakDetector,
     PeakDetectorResults,
-} from '../../components/HilbertPeakDetector'
-import { HilbertTransform } from '../../components/HilbertTransformer'
+} from '../../impl/HilbertPeakDetector'
+import { HilbertTransform } from '../../impl/HilbertTransformer'
 
 export default class FakeHilbertPeakDetector implements PeakDetector {
     public static constructorCalledWith: HilbertTransform[] = []

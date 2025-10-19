@@ -1,11 +1,11 @@
 import { test, assert } from '@sprucelabs/test-utils'
 import HilbertPeakDetector, {
     PeakDetectorResults,
-} from '../components/HilbertPeakDetector'
-import HilbertTransformer from '../components/HilbertTransformer'
-import SpyHilbertPeakDetector from '../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
-import SpyHilbertTransformer from '../testDoubles/HilbertTransformer/SpyHilbertTransformer'
-import AbstractSignalProcessingTest from './AbstractSignalProcessingTest'
+} from '../../impl/HilbertPeakDetector'
+import HilbertTransformer from '../../impl/HilbertTransformer'
+import SpyHilbertPeakDetector from '../../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
+import SpyHilbertTransformer from '../../testDoubles/HilbertTransformer/SpyHilbertTransformer'
+import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
 
 export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTest {
     private static detector: HilbertPeakDetector
