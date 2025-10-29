@@ -1,6 +1,6 @@
 {
   "name": "@neurodevs/node-signal-processing",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Object-oriented algorithms for digital signal processing.",
   "type": "module",
   "keywords": [
