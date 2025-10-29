@@ -1,8 +1,8 @@
-import { isPowerOfTwo } from '../utils/validations'
+import { isPowerOfTwo } from '../utils/validations.js'
 import HilbertTransformer, {
     HilbertTransform,
     HilbertTransformResults,
-} from './HilbertTransformer'
+} from './HilbertTransformer.js'
 
 export default class HilbertPeakDetector implements PeakDetector {
     public static Class?: HilbertPeakDetectorConstructor

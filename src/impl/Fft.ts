@@ -1,15 +1,18 @@
-import { assertOptions } from '@sprucelabs/schema'
-import { Fft as FiliFft } from '@neurodevs/fili'
-import { assertValidDataLength, assertValidRadix } from '../utils/assertions'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+
+import { assertValidDataLength, assertValidRadix } from '../utils/assertions.js'
+
+const { Fft: FiliFft } = require('@neurodevs/fili')
 
 export default class Fft implements FastFourierTransform {
     public static Class?: FftConstructor
 
-    private filiFft: FiliFft
+    private filiFft: typeof FiliFft
     private radix: number
 
     protected constructor(options: FftOptions) {
-        const { radix } = assertOptions(options, ['radix'])
+        const { radix } = options
         assertValidRadix(radix)
 
         this.radix = radix

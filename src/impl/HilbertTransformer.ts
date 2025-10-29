@@ -1,8 +1,8 @@
 import {
     assertArrayIsNotEmpty,
     assertArrayLengthIsPowerOfTwo,
-} from '../utils/assertions'
-import Fft, { ComplexNumbers, FastFourierTransform } from './Fft'
+} from '../utils/assertions.js'
+import Fft, { ComplexNumbers, FastFourierTransform } from './Fft.js'
 
 export default class HilbertTransformer implements HilbertTransform {
     public static Class?: HilbertTransformConstructor

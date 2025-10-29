@@ -1,12 +1,13 @@
-import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import Fft from '../../impl/Fft'
+import { test, assert } from '@neurodevs/node-tdd'
+
+import Fft from '../../impl/Fft.js'
 import {
     HilbertTransform,
     HilbertTransformResults,
-} from '../../impl/HilbertTransformer'
-import HilbertTransformer from '../../impl/HilbertTransformer'
-import SpyFft from '../../testDoubles/Fft/SpyFft'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
+} from '../../impl/HilbertTransformer.js'
+import HilbertTransformer from '../../impl/HilbertTransformer.js'
+import SpyFft from '../../testDoubles/Fft/SpyFft.js'
+import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
 
 export default class HilbertTransformerTest extends AbstractSignalProcessingTest {
     private static testData = [1, 2, 3, 4]
@@ -25,16 +26,15 @@ export default class HilbertTransformerTest extends AbstractSignalProcessingTest
 
     @test()
     protected static async throwsOnRunWithEmptyArray() {
-        const err = assert.doesThrow(() => this.hilbert.run([]))
-        errorAssert.assertError(err, 'INVALID_EMPTY_ARRAY')
+        assert.doesThrow(() => this.hilbert.run([]), 'Array cannot be empty!')
     }
 
     @test()
     protected static async throwsOnRunWithArrayOfLengthNotPowerOfTwo() {
-        const err = assert.doesThrow(() => this.hilbert.run([1, 2, 3]))
-        errorAssert.assertError(err, 'INVALID_PARAMETERS', {
-            parameters: ['signal'],
-        })
+        assert.doesThrow(
+            () => this.hilbert.run([1, 2, 3]),
+            'Data for Hilbert transform must have length equal to a power of two!'
+        )
     }
 
     @test()

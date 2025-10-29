@@ -1,5 +1,5 @@
-import HilbertPeakDetector from '../../impl/HilbertPeakDetector'
-import { HilbertTransform } from '../../impl/HilbertTransformer'
+import HilbertPeakDetector from '../../impl/HilbertPeakDetector.js'
+import { HilbertTransform } from '../../impl/HilbertTransformer.js'
 
 export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
     public static generateSegmentsHitCount = 0

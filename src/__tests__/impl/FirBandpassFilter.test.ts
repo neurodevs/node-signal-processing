@@ -1,9 +1,8 @@
-import { test, assert, errorAssert } from '@sprucelabs/test-utils'
-import FirBandpassFilter, {
-    FirBandpassFilterOptions,
-} from '../../impl/FirBandpassFilter'
-import SpyFirBandpassFilter from '../../testDoubles/FirBandpassFilter/SpyFirBandpassFilter'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
+import { test, assert } from '@neurodevs/node-tdd'
+
+import { FirBandpassFilterOptions } from '../../impl/FirBandpassFilter.js'
+import SpyFirBandpassFilter from '../../testDoubles/FirBandpassFilter/SpyFirBandpassFilter.js'
+import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
 
 export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
     private static testData = [1, 2, 3, 4]
@@ -17,21 +16,6 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
         this.options = this.generateOptions()
         this.filter = this.Filter(this.options)
         this.result = this.filter.run(this.testData)
-    }
-
-    @test()
-    protected static async throwsWithMissingRequiredOptions() {
-        // @ts-ignore
-        const err = assert.doesThrow(() => new FirBandpassFilter())
-        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: [
-                'sampleRate',
-                'lowCutoffHz',
-                'highCutoffHz',
-                'numTaps',
-                'attenuation',
-            ],
-        })
     }
 
     @test()
@@ -72,8 +56,7 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
 
     @test()
     protected static throwsWhenRunReceivesEmptyList() {
-        const err = assert.doesThrow(() => this.filter.run([]))
-        errorAssert.assertError(err, 'INVALID_EMPTY_ARRAY')
+        assert.doesThrow(() => this.filter.run([]), 'Array cannot be empty!')
     }
 
     @test()
@@ -135,45 +118,55 @@ export default class FirBandpassFilterTest extends AbstractSignalProcessingTest 
     }
 
     private static assertInvalidSampleRate(sampleRate: number) {
-        this.assertDoesThrowInvalidParameters({ sampleRate }, ['sampleRate'])
+        this.assertDoesThrowInvalidParameters(
+            { sampleRate },
+            'Sample rate must be a positive number!'
+        )
     }
 
     private static assertInvalidLowCutoffHz(lowCutoffHz: number) {
-        this.assertDoesThrowInvalidParameters({ lowCutoffHz }, ['lowCutoffHz'])
+        this.assertDoesThrowInvalidParameters(
+            { lowCutoffHz },
+            'Low frequency cutoff must be a positive number!'
+        )
     }
 
     private static assertInvalidHighCutoffHz(highCutoffHz: number) {
-        this.assertDoesThrowInvalidParameters({ highCutoffHz }, [
-            'highCutoffHz',
-        ])
+        this.assertDoesThrowInvalidParameters(
+            { highCutoffHz },
+            'High frequency cutoff must be a positive number!'
+        )
     }
 
     private static assertInvalidFrequencies(
         lowCutoffHz: number,
         highCutoffHz: number
     ) {
-        this.assertDoesThrowInvalidParameters({ lowCutoffHz, highCutoffHz }, [
-            'lowCutoffHz',
-            'highCutoffHz',
-        ])
+        this.assertDoesThrowInvalidParameters(
+            { lowCutoffHz, highCutoffHz },
+            'High frequency cutoff must be greater than low frequency cutoff!'
+        )
     }
 
     private static assertInvalidNumTaps(numTaps: number) {
-        this.assertDoesThrowInvalidParameters({ numTaps }, ['numTaps'])
+        this.assertDoesThrowInvalidParameters(
+            { numTaps },
+            'Number of taps must be an odd positive integer!'
+        )
     }
 
     private static async assertInvalidAttenuation(attenuation: number) {
-        this.assertDoesThrowInvalidParameters({ attenuation }, ['attenuation'])
+        this.assertDoesThrowInvalidParameters(
+            { attenuation },
+            'Attenuation must be a positive number!'
+        )
     }
 
     private static assertDoesThrowInvalidParameters(
         options: Partial<FirBandpassFilterOptions>,
-        parameters: string[]
+        message: string
     ) {
-        const err = assert.doesThrow(() => this.Filter(options))
-        errorAssert.assertError(err, 'INVALID_PARAMETERS', {
-            parameters,
-        })
+        assert.doesThrow(() => this.Filter(options), message)
     }
 
     private static generateOptions() {

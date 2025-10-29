@@ -1,39 +1,43 @@
-// Fft + test doubles
-export { default as Fft } from './impl/Fft'
-export * from './impl/Fft'
+// FastFourierTransform
 
-export { default as SpyFft } from './testDoubles/Fft/SpyFft'
-export * from './testDoubles/Fft/SpyFft'
+export { default as Fft } from './impl/Fft.js'
+export * from './impl/Fft.js'
 
-export { default as FakeFft } from './testDoubles/Fft/FakeFft'
-export * from './testDoubles/Fft/FakeFft'
+export { default as SpyFft } from './testDoubles/Fft/SpyFft.js'
+export * from './testDoubles/Fft/SpyFft.js'
 
-// FirBandpassFilter + test doubles
-export { default as FirBandpassFilter } from './impl/FirBandpassFilter'
-export * from './impl/FirBandpassFilter'
+export { default as FakeFft } from './testDoubles/Fft/FakeFft.js'
+export * from './testDoubles/Fft/FakeFft.js'
 
-export { default as SpyFirBandpassFilter } from './testDoubles/FirBandpassFilter/SpyFirBandpassFilter'
-export * from './testDoubles/FirBandpassFilter/SpyFirBandpassFilter'
+// FirBandpassFilter
 
-export { default as FakeFirBandpassFilter } from './testDoubles/FirBandpassFilter/FakeFirBandpassFilter'
-export * from './testDoubles/FirBandpassFilter/FakeFirBandpassFilter'
+export { default as FirBandpassFilter } from './impl/FirBandpassFilter.js'
+export * from './impl/FirBandpassFilter.js'
 
-// HilbertPeakDetector + test doubles
-export { default as HilbertPeakDetector } from './impl/HilbertPeakDetector'
-export * from './impl/HilbertPeakDetector'
+export { default as SpyFirBandpassFilter } from './testDoubles/FirBandpassFilter/SpyFirBandpassFilter.js'
+export * from './testDoubles/FirBandpassFilter/SpyFirBandpassFilter.js'
 
-export { default as SpyHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
-export * from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
+export { default as FakeFirBandpassFilter } from './testDoubles/FirBandpassFilter/FakeFirBandpassFilter.js'
+export * from './testDoubles/FirBandpassFilter/FakeFirBandpassFilter.js'
 
-export { default as FakeHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector'
-export * from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector'
+// HilbertPeakDetector
 
-// HilbertTransformer + test doubles
-export { default as HilbertTransformer } from './impl/HilbertTransformer'
-export * from './impl/HilbertTransformer'
+export { default as HilbertPeakDetector } from './impl/HilbertPeakDetector.js'
+export * from './impl/HilbertPeakDetector.js'
 
-export { default as SpyHilbertTransformer } from './testDoubles/HilbertTransformer/SpyHilbertTransformer'
-export * from './testDoubles/HilbertTransformer/SpyHilbertTransformer'
+export { default as SpyHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
+export * from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
 
-export { default as FakeHilbertTransformer } from './testDoubles/HilbertTransformer/FakeHilbertTransformer'
-export * from './testDoubles/HilbertTransformer/FakeHilbertTransformer'
+export { default as FakeHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector.js'
+export * from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector.js'
+
+// HilbertTransformer
+
+export { default as HilbertTransformer } from './impl/HilbertTransformer.js'
+export * from './impl/HilbertTransformer.js'
+
+export { default as SpyHilbertTransformer } from './testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
+export * from './testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
+
+export { default as FakeHilbertTransformer } from './testDoubles/HilbertTransformer/FakeHilbertTransformer.js'
+export * from './testDoubles/HilbertTransformer/FakeHilbertTransformer.js'

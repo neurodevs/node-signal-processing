@@ -1,4 +1,4 @@
-import Fft, { ComplexNumbers, FftOptions } from '../../impl/Fft'
+import Fft, { ComplexNumbers, FftOptions } from '../../impl/Fft.js'
 
 export default class SpyFft extends Fft {
     public static constructorHitCount = 0

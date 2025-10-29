@@ -1,11 +1,12 @@
-import { test, assert } from '@sprucelabs/test-utils'
+import { test, assert } from '@neurodevs/node-tdd'
+
 import HilbertPeakDetector, {
     PeakDetectorResults,
-} from '../../impl/HilbertPeakDetector'
-import HilbertTransformer from '../../impl/HilbertTransformer'
-import SpyHilbertPeakDetector from '../../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector'
-import SpyHilbertTransformer from '../../testDoubles/HilbertTransformer/SpyHilbertTransformer'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest'
+} from '../../impl/HilbertPeakDetector.js'
+import HilbertTransformer from '../../impl/HilbertTransformer.js'
+import SpyHilbertPeakDetector from '../../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
+import SpyHilbertTransformer from '../../testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
+import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
 
 export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTest {
     private static detector: HilbertPeakDetector

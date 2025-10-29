@@ -2,7 +2,7 @@ import {
     ComplexNumbers,
     FastFourierTransform,
     FftOptions,
-} from '../../impl/Fft'
+} from '../../impl/Fft.js'
 
 export default class FakeFft implements FastFourierTransform {
     public static constructorCalledWith: FftOptions[] = []

@@ -1,8 +1,6 @@
-import { assertOptions } from '@sprucelabs/schema'
-import {
-    FirCoeffs as FiliFirCoeffs,
-    FirFilter as FiliFirFilter,
-} from '@neurodevs/fili'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+
 import {
     assertArrayIsNotEmpty,
     assertHighFreqGreaterThanLowFreq,
@@ -11,12 +9,17 @@ import {
     assertValidLowCutoffHz,
     assertValidNumTaps,
     assertValidSampleRate,
-} from '../utils/assertions'
+} from '../utils/assertions.js'
 import {
     normalizeArray,
     padArrayWithZeros,
     removeArrayPadding,
-} from '../utils/preprocess'
+} from '../utils/preprocess.js'
+
+const {
+    FirCoeffs: FiliFirCoeffs,
+    FirFilter: FiliFirFilter,
+} = require('@neurodevs/fili')
 
 export default class FirBandpassFilter implements Filter {
     public static Class?: FirBandpassFilterConstructor
@@ -30,8 +33,8 @@ export default class FirBandpassFilter implements Filter {
     private attenuation: number
     private signal!: number[]
     private result!: number[]
-    private filiFirFilter!: FiliFirFilter
-    private filiFirCoeffs!: FiliFirCoeffs
+    private filiFirFilter!: typeof FiliFirFilter
+    private filiFirCoeffs!: typeof FiliFirCoeffs
     private firFilterCoeffs!: number[]
 
     protected constructor(options: FirBandpassFilterOptions) {
@@ -43,13 +46,7 @@ export default class FirBandpassFilter implements Filter {
             attenuation,
             useNormalization = true,
             usePadding = true,
-        } = assertOptions(options, [
-            'sampleRate',
-            'lowCutoffHz',
-            'highCutoffHz',
-            'numTaps',
-            'attenuation',
-        ])
+        } = options
 
         this.sampleRate = sampleRate
         this.lowCutoffHz = lowCutoffHz

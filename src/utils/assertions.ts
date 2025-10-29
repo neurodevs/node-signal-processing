@@ -1,34 +1,24 @@
-import { SchemaError } from '@sprucelabs/schema'
-import SpruceError from '../errors/SpruceError'
-import { isOddPositiveInt, isPositiveNumber, isPowerOfTwo } from './validations'
+import {
+    isOddPositiveInt,
+    isPositiveNumber,
+    isPowerOfTwo,
+} from './validations.js'
 
 export function assertValidSampleRate(sampleRate: number): void {
     if (!isPositiveNumber(sampleRate)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['sampleRate'],
-            friendlyMessage: 'Sample rate must be a positive number!',
-        })
+        throw new Error('Sample rate must be a positive number!')
     }
 }
 
 export function assertValidLowCutoffHz(lowCutoffHz: number): void {
     if (!isPositiveNumber(lowCutoffHz)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['lowCutoffHz'],
-            friendlyMessage: 'Low frequency cutoff must be a positive number!',
-        })
+        throw new Error('Low frequency cutoff must be a positive number!')
     }
 }
 
 export function assertValidHighCutoffHz(highCutoffHz: number): void {
     if (!isPositiveNumber(highCutoffHz)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['highCutoffHz'],
-            friendlyMessage: 'High frequency cutoff must be a positive number!',
-        })
+        throw new Error('High frequency cutoff must be a positive number!')
     }
 }
 
@@ -37,68 +27,46 @@ export function assertHighFreqGreaterThanLowFreq(
     highCutoffHz: number
 ): void {
     if (lowCutoffHz >= highCutoffHz) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['lowCutoffHz', 'highCutoffHz'],
-            friendlyMessage:
-                'High frequency cutoff must be greater than low frequency cutoff!',
-        })
+        throw new Error(
+            'High frequency cutoff must be greater than low frequency cutoff!'
+        )
     }
 }
 
 export function assertValidNumTaps(numTaps: number): void {
     if (!isOddPositiveInt(numTaps)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['numTaps'],
-            friendlyMessage: 'Number of taps must be an odd positive integer!',
-        })
+        throw new Error('Number of taps must be an odd positive integer!')
     }
 }
 
 export function assertValidAttenuation(attenuation: number): void {
     if (!isPositiveNumber(attenuation)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['attenuation'],
-            friendlyMessage: 'Attenuation must be a positive number!',
-        })
+        throw new Error('Attenuation must be a positive number!')
     }
 }
 
 export function assertValidRadix(radix: number): void {
     if (!isPowerOfTwo(radix)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['radix'],
-            friendlyMessage: 'Radix must be a power of two!',
-        })
+        throw new Error('Radix must be a power of two!')
     }
 }
 
 export function assertValidDataLength(signal: number[], radix: number): void {
     if (signal.length !== radix) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['radix', 'signal'],
-            friendlyMessage: 'Data must be same length as radix!',
-        })
+        throw new Error('Data must be same length as radix!')
     }
 }
 
 export function assertArrayIsNotEmpty(signal: number[]): void {
     if (signal.length === 0) {
-        throw new SpruceError({ code: 'INVALID_EMPTY_ARRAY' })
+        throw new Error('Array cannot be empty!')
     }
 }
 
 export function assertArrayLengthIsPowerOfTwo(signal: number[]): void {
     if (!isPowerOfTwo(signal.length)) {
-        throw new SchemaError({
-            code: 'INVALID_PARAMETERS',
-            parameters: ['signal'],
-            friendlyMessage:
-                'Data for Hilbert transform must have length equal to a power of two!',
-        })
+        throw new Error(
+            'Data for Hilbert transform must have length equal to a power of two!'
+        )
     }
 }

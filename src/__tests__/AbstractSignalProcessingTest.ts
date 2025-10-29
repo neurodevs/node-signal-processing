@@ -1,6 +1,6 @@
-import AbstractSpruceTest from '@sprucelabs/test-utils'
+import AbstractModuleTest from '@neurodevs/node-tdd'
 
-export default abstract class AbstractSignalProcessingTest extends AbstractSpruceTest {
+export default abstract class AbstractSignalProcessingTest extends AbstractModuleTest {
     protected static async beforeEach() {
         await super.beforeEach()
     }
