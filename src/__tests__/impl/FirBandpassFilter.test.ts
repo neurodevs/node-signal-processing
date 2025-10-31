@@ -2,9 +2,9 @@ import { test, assert } from '@neurodevs/node-tdd'
 
 import { FirBandpassFilterOptions } from '../../impl/FirBandpassFilter.js'
 import SpyFirBandpassFilter from '../../testDoubles/FirBandpassFilter/SpyFirBandpassFilter.js'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class FirBandpassFilterTest extends AbstractSignalProcessingTest {
+export default class FirBandpassFilterTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
     private static filter: SpyFirBandpassFilter
     private static options: FirBandpassFilterOptions

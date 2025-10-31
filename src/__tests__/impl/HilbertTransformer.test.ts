@@ -7,9 +7,9 @@ import {
 } from '../../impl/HilbertTransformer.js'
 import HilbertTransformer from '../../impl/HilbertTransformer.js'
 import SpyFft from '../../testDoubles/Fft/SpyFft.js'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class HilbertTransformerTest extends AbstractSignalProcessingTest {
+export default class HilbertTransformerTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
     private static hilbert: HilbertTransform
     private static result: HilbertTransformResults

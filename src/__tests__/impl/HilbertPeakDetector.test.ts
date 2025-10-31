@@ -6,9 +6,9 @@ import HilbertPeakDetector, {
 import HilbertTransformer from '../../impl/HilbertTransformer.js'
 import SpyHilbertPeakDetector from '../../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
 import SpyHilbertTransformer from '../../testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class HilbertPeakDetectorTest extends AbstractSignalProcessingTest {
+export default class HilbertPeakDetectorTest extends AbstractPackageTest {
     private static detector: HilbertPeakDetector
 
     protected static async beforeEach() {

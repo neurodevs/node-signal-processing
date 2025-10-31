@@ -2,9 +2,9 @@ import { test, assert } from '@neurodevs/node-tdd'
 
 import { FftOptions } from '../../impl/Fft.js'
 import SpyFft from '../../testDoubles/Fft/SpyFft.js'
-import AbstractSignalProcessingTest from '../AbstractSignalProcessingTest.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class FastFourierTransformTest extends AbstractSignalProcessingTest {
+export default class FastFourierTransformTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
     private static fft: SpyFft
     private static fftOptions: FftOptions
