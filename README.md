@@ -9,10 +9,10 @@ Object-oriented algorithms for digital signal processing.
 - [Overview](#overview)
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Fft](#fft)
-    - [FirBandpassFilter](#firbandpassfilter)
-    - [HilbertPeakDetector](#hilbertpeakdetector)
-    - [HilbertTransformer](#hilberttransformer)
+  - [Fft](#fft)
+  - [FirBandpassFilter](#firbandpassfilter)
+  - [HilbertPeakDetector](#hilbertpeakdetector)
+  - [HilbertTransformer](#hilberttransformer)
 
 ## Overview
 
