@@ -110,7 +110,7 @@ export default class HilbertTransformer implements HilbertTransform {
         return {
             real: this.real,
             imaginary: this.imaginary,
-        } as ComplexNumbers
+        } satisfies ComplexNumbers
     }
 
     private get results() {

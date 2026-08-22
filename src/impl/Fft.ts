@@ -1,4 +1,5 @@
-import { createRequire } from 'module'
+import { createRequire } from 'node:module'
+
 const require = createRequire(import.meta.url)
 
 import { assertValidDataLength, assertValidRadix } from '../utils/assertions.js'

@@ -99,11 +99,11 @@ export default class HilbertPeakDetector implements PeakDetector {
         }
     }
 
-    private createEmptySegment() {
+    private createEmptySegment(): SignalSegment {
         return {
             values: [],
             timestamps: [],
-        } as SignalSegment
+        }
     }
 
     protected detectPeaks() {
