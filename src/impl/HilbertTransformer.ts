@@ -21,7 +21,7 @@ export default class HilbertTransformer implements HilbertTransform {
         return new (this.Class ?? this)()
     }
 
-    public run(signal: number[]) {
+    public run(signal: readonly number[]) {
         this.signal = signal.slice()
         this.assertValidSignal()
 
@@ -135,7 +135,7 @@ export default class HilbertTransformer implements HilbertTransform {
 }
 
 export interface HilbertTransform {
-    run(signal: number[]): HilbertTransformResults
+    run(signal: readonly number[]): HilbertTransformResults
 }
 
 export type HilbertTransformConstructor = new () => HilbertTransform

@@ -32,7 +32,8 @@ export default class FirBandpassFilter implements Filter {
     private highCutoffHz: number
     private numTaps: number
     private attenuation: number
-    private signal!: number[]
+    
+    private signal!: readonly number[]
     private result!: number[]
     private filiFirFilter!: typeof FiliFirFilter
     private filiFirCoeffs!: typeof FiliFirCoeffs
@@ -88,7 +89,7 @@ export default class FirBandpassFilter implements Filter {
         return new (this.Class ?? this)(options)
     }
 
-    public run(signal: number[]) {
+    public run(signal: readonly number[]) {
         this.signal = signal
         assertArrayIsNotEmpty(this.signal)
 
@@ -137,7 +138,7 @@ export default class FirBandpassFilter implements Filter {
 }
 
 export interface Filter {
-    run(signal: number[]): number[]
+    run(signal: readonly number[]): number[]
 }
 
 export type FirBandpassFilterConstructor = new (

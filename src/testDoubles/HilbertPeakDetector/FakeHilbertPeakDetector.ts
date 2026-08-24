@@ -17,7 +17,10 @@ export default class FakeHilbertPeakDetector implements PeakDetector {
         this.constructorCalledWith.push(transformer)
     }
 
-    public run(filteredSignal: number[], timestamps: number[]) {
+    public run(
+        filteredSignal: readonly number[],
+        timestamps: readonly number[]
+    ) {
         this.runCalledWith.push({
             filteredSignal,
             timestamps,
@@ -58,6 +61,6 @@ export default class FakeHilbertPeakDetector implements PeakDetector {
 }
 
 export interface CallToRun {
-    filteredSignal: number[]
-    timestamps: number[]
+    filteredSignal: readonly number[]
+    timestamps: readonly number[]
 }

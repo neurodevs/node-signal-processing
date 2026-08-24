@@ -9,7 +9,7 @@ export default class SpyHilbertTransformer extends HilbertTransformer {
         super()
     }
 
-    public run(signal: number[]) {
+    public run(signal: readonly number[]) {
         SpyHilbertTransformer.runHitCount++
         return super.run(signal)
     }

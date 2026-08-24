@@ -24,7 +24,7 @@ export default class Fft implements FastFourierTransform {
         return new (this.Class ?? this)(options)
     }
 
-    public forward(signal: number[]) {
+    public forward(signal: readonly number[]) {
         assertValidDataLength(signal, this.radix)
 
         const result = this.filiFft.forward(signal, 'none')
@@ -53,7 +53,7 @@ export default class Fft implements FastFourierTransform {
     }
 }
 export interface FastFourierTransform {
-    forward(signal: number[]): ComplexNumbers
+    forward(signal: readonly number[]): ComplexNumbers
     inverse(signal: ComplexNumbers): ComplexNumbers
 }
 

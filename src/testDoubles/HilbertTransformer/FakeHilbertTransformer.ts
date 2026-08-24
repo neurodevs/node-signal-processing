@@ -5,7 +5,7 @@ import {
 
 export default class FakeHilbertTransformer implements HilbertTransform {
     public static numCallsToConstructor = 0
-    public static runCalledWith: number[][] = []
+    public static runCalledWith: (readonly number[])[] = []
 
     public static fakeRunResult = this.createEmptyResult()
 
@@ -13,7 +13,7 @@ export default class FakeHilbertTransformer implements HilbertTransform {
         FakeHilbertTransformer.numCallsToConstructor++
     }
 
-    public run(signal: number[]) {
+    public run(signal: readonly number[]) {
         FakeHilbertTransformer.runCalledWith.push(signal)
         return FakeHilbertTransformer.fakeRunResult
     }

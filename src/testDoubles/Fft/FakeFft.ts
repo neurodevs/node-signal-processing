@@ -6,7 +6,7 @@ import {
 
 export default class FakeFft implements FastFourierTransform {
     public static constructorCalledWith: FftOptions[] = []
-    public static forwardCalledWith: number[][] = []
+    public static forwardCalledWith: (readonly number[])[] = []
     public static inverseCalledWith: ComplexNumbers[] = []
 
     public static fakeForwardResult = this.createEmptyResult()
@@ -16,7 +16,7 @@ export default class FakeFft implements FastFourierTransform {
         this.constructorCalledWith.push(options)
     }
 
-    public forward(signal: number[]) {
+    public forward(signal: readonly number[]) {
         this.forwardCalledWith.push(signal)
         return this.fakeForwardResult
     }

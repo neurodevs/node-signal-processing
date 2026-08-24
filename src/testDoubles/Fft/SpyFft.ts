@@ -6,7 +6,7 @@ export default class SpyFft extends Fft {
     public static inverseHitCount = 0
 
     public static constructorCalledWith: FftOptions[] = []
-    public static forwardCalledWith: number[][] = []
+    public static forwardCalledWith: (readonly number[])[] = []
     public static inverseCalledWith: ComplexNumbers[] = []
 
     public constructor(options: FftOptions) {
@@ -15,7 +15,7 @@ export default class SpyFft extends Fft {
         SpyFft.constructorCalledWith.push(options)
     }
 
-    public forward(signal: number[]): ComplexNumbers {
+    public forward(signal: readonly number[]): ComplexNumbers {
         SpyFft.forwardHitCount += 1
         SpyFft.forwardCalledWith.push(signal)
         return super.forward(signal)

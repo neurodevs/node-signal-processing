@@ -5,7 +5,7 @@ import {
 
 export default class FakeFirBandpassFilter implements Filter {
     public static constructorCalledWith: FirBandpassFilterOptions[] = []
-    public static runCalledWith: number[][] = []
+    public static runCalledWith: (readonly number[])[] = []
 
     public static fakeRunResult = this.createEmptyResult()
 
@@ -13,7 +13,7 @@ export default class FakeFirBandpassFilter implements Filter {
         this.constructorCalledWith.push(options)
     }
 
-    public run(signal: number[]) {
+    public run(signal: readonly number[]) {
         this.runCalledWith.push(signal)
         return FakeFirBandpassFilter.fakeRunResult
     }

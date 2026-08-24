@@ -51,19 +51,22 @@ export function assertValidRadix(radix: number): void {
     }
 }
 
-export function assertValidDataLength(signal: number[], radix: number): void {
+export function assertValidDataLength(
+    signal: readonly number[],
+    radix: number
+): void {
     if (signal.length !== radix) {
         throw new Error('Data must be same length as radix!')
     }
 }
 
-export function assertArrayIsNotEmpty(signal: number[]): void {
+export function assertArrayIsNotEmpty(signal: readonly number[]): void {
     if (signal.length === 0) {
         throw new Error('Array cannot be empty!')
     }
 }
 
-export function assertArrayLengthIsPowerOfTwo(signal: number[]): void {
+export function assertArrayLengthIsPowerOfTwo(signal: readonly number[]): void {
     if (!isPowerOfTwo(signal.length)) {
         throw new Error(
             'Data for Hilbert transform must have length equal to a power of two!'

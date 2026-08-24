@@ -8,9 +8,10 @@ export default class HilbertPeakDetector implements PeakDetector {
     public static Class?: HilbertPeakDetectorConstructor
 
     private transformer: HilbertTransform
-    private passedSignal!: number[]
+    
+    private passedSignal!: readonly number[]
     private signal!: number[]
-    private timestamps!: number[]
+    private timestamps!: readonly number[]
     private upperHilbert!: HilbertTransformResults
     private lowerHilbert!: HilbertTransformResults
     private thresholdedSignal!: number[]
@@ -26,7 +27,10 @@ export default class HilbertPeakDetector implements PeakDetector {
         return new (this.Class ?? this)(transformer)
     }
 
-    public run(filteredSignal: number[], timestamps: number[]) {
+    public run(
+        filteredSignal: readonly number[],
+        timestamps: readonly number[]
+    ) {
         this.passedSignal = filteredSignal
 
         this.signal = this.passedSignal.slice()
@@ -123,7 +127,7 @@ export default class HilbertPeakDetector implements PeakDetector {
         }
     }
 
-    private removePadding(signal: number[]) {
+    private removePadding(signal: readonly number[]) {
         return signal.slice(
             this.numZerosToPadAtStart,
             this.signalLength - this.numZerosToPadAtEnd
@@ -207,7 +211,10 @@ export default class HilbertPeakDetector implements PeakDetector {
 }
 
 export interface PeakDetector {
-    run(filteredSignal: number[], timestamps: number[]): PeakDetectorResults
+    run(
+        filteredSignal: readonly number[],
+        timestamps: readonly number[]
+    ): PeakDetectorResults
 }
 
 export type HilbertPeakDetectorConstructor = new (

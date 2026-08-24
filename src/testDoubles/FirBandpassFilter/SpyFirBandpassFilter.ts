@@ -4,14 +4,14 @@ import FirBandpassFilter, {
 
 export default class SpyFirBandpassFilter extends FirBandpassFilter {
     public static callsToConstructor: FirBandpassFilterOptions[] = []
-    public static callsToRun: number[][] = []
+    public static callsToRun: (readonly number[])[] = []
 
     public constructor(options: FirBandpassFilterOptions) {
         super(options)
         this.callsToConstructor.push(options)
     }
 
-    public run(signal: number[]) {
+    public run(signal: readonly number[]) {
         SpyFirBandpassFilter.callsToRun.push(signal)
         return super.run(signal)
     }
