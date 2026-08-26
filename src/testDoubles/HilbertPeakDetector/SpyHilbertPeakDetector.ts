@@ -1,13 +1,13 @@
 import HilbertPeakDetector from '../../impl/HilbertPeakDetector.js'
-import { HilbertTransform } from '../../impl/HilbertTransformer.js'
+import { HilbertTransformFn } from '../../impl/hilbertTransform.js'
 
 export default class SpyHilbertPeakDetector extends HilbertPeakDetector {
     public static generateSegmentsHitCount = 0
     public static applyEnvelopeThresholdHitCount = 0
     public static findPeaksHitCount = 0
 
-    public constructor(transformer: HilbertTransform) {
-        super(transformer)
+    public constructor(transform: HilbertTransformFn) {
+        super(transform)
     }
 
     public setSignalBelowLowerEnvelopeToZero() {

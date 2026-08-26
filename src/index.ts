@@ -31,13 +31,9 @@ export * from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
 export { default as FakeHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector.js'
 export * from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector.js'
 
-// HilbertTransformer
+// hilbertTransform
 
-export { default as HilbertTransformer } from './impl/HilbertTransformer.js'
-export * from './impl/HilbertTransformer.js'
+export * from './impl/hilbertTransform.js'
 
-export { default as SpyHilbertTransformer } from './testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
-export * from './testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
-
-export { default as FakeHilbertTransformer } from './testDoubles/HilbertTransformer/FakeHilbertTransformer.js'
-export * from './testDoubles/HilbertTransformer/FakeHilbertTransformer.js'
+export * from './testDoubles/hilbertTransform/createSpyHilbertTransform.js'
+export * from './testDoubles/hilbertTransform/createFakeHilbertTransform.js'

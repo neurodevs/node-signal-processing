@@ -3,37 +3,48 @@ import { test, assert } from '@neurodevs/node-tdd'
 import HilbertPeakDetector, {
     PeakDetectorResults,
 } from '../../impl/HilbertPeakDetector.js'
-import HilbertTransformer from '../../impl/HilbertTransformer.js'
+import { hilbertTransform } from '../../impl/hilbertTransform.js'
 import SpyHilbertPeakDetector from '../../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
-import SpyHilbertTransformer from '../../testDoubles/HilbertTransformer/SpyHilbertTransformer.js'
+import {
+    createSpyHilbertTransform,
+    SpyHilbertTransform,
+} from '../../testDoubles/hilbertTransform/createSpyHilbertTransform.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class HilbertPeakDetectorTest extends AbstractPackageTest {
     private static detector: HilbertPeakDetector
+    private static spyTransform: SpyHilbertTransform
 
     protected static async beforeEach() {
-        HilbertTransformer.Class = SpyHilbertTransformer
         HilbertPeakDetector.Class = SpyHilbertPeakDetector
 
         this.detector = this.Detector()
     }
 
     @test()
-    protected static async createsHilbertTransformer() {
-        assert.isEqual(SpyHilbertTransformer.constructorHitCount, 1)
+    protected static async defaultsToRealHilbertTransform() {
+        const signal = [1, 2, 3, 4]
+        const timestamps = [1, 2, 3, 4]
+
+        const withDefault = HilbertPeakDetector.Create()
+        const withInjected = HilbertPeakDetector.Create({ hilbertTransform })
+
+        assert.isEqualDeep(
+            withDefault.run(signal, timestamps),
+            withInjected.run(signal, timestamps)
+        )
     }
 
     @test()
     protected static async runCallsDependenciesAsExpected() {
-        SpyHilbertTransformer.resetTestDouble()
         SpyHilbertPeakDetector.resetTestDouble()
 
         this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
 
         assert.isEqual(
-            SpyHilbertTransformer.runHitCount,
+            this.spyTransform.calledWith.length,
             2,
-            'Incorrect number of calls to run!'
+            'Incorrect number of calls to hilbertTransform!'
         )
 
         assert.isEqual(
@@ -130,9 +141,12 @@ export default class HilbertPeakDetectorTest extends AbstractPackageTest {
     }
 
     private static Detector() {
-        SpyHilbertTransformer.resetTestDouble()
         SpyHilbertPeakDetector.resetTestDouble()
 
-        return HilbertPeakDetector.Create() as SpyHilbertPeakDetector
+        this.spyTransform = createSpyHilbertTransform()
+
+        return HilbertPeakDetector.Create({
+            hilbertTransform: this.spyTransform,
+        }) as SpyHilbertPeakDetector
     }
 }

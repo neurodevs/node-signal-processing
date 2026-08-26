@@ -2,19 +2,19 @@ import {
     PeakDetector,
     PeakDetectorResults,
 } from '../../impl/HilbertPeakDetector.js'
-import { HilbertTransform } from '../../impl/HilbertTransformer.js'
+import { HilbertTransformFn } from '../../impl/hilbertTransform.js'
 
 export default class FakeHilbertPeakDetector implements PeakDetector {
-    public static constructorCalledWith: HilbertTransform[] = []
+    public static constructorCalledWith: HilbertTransformFn[] = []
     public static runCalledWith: CallToRun[] = []
 
     public static fakeRunResult = this.createEmptyResult()
 
-    public transformer: HilbertTransform
+    public transform: HilbertTransformFn
 
-    public constructor(transformer: HilbertTransform) {
-        this.transformer = transformer
-        this.constructorCalledWith.push(transformer)
+    public constructor(transform: HilbertTransformFn) {
+        this.transform = transform
+        this.constructorCalledWith.push(transform)
     }
 
     public run(

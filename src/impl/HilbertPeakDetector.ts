@@ -1,14 +1,15 @@
 import { isPowerOfTwo } from '../utils/validations.js'
-import HilbertTransformer, {
-    HilbertTransform,
+import {
+    hilbertTransform,
+    HilbertTransformFn,
     HilbertTransformResults,
-} from './HilbertTransformer.js'
+} from './hilbertTransform.js'
 
 export default class HilbertPeakDetector implements PeakDetector {
     public static Class?: HilbertPeakDetectorConstructor
 
-    private transformer: HilbertTransform
-    
+    private transform: HilbertTransformFn
+
     private passedSignal!: readonly number[]
     private signal!: number[]
     private timestamps!: readonly number[]
@@ -18,13 +19,13 @@ export default class HilbertPeakDetector implements PeakDetector {
     private nonZeroSegments!: SignalSegment[]
     private peaks!: DataPoint[]
 
-    protected constructor(transformer: HilbertTransform) {
-        this.transformer = transformer
+    protected constructor(transform: HilbertTransformFn) {
+        this.transform = transform
     }
 
-    public static Create() {
-        const transformer = this.HilbertTransformer()
-        return new (this.Class ?? this)(transformer)
+    public static Create(options?: HilbertPeakDetectorOptions) {
+        const { hilbertTransform: transform = hilbertTransform } = options ?? {}
+        return new (this.Class ?? this)(transform)
     }
 
     public run(
@@ -61,11 +62,11 @@ export default class HilbertPeakDetector implements PeakDetector {
     }
 
     private calculateUpperEnvelope() {
-        this.upperHilbert = this.transformer.run(this.signal)
+        this.upperHilbert = this.transform(this.signal)
     }
 
     private calculateLowerEnvelope() {
-        this.lowerHilbert = this.transformer.run(this.upperAnalyticSignal)
+        this.lowerHilbert = this.transform(this.upperAnalyticSignal)
     }
 
     protected setSignalBelowLowerEnvelopeToZero() {
@@ -204,10 +205,6 @@ export default class HilbertPeakDetector implements PeakDetector {
             peaks: this.peaks,
         } as unknown as PeakDetectorResults
     }
-
-    private static HilbertTransformer() {
-        return HilbertTransformer.Create()
-    }
 }
 
 export interface PeakDetector {
@@ -218,8 +215,12 @@ export interface PeakDetector {
 }
 
 export type HilbertPeakDetectorConstructor = new (
-    transformer: HilbertTransform
+    transform: HilbertTransformFn
 ) => PeakDetector
+
+export interface HilbertPeakDetectorOptions {
+    hilbertTransform?: HilbertTransformFn
+}
 
 export interface PeakDetectorResults {
     filteredSignal: number[]

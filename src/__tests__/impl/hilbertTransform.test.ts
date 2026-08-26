@@ -2,16 +2,14 @@ import { test, assert } from '@neurodevs/node-tdd'
 
 import Fft from '../../impl/Fft.js'
 import {
-    HilbertTransform,
+    hilbertTransform,
     HilbertTransformResults,
-} from '../../impl/HilbertTransformer.js'
-import HilbertTransformer from '../../impl/HilbertTransformer.js'
+} from '../../impl/hilbertTransform.js'
 import SpyFft from '../../testDoubles/Fft/SpyFft.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class HilbertTransformerTest extends AbstractPackageTest {
+export default class HilbertTransformTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
-    private static hilbert: HilbertTransform
     private static result: HilbertTransformResults
 
     protected static async beforeEach() {
@@ -20,19 +18,18 @@ export default class HilbertTransformerTest extends AbstractPackageTest {
         Fft.Class = SpyFft
         SpyFft.resetTestDouble()
 
-        this.hilbert = this.HilbertTransformer()
-        this.result = this.hilbert.run(this.testData)
+        this.result = this.run(this.testData)
     }
 
     @test()
     protected static async throwsOnRunWithEmptyArray() {
-        assert.doesThrow(() => this.hilbert.run([]), 'Array cannot be empty!')
+        assert.doesThrow(() => this.run([]), 'Array cannot be empty!')
     }
 
     @test()
     protected static async throwsOnRunWithArrayOfLengthNotPowerOfTwo() {
         assert.doesThrow(
-            () => this.hilbert.run([1, 2, 3]),
+            () => this.run([1, 2, 3]),
             'Data for Hilbert transform must have length equal to a power of two!'
         )
     }
@@ -61,6 +58,14 @@ export default class HilbertTransformerTest extends AbstractPackageTest {
     }
 
     @test()
+    protected static async doesNotMutatePassedSignal() {
+        const signal = [1, 2, 3, 4]
+        this.run(signal)
+
+        assert.isEqualDeep(signal, this.testData)
+    }
+
+    @test()
     protected static async runCallsFftExpectedNumberOfTimes() {
         assert.isEqual(SpyFft.constructorHitCount, 1)
         assert.isEqual(SpyFft.forwardHitCount, 1)
@@ -79,6 +84,20 @@ export default class HilbertTransformerTest extends AbstractPackageTest {
         assert.isEqualDeep(SpyFft.forwardCalledWith[0], this.testData)
     }
 
+    @test()
+    protected static async acceptsInjectedFftFactory() {
+        const callsToCreateFft: number[] = []
+
+        this.run(this.testData, {
+            createFft: (radix) => {
+                callsToCreateFft.push(radix)
+                return Fft.Create({ radix })
+            },
+        })
+
+        assert.isEqualDeep(callsToCreateFft, [this.testData.length])
+    }
+
     private static get analyticSignal() {
         return this.result.analyticSignal
     }
@@ -87,7 +106,7 @@ export default class HilbertTransformerTest extends AbstractPackageTest {
         return this.result.envelope
     }
 
-    private static HilbertTransformer() {
-        return HilbertTransformer.Create()
+    private static run(...args: Parameters<typeof hilbertTransform>) {
+        return hilbertTransform(...args)
     }
 }
