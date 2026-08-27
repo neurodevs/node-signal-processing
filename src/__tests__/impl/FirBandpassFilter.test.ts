@@ -54,7 +54,10 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
 
     @test()
     protected static throwsWhenRunReceivesEmptyList() {
-        assert.doesThrow(() => this.firBandpassFilter([]), 'Array cannot be empty!')
+        assert.doesThrow(
+            () => this.firBandpassFilter([]),
+            'Array cannot be empty!'
+        )
     }
 
     @test()
@@ -110,9 +113,12 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
 
     @test()
     protected static async resultWithoutNormalizationHasExpectedValues() {
-        const resultWithoutNormalization = this.firBandpassFilter(this.testData, {
-            useNormalization: false,
-        })
+        const resultWithoutNormalization = this.firBandpassFilter(
+            this.testData,
+            {
+                useNormalization: false,
+            }
+        )
 
         assert.isEqualDeep(
             resultWithoutNormalization,
@@ -185,7 +191,10 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
         options: Partial<FirBandpassFilterOptions>,
         message: string
     ) {
-        assert.doesThrow(() => this.firBandpassFilter(this.testData, options), message)
+        assert.doesThrow(
+            () => this.firBandpassFilter(this.testData, options),
+            message
+        )
     }
 
     private static generateOptions() {

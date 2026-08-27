@@ -1,13 +1,10 @@
-// FastFourierTransform
+// createFft
 
-export { default as Fft } from './impl/Fft.js'
-export * from './impl/Fft.js'
+export * from './impl/createFft.js'
 
-export { default as SpyFft } from './testDoubles/Fft/SpyFft.js'
-export * from './testDoubles/Fft/SpyFft.js'
+export * from './testDoubles/createFft/createSpyFftFactory.js'
 
-export { default as FakeFft } from './testDoubles/Fft/FakeFft.js'
-export * from './testDoubles/Fft/FakeFft.js'
+export * from './testDoubles/createFft/createFakeFftFactory.js'
 
 // firBandpassFilter
 

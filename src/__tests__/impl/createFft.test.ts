@@ -1,18 +1,19 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import { FftOptions } from '../../impl/Fft.js'
-import SpyFft from '../../testDoubles/Fft/SpyFft.js'
+import {
+    createFft,
+    FastFourierTransform,
+    FftOptions,
+} from '../../impl/createFft.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class FastFourierTransformTest extends AbstractPackageTest {
+export default class CreateFftTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
-    private static fft: SpyFft
-    private static fftOptions: FftOptions
+    private static fft: FastFourierTransform
 
     protected static async beforeEach() {
         await super.beforeEach()
 
-        this.fftOptions = this.generateOptions()
         this.fft = this.Fft()
     }
 
@@ -88,19 +89,15 @@ export default class FastFourierTransformTest extends AbstractPackageTest {
         assert.doesThrow(() => this.Fft(options), message)
     }
 
-    private static generateOptions(options?: Partial<FftOptions>) {
-        const defaultOptions = {
-            radix: 4,
-        }
+    private static generateOptions() {
         return {
-            ...defaultOptions,
-            ...options,
+            radix: 4,
         }
     }
 
     private static Fft(options?: Partial<FftOptions>) {
-        return new SpyFft({
-            ...this.fftOptions,
+        return createFft({
+            ...this.generateOptions(),
             ...options,
         })
     }

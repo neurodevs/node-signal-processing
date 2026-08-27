@@ -1,22 +1,25 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import Fft from '../../impl/Fft.js'
+import { createFft } from '../../impl/createFft.js'
 import {
     hilbertTransform,
     HilbertTransformResults,
 } from '../../impl/hilbertTransform.js'
-import SpyFft from '../../testDoubles/Fft/SpyFft.js'
+import {
+    createSpyFftFactory,
+    SpyFftFactory,
+} from '../../testDoubles/createFft/createSpyFftFactory.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class HilbertTransformTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
+    private static spyFftFactory: SpyFftFactory
     private static result: HilbertTransformResults
 
     protected static async beforeEach() {
         await super.beforeEach()
 
-        Fft.Class = SpyFft
-        SpyFft.resetTestDouble()
+        this.spyFftFactory = createSpyFftFactory()
 
         this.result = this.run(this.testData)
     }
@@ -67,21 +70,24 @@ export default class HilbertTransformTest extends AbstractPackageTest {
 
     @test()
     protected static async runCallsFftExpectedNumberOfTimes() {
-        assert.isEqual(SpyFft.constructorHitCount, 1)
-        assert.isEqual(SpyFft.forwardHitCount, 1)
-        assert.isEqual(SpyFft.inverseHitCount, 1)
+        assert.isEqual(this.spyFftFactory.calledWith.length, 1)
+        assert.isEqual(this.spyFftFactory.forwardCalledWith.length, 1)
+        assert.isEqual(this.spyFftFactory.inverseCalledWith.length, 1)
     }
 
     @test()
     protected static async runCallsFftWithExpectedRadix() {
-        assert.isEqualDeep(SpyFft.constructorCalledWith[0], {
+        assert.isEqualDeep(this.spyFftFactory.calledWith[0], {
             radix: this.testData.length,
         })
     }
 
     @test()
     protected static async runCallsFftForwardWithExpectedData() {
-        assert.isEqualDeep(SpyFft.forwardCalledWith[0], this.testData)
+        assert.isEqualDeep(
+            this.spyFftFactory.forwardCalledWith[0],
+            this.testData
+        )
     }
 
     @test()
@@ -89,9 +95,9 @@ export default class HilbertTransformTest extends AbstractPackageTest {
         const callsToCreateFft: number[] = []
 
         this.run(this.testData, {
-            createFft: (radix) => {
-                callsToCreateFft.push(radix)
-                return Fft.Create({ radix })
+            createFft: (options) => {
+                callsToCreateFft.push(options.radix)
+                return createFft(options)
             },
         })
 
@@ -106,7 +112,12 @@ export default class HilbertTransformTest extends AbstractPackageTest {
         return this.result.envelope
     }
 
-    private static run(...args: Parameters<typeof hilbertTransform>) {
-        return hilbertTransform(...args)
+    private static run(
+        signal: readonly number[],
+        options: Parameters<typeof hilbertTransform>[1] = {
+            createFft: this.spyFftFactory,
+        }
+    ) {
+        return hilbertTransform(signal, options)
     }
 }

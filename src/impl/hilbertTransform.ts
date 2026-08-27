@@ -2,18 +2,23 @@ import {
     assertArrayIsNotEmpty,
     assertArrayLengthIsPowerOfTwo,
 } from '../utils/assertions.js'
-import Fft, { ComplexNumbers, FastFourierTransform } from './Fft.js'
+import {
+    ComplexNumbers,
+    createFft,
+    FastFourierTransform,
+    FftFactory,
+} from './createFft.js'
 
 export function hilbertTransform(
     signal: readonly number[],
     options?: HilbertTransformOptions
 ): HilbertTransformResults {
-    const { createFft = defaultCreateFft } = options ?? {}
+    const { createFft: fftFactory = createFft } = options ?? {}
 
     const copiedSignal = signal.slice()
     assertValidSignal(copiedSignal)
 
-    const fft = createFft(copiedSignal.length)
+    const fft = fftFactory({ radix: copiedSignal.length })
 
     const freqs = runForwardFft(fft, copiedSignal)
     const filter = createHilbertFilter(copiedSignal.length)
@@ -92,10 +97,6 @@ function createResults(result: ComplexNumbers) {
     return { analyticSignal, envelope } satisfies HilbertTransformResults
 }
 
-function defaultCreateFft(radix: number) {
-    return Fft.Create({ radix })
-}
-
 export type HilbertTransformFn = (
     signal: readonly number[],
     options?: HilbertTransformOptions
@@ -104,8 +105,6 @@ export type HilbertTransformFn = (
 export interface HilbertTransformOptions {
     createFft?: FftFactory
 }
-
-export type FftFactory = (radix: number) => FastFourierTransform
 
 export interface HilbertTransformResults {
     analyticSignal: number[]
