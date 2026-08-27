@@ -1,21 +1,19 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import { FirBandpassFilterOptions } from '../../impl/FirBandpassFilter.js'
-import SpyFirBandpassFilter from '../../testDoubles/FirBandpassFilter/SpyFirBandpassFilter.js'
+import {
+    firBandpassFilter,
+    FirBandpassFilterOptions,
+} from '../../impl/firBandpassFilter.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class FirBandpassFilterTest extends AbstractPackageTest {
     private static testData = [1, 2, 3, 4]
-    private static filter: SpyFirBandpassFilter
-    private static options: FirBandpassFilterOptions
     private static result: number[]
 
     protected static async beforeEach() {
         await super.beforeEach()
 
-        this.options = this.generateOptions()
-        this.filter = this.Filter(this.options)
-        this.result = this.filter.run(this.testData)
+        this.result = this.firBandpassFilter(this.testData)
     }
 
     @test()
@@ -56,7 +54,7 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
 
     @test()
     protected static throwsWhenRunReceivesEmptyList() {
-        assert.doesThrow(() => this.filter.run([]), 'Array cannot be empty!')
+        assert.doesThrow(() => this.firBandpassFilter([]), 'Array cannot be empty!')
     }
 
     @test()
@@ -72,20 +70,26 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
 
     @test()
     protected static async runningTwiceReturnsSameResult() {
-        const result1 = this.filter.run(this.testData)
-        const result2 = this.filter.run(this.testData)
+        const result1 = this.firBandpassFilter(this.testData)
+        const result2 = this.firBandpassFilter(this.testData)
         assert.isEqualDeep(result1, result2)
     }
 
     @test()
     protected static async usesPaddingByDefault() {
-        assert.isTrue(this.filter.getUsePadding())
+        const resultWithPadding = this.firBandpassFilter(this.testData, {
+            usePadding: true,
+        })
+
+        assert.isEqualDeep(this.result, resultWithPadding)
     }
 
     @test()
     protected static async resultWithoutPaddingHasExpectedValues() {
-        const filterWithoutPadding = this.Filter({ usePadding: false })
-        const resultWithoutPadding = filterWithoutPadding.run(this.testData)
+        const resultWithoutPadding = this.firBandpassFilter(this.testData, {
+            usePadding: false,
+        })
+
         assert.isEqualDeep(
             resultWithoutPadding,
             [
@@ -97,17 +101,19 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
 
     @test()
     protected static async usesNormalizationByDefault() {
-        assert.isTrue(this.filter.getUseNormalization())
+        const resultWithNormalization = this.firBandpassFilter(this.testData, {
+            useNormalization: true,
+        })
+
+        assert.isEqualDeep(this.result, resultWithNormalization)
     }
 
     @test()
     protected static async resultWithoutNormalizationHasExpectedValues() {
-        const filterWithoutNormalization = this.Filter({
+        const resultWithoutNormalization = this.firBandpassFilter(this.testData, {
             useNormalization: false,
         })
-        const resultWithoutNormalization = filterWithoutNormalization.run(
-            this.testData
-        )
+
         assert.isEqualDeep(
             resultWithoutNormalization,
             [
@@ -123,7 +129,7 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
         const signal = this.generateSignal(tooLong)
 
         // Passes if does not throw
-        this.filter.run(signal)
+        this.firBandpassFilter(signal)
     }
 
     private static generateSignal(length: number) {
@@ -179,7 +185,7 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
         options: Partial<FirBandpassFilterOptions>,
         message: string
     ) {
-        assert.doesThrow(() => this.Filter(options), message)
+        assert.doesThrow(() => this.firBandpassFilter(this.testData, options), message)
     }
 
     private static generateOptions() {
@@ -192,10 +198,12 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
         }
     }
 
-    private static Filter(options: Partial<FirBandpassFilterOptions>) {
-        const defaultOptions = this.generateOptions()
-        return new SpyFirBandpassFilter({
-            ...defaultOptions,
+    private static firBandpassFilter(
+        signal: readonly number[],
+        options: Partial<FirBandpassFilterOptions> = {}
+    ) {
+        return firBandpassFilter(signal, {
+            ...this.generateOptions(),
             ...options,
         })
     }
