@@ -20,16 +20,13 @@ export * from './testDoubles/FirBandpassFilter/SpyFirBandpassFilter.js'
 export { default as FakeFirBandpassFilter } from './testDoubles/FirBandpassFilter/FakeFirBandpassFilter.js'
 export * from './testDoubles/FirBandpassFilter/FakeFirBandpassFilter.js'
 
-// HilbertPeakDetector
+// detectHilbertPeaks
 
-export { default as HilbertPeakDetector } from './impl/HilbertPeakDetector.js'
-export * from './impl/HilbertPeakDetector.js'
+export * from './impl/detectHilbertPeaks.js'
 
-export { default as SpyHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
-export * from './testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
+export * from './testDoubles/detectHilbertPeaks/createSpyDetectHilbertPeaks.js'
 
-export { default as FakeHilbertPeakDetector } from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector.js'
-export * from './testDoubles/HilbertPeakDetector/FakeHilbertPeakDetector.js'
+export * from './testDoubles/detectHilbertPeaks/createFakeDetectHilbertPeaks.js'
 
 // hilbertTransform
 

@@ -1,24 +1,23 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import HilbertPeakDetector, {
-    PeakDetectorResults,
-} from '../../impl/HilbertPeakDetector.js'
+import {
+    detectHilbertPeaks,
+    HilbertPeakResults,
+} from '../../impl/detectHilbertPeaks.js'
 import { hilbertTransform } from '../../impl/hilbertTransform.js'
-import SpyHilbertPeakDetector from '../../testDoubles/HilbertPeakDetector/SpyHilbertPeakDetector.js'
 import {
     createSpyHilbertTransform,
     SpyHilbertTransform,
 } from '../../testDoubles/hilbertTransform/createSpyHilbertTransform.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class HilbertPeakDetectorTest extends AbstractPackageTest {
-    private static detector: HilbertPeakDetector
+export default class DetectHilbertPeaksTest extends AbstractPackageTest {
     private static spyTransform: SpyHilbertTransform
 
     protected static async beforeEach() {
-        HilbertPeakDetector.Class = SpyHilbertPeakDetector
+        await super.beforeEach()
 
-        this.detector = this.Detector()
+        this.spyTransform = createSpyHilbertTransform()
     }
 
     @test()
@@ -26,52 +25,29 @@ export default class HilbertPeakDetectorTest extends AbstractPackageTest {
         const signal = [1, 2, 3, 4]
         const timestamps = [1, 2, 3, 4]
 
-        const withDefault = HilbertPeakDetector.Create()
-        const withInjected = HilbertPeakDetector.Create({ hilbertTransform })
-
         assert.isEqualDeep(
-            withDefault.run(signal, timestamps),
-            withInjected.run(signal, timestamps)
+            detectHilbertPeaks(signal, timestamps),
+            detectHilbertPeaks(signal, timestamps, { hilbertTransform })
         )
     }
 
     @test()
-    protected static async runCallsDependenciesAsExpected() {
-        SpyHilbertPeakDetector.resetTestDouble()
-
-        this.detector.run([1, 2, 3, 4], [1, 2, 3, 4])
+    protected static async callsDependenciesAsExpected() {
+        this.run([1, 2, 3, 4], [1, 2, 3, 4])
 
         assert.isEqual(
             this.spyTransform.calledWith.length,
             2,
             'Incorrect number of calls to hilbertTransform!'
         )
-
-        assert.isEqual(
-            SpyHilbertPeakDetector.generateSegmentsHitCount,
-            1,
-            'Incorrect number of calls to generateSegments!'
-        )
-
-        assert.isEqual(
-            SpyHilbertPeakDetector.applyEnvelopeThresholdHitCount,
-            1,
-            'Incorrect number of calls to applyEnvelopeThreshold!'
-        )
-
-        assert.isEqual(
-            SpyHilbertPeakDetector.findPeaksHitCount,
-            1,
-            'Incorrect number of calls to findPeaks!'
-        )
     }
 
     @test()
-    protected static async runReturnsExpectedDataStructure() {
+    protected static async returnsExpectedDataStructure() {
         const dummyData = [1, 2, 3, 4]
         const dummyTimestamps = [1, 2, 3, 4]
 
-        const result = this.detector.run(dummyData, dummyTimestamps)
+        const result = this.run(dummyData, dummyTimestamps)
 
         const {
             filteredSignal: signal,
@@ -97,7 +73,7 @@ export default class HilbertPeakDetectorTest extends AbstractPackageTest {
     }
 
     @test()
-    protected static async runPadsDataWithZerosToNearestPowerOfTwo() {
+    protected static async padsDataWithZerosToNearestPowerOfTwo() {
         const examples = [1, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15]
         examples.forEach((length) => this.runForLength(length))
     }
@@ -111,7 +87,7 @@ export default class HilbertPeakDetectorTest extends AbstractPackageTest {
             'upperAnalyticSignal',
             'lowerAnalyticSignal',
             'thresholdedSignal',
-        ] as (keyof PeakDetectorResults)[]
+        ] as (keyof HilbertPeakResults)[]
 
         const fieldLengths = fields.map((field) => results[field].length)
         const uniqueLengths = new Set(fieldLengths)
@@ -125,7 +101,7 @@ export default class HilbertPeakDetectorTest extends AbstractPackageTest {
 
     private static runForLength(length: number) {
         const { signal, timestamps } = this.generateDummyData(length)
-        return this.detector.run(signal, timestamps)
+        return this.run(signal, timestamps)
     }
 
     private static generateDummyData(length: number) {
@@ -140,13 +116,12 @@ export default class HilbertPeakDetectorTest extends AbstractPackageTest {
         return { signal, timestamps }
     }
 
-    private static Detector() {
-        SpyHilbertPeakDetector.resetTestDouble()
-
-        this.spyTransform = createSpyHilbertTransform()
-
-        return HilbertPeakDetector.Create({
+    private static run(
+        filteredSignal: readonly number[],
+        timestamps: readonly number[]
+    ) {
+        return detectHilbertPeaks(filteredSignal, timestamps, {
             hilbertTransform: this.spyTransform,
-        }) as SpyHilbertPeakDetector
+        })
     }
 }
