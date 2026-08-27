@@ -49,7 +49,7 @@ declare module '@neurodevs/fili' {
         public twiddle: number[]
         public sinTable: number[]
         public cosTable: number[]
-        public forward(b: number[], window: string): FiliComplexNumbers
+        public forward(b: readonly number[], window: string): FiliComplexNumbers
         public inverse(re: number[], im: number[]): FiliComplexNumbers
         public magnitude(params: FiliComplexNumbers): number[]
         public magToDb(b: number[]): number[]

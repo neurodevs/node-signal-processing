@@ -1,10 +1,6 @@
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
-
 import { assertValidDataLength, assertValidRadix } from '../utils/assertions.js'
 
-const { Fft: FiliFft } = require('@neurodevs/fili')
+import { Fft as FiliFft } from '@neurodevs/fili'
 
 export function createFft(options: FftOptions): FastFourierTransform {
     const { radix } = options

@@ -1,7 +1,3 @@
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
-
 import {
     assertArrayIsNotEmpty,
     assertHighFreqGreaterThanLowFreq,
@@ -17,10 +13,10 @@ import {
     removeArrayPadding,
 } from '../utils/preprocess.js'
 
-const {
-    FirCoeffs: FiliFirCoeffs,
-    FirFilter: FiliFirFilter,
-} = require('@neurodevs/fili')
+import {
+    FirCoeffs as FiliFirCoeffs,
+    FirFilter as FiliFirFilter,
+} from '@neurodevs/fili'
 
 export function firBandpassFilter(
     signal: readonly number[],
@@ -34,13 +30,15 @@ export function firBandpassFilter(
     const filiFirFilter = createFiliFirFilter(options)
     const padLength = 3 * numTaps
 
-    let preprocessed = useNormalization ? normalizeArray(signal) : signal
+    let preprocessed = useNormalization
+        ? normalizeArray(signal)
+        : signal.slice()
 
     if (usePadding) {
         preprocessed = padArrayWithZeros(preprocessed, padLength)
     }
 
-    const result = filiFirFilter.filtfilt(preprocessed) as number[]
+    const result = filiFirFilter.filtfilt(preprocessed)
 
     return usePadding ? removeArrayPadding(result, padLength) : result
 }
