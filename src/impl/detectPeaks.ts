@@ -2,11 +2,11 @@ import { maxOfArray } from '../utils/arrays.js'
 import { isPowerOfTwo } from '../utils/validations.js'
 import { hilbertTransform, HilbertTransformFn } from './hilbertTransform.js'
 
-export function detectHilbertPeaks(
+export function detectPeaks(
     filteredSignal: readonly number[],
     timestamps: readonly number[],
-    options?: DetectHilbertPeaksOptions
-): HilbertPeakResults {
+    options?: DetectPeaksOptions
+): DetectPeaksResults {
     const { hilbertTransform: transform = hilbertTransform } = options ?? {}
 
     const padding = createPadding(filteredSignal.length)
@@ -29,7 +29,7 @@ export function detectHilbertPeaks(
         timestamps
     )
 
-    const peaks = detectPeaks(nonZeroSegments)
+    const peaks = findPeaksInSegments(nonZeroSegments)
 
     return {
         filteredSignal,
@@ -41,7 +41,7 @@ export function detectHilbertPeaks(
         thresholdedSignal,
         nonZeroSegments,
         peaks,
-    } as unknown as HilbertPeakResults
+    } as unknown as DetectPeaksResults
 }
 
 function createPadding(signalLength: number) {
@@ -139,7 +139,7 @@ function createEmptySegment(): SignalSegment {
     }
 }
 
-function detectPeaks(nonZeroSegments: SignalSegment[]) {
+function findPeaksInSegments(nonZeroSegments: SignalSegment[]) {
     const peaks: DataPoint[] = []
 
     for (const segment of nonZeroSegments) {
@@ -158,17 +158,17 @@ function detectPeaks(nonZeroSegments: SignalSegment[]) {
     return peaks
 }
 
-export type DetectHilbertPeaksFn = (
+export type DetectPeaksFn = (
     filteredSignal: readonly number[],
     timestamps: readonly number[],
-    options?: DetectHilbertPeaksOptions
-) => HilbertPeakResults
+    options?: DetectPeaksOptions
+) => DetectPeaksResults
 
-export interface DetectHilbertPeaksOptions {
+export interface DetectPeaksOptions {
     hilbertTransform?: HilbertTransformFn
 }
 
-export interface HilbertPeakResults {
+export interface DetectPeaksResults {
     filteredSignal: number[]
     timestamps: number[]
     upperAnalyticSignal: number[]

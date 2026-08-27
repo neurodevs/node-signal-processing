@@ -1,9 +1,6 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import {
-    detectHilbertPeaks,
-    HilbertPeakResults,
-} from '../../impl/detectHilbertPeaks.js'
+import { detectPeaks, DetectPeaksResults } from '../../impl/detectPeaks.js'
 import { hilbertTransform } from '../../impl/hilbertTransform.js'
 import {
     createSpyHilbertTransform,
@@ -11,7 +8,7 @@ import {
 } from '../../testDoubles/hilbertTransform/createSpyHilbertTransform.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
-export default class DetectHilbertPeaksTest extends AbstractPackageTest {
+export default class DetectPeaksTest extends AbstractPackageTest {
     private static spyTransform: SpyHilbertTransform
 
     protected static async beforeEach() {
@@ -26,8 +23,8 @@ export default class DetectHilbertPeaksTest extends AbstractPackageTest {
         const timestamps = [1, 2, 3, 4]
 
         assert.isEqualDeep(
-            detectHilbertPeaks(signal, timestamps),
-            detectHilbertPeaks(signal, timestamps, { hilbertTransform })
+            detectPeaks(signal, timestamps),
+            detectPeaks(signal, timestamps, { hilbertTransform })
         )
     }
 
@@ -87,7 +84,7 @@ export default class DetectHilbertPeaksTest extends AbstractPackageTest {
             'upperAnalyticSignal',
             'lowerAnalyticSignal',
             'thresholdedSignal',
-        ] as (keyof HilbertPeakResults)[]
+        ] as (keyof DetectPeaksResults)[]
 
         const fieldLengths = fields.map((field) => results[field].length)
         const uniqueLengths = new Set(fieldLengths)
@@ -106,7 +103,7 @@ export default class DetectHilbertPeaksTest extends AbstractPackageTest {
         const timestamps = signal.map((_, i) => i)
 
         // Passes if does not throw
-        detectHilbertPeaks(signal, timestamps)
+        detectPeaks(signal, timestamps)
     }
 
     private static runForLength(length: number) {
@@ -130,7 +127,7 @@ export default class DetectHilbertPeaksTest extends AbstractPackageTest {
         filteredSignal: readonly number[],
         timestamps: readonly number[]
     ) {
-        return detectHilbertPeaks(filteredSignal, timestamps, {
+        return detectPeaks(filteredSignal, timestamps, {
             hilbertTransform: this.spyTransform,
         })
     }

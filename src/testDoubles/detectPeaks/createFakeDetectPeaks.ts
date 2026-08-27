@@ -1,14 +1,14 @@
 import {
-    DetectHilbertPeaksFn,
-    DetectHilbertPeaksOptions,
-    HilbertPeakResults,
-} from '../../impl/detectHilbertPeaks.js'
+    DetectPeaksFn,
+    DetectPeaksOptions,
+    DetectPeaksResults,
+} from '../../impl/detectPeaks.js'
 
-export function createFakeDetectHilbertPeaks(fakeResult = createEmptyResult()) {
+export function createFakeDetectPeaks(fakeResult = createEmptyResult()) {
     const fake = ((filteredSignal, timestamps, options) => {
         fake.calledWith.push({ filteredSignal, timestamps, options })
         return fake.fakeResult
-    }) as FakeDetectHilbertPeaks
+    }) as FakeDetectPeaks
 
     fake.calledWith = []
     fake.fakeResult = fakeResult
@@ -27,16 +27,16 @@ function createEmptyResult() {
         thresholdedSignal: [],
         nonZeroSegments: [],
         peaks: [],
-    } as HilbertPeakResults
+    } as DetectPeaksResults
 }
 
-export interface FakeDetectHilbertPeaks extends DetectHilbertPeaksFn {
-    calledWith: CallToDetectHilbertPeaks[]
-    fakeResult: HilbertPeakResults
+export interface FakeDetectPeaks extends DetectPeaksFn {
+    calledWith: CallToDetectPeaks[]
+    fakeResult: DetectPeaksResults
 }
 
-export interface CallToDetectHilbertPeaks {
+export interface CallToDetectPeaks {
     filteredSignal: readonly number[]
     timestamps: readonly number[]
-    options?: DetectHilbertPeaksOptions
+    options?: DetectPeaksOptions
 }

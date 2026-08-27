@@ -3,7 +3,6 @@
 export * from './impl/createFft.js'
 
 export * from './testDoubles/createFft/createSpyFftFactory.js'
-
 export * from './testDoubles/createFft/createFakeFftFactory.js'
 
 // firBandpassFilter
@@ -13,12 +12,12 @@ export * from './impl/firBandpassFilter.js'
 export * from './testDoubles/firBandpassFilter/createSpyFirBandpassFilter.js'
 export * from './testDoubles/firBandpassFilter/createFakeFirBandpassFilter.js'
 
-// detectHilbertPeaks
+// detectPeaks
 
-export * from './impl/detectHilbertPeaks.js'
+export * from './impl/detectPeaks.js'
 
-export * from './testDoubles/detectHilbertPeaks/createSpyDetectHilbertPeaks.js'
-export * from './testDoubles/detectHilbertPeaks/createFakeDetectHilbertPeaks.js'
+export * from './testDoubles/detectPeaks/createSpyDetectPeaks.js'
+export * from './testDoubles/detectPeaks/createFakeDetectPeaks.js'
 
 // hilbertTransform
 
