@@ -1,3 +1,4 @@
+import { maxOfArray } from '../utils/arrays.js'
 import { isPowerOfTwo } from '../utils/validations.js'
 import { hilbertTransform, HilbertTransformFn } from './hilbertTransform.js'
 
@@ -144,7 +145,7 @@ function detectPeaks(nonZeroSegments: SignalSegment[]) {
     for (const segment of nonZeroSegments) {
         const { values, timestamps } = segment
 
-        const maxValue = Math.max(...values)
+        const maxValue = maxOfArray(values)
         const indexAtMaxValue = values.findIndex((v) => v == maxValue)
         const timestampAtMaxValue = timestamps[indexAtMaxValue]
 

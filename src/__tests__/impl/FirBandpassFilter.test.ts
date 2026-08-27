@@ -117,6 +117,19 @@ export default class FirBandpassFilterTest extends AbstractPackageTest {
         )
     }
 
+    @test()
+    protected static async normalizesSignalsTooLongForSpreadOperator() {
+        const tooLong = 131072
+        const signal = this.generateSignal(tooLong)
+
+        // Passes if does not throw
+        this.filter.run(signal)
+    }
+
+    private static generateSignal(length: number) {
+        return Array.from({ length }, (_, i) => Math.sin(i))
+    }
+
     private static assertInvalidSampleRate(sampleRate: number) {
         this.assertDoesThrowInvalidParameters(
             { sampleRate },

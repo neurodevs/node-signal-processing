@@ -99,6 +99,16 @@ export default class DetectHilbertPeaksTest extends AbstractPackageTest {
         )
     }
 
+    @test()
+    protected static async detectsPeaksInSegmentsTooLongForSpreadOperator() {
+        const tooLong = 131072
+        const signal = Array(tooLong).fill(1) as number[]
+        const timestamps = signal.map((_, i) => i)
+
+        // Passes if does not throw
+        detectHilbertPeaks(signal, timestamps)
+    }
+
     private static runForLength(length: number) {
         const { signal, timestamps } = this.generateDummyData(length)
         return this.run(signal, timestamps)

@@ -1,3 +1,5 @@
+import { maxOfArray, minOfArray } from './arrays.js'
+
 export function padArrayWithZeros(
     signal: readonly number[],
     padLength: number
@@ -14,8 +16,8 @@ export function removeArrayPadding(
 }
 
 export function normalizeArray(signal: readonly number[]) {
-    const max = Math.max(...signal)
-    const min = Math.min(...signal)
+    const max = maxOfArray(signal)
+    const min = minOfArray(signal)
 
     return signal.map((value) => (value - min) / (max - min))
 }
