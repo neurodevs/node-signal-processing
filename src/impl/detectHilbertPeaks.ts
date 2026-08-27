@@ -5,9 +5,9 @@ import { hilbertTransform, HilbertTransformFn } from './hilbertTransform.js'
 export function detectHilbertPeaks(
     filteredSignal: readonly number[],
     timestamps: readonly number[],
-    options: DetectHilbertPeaksOptions = {}
+    options?: DetectHilbertPeaksOptions
 ): HilbertPeakResults {
-    const { hilbertTransform: transform = hilbertTransform } = options
+    const { hilbertTransform: transform = hilbertTransform } = options ?? {}
 
     const padding = createPadding(filteredSignal.length)
     const paddedSignal = padSignal(filteredSignal, padding)
