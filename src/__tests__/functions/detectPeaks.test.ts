@@ -1,7 +1,7 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import { detectPeaks, DetectPeaksResults } from '../../impl/detectPeaks.js'
-import { hilbertTransform } from '../../impl/hilbertTransform.js'
+import { detectPeaks, DetectPeaksResults } from '../../functions/detectPeaks.js'
+import { hilbertTransform } from '../../functions/hilbertTransform.js'
 import {
     createSpyHilbertTransform,
     SpyHilbertTransform,

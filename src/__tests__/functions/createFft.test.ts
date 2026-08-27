@@ -4,7 +4,7 @@ import {
     createFft,
     FastFourierTransform,
     FftOptions,
-} from '../../impl/createFft.js'
+} from '../../functions/createFft.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class CreateFftTest extends AbstractPackageTest {

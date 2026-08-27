@@ -1,4 +1,8 @@
-import { ComplexNumbers, FftFactory, FftOptions } from '../../impl/createFft.js'
+import {
+    ComplexNumbers,
+    FftFactory,
+    FftOptions,
+} from '../../functions/createFft.js'
 
 export function createFakeFftFactory(
     fakeForwardResult = createEmptyResult(),

@@ -1,4 +1,4 @@
-import { detectPeaks, DetectPeaksFn } from '../../impl/detectPeaks.js'
+import { detectPeaks, DetectPeaksFn } from '../../functions/detectPeaks.js'
 import { CallToDetectPeaks } from './createFakeDetectPeaks.js'
 
 export function createSpyDetectPeaks(detect: DetectPeaksFn = detectPeaks) {

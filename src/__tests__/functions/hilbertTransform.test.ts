@@ -1,10 +1,10 @@
 import { test, assert } from '@neurodevs/node-tdd'
 
-import { createFft } from '../../impl/createFft.js'
+import { createFft } from '../../functions/createFft.js'
 import {
     hilbertTransform,
     HilbertTransformResults,
-} from '../../impl/hilbertTransform.js'
+} from '../../functions/hilbertTransform.js'
 import {
     createSpyFftFactory,
     SpyFftFactory,

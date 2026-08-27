@@ -1,7 +1,7 @@
 import {
     firBandpassFilter,
     FirBandpassFilterFn,
-} from '../../impl/firBandpassFilter.js'
+} from '../../functions/firBandpassFilter.js'
 import { CallToFirBandpassFilter } from './createFakeFirBandpassFilter.js'
 
 export function createSpyFirBandpassFilter(

@@ -2,7 +2,7 @@ import {
     DetectPeaksFn,
     DetectPeaksOptions,
     DetectPeaksResults,
-} from '../../impl/detectPeaks.js'
+} from '../../functions/detectPeaks.js'
 
 export function createFakeDetectPeaks(fakeResult = createEmptyResult()) {
     const fake = ((filteredSignal, timestamps, options) => {

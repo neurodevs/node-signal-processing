@@ -2,7 +2,7 @@ import {
     HilbertTransformFn,
     HilbertTransformOptions,
     HilbertTransformResults,
-} from '../../impl/hilbertTransform.js'
+} from '../../functions/hilbertTransform.js'
 
 export function createFakeHilbertTransform(fakeResult = createEmptyResult()) {
     const fake = ((signal, options) => {

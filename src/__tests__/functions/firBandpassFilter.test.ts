@@ -3,7 +3,7 @@ import { test, assert } from '@neurodevs/node-tdd'
 import {
     firBandpassFilter,
     FirBandpassFilterOptions,
-} from '../../impl/firBandpassFilter.js'
+} from '../../functions/firBandpassFilter.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class FirBandpassFilterTest extends AbstractPackageTest {

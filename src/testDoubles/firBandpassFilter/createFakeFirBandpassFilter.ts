@@ -1,7 +1,7 @@
 import {
     FirBandpassFilterFn,
     FirBandpassFilterOptions,
-} from '../../impl/firBandpassFilter.js'
+} from '../../functions/firBandpassFilter.js'
 
 export function createFakeFirBandpassFilter(fakeResult: number[] = []) {
     const fake = ((signal, options) => {

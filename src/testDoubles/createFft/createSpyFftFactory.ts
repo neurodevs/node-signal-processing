@@ -3,7 +3,7 @@ import {
     createFft,
     FftFactory,
     FftOptions,
-} from '../../impl/createFft.js'
+} from '../../functions/createFft.js'
 
 export function createSpyFftFactory(fftFactory: FftFactory = createFft) {
     const spy = ((options: FftOptions) => {

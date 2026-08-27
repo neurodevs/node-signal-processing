@@ -1,7 +1,7 @@
 import {
     hilbertTransform,
     HilbertTransformFn,
-} from '../../impl/hilbertTransform.js'
+} from '../../functions/hilbertTransform.js'
 import { CallToHilbertTransform } from './createFakeHilbertTransform.js'
 
 export function createSpyHilbertTransform(
